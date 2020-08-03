@@ -22,3 +22,15 @@ nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 " Save convenience binding
 nnoremap <leader>fs :w<cr>
 nnoremap <leader>fS :wa<cr>
+
+" vim-plug keybindings
+nnoremap <leader>PI :PlugInstall<cr>
+nnoremap <leader>PC :PlugClean<cr>
+nnoremap <leader>PU :PlugUpdate<cr>
+
+" Begin plugins
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-sensible'
+
+call plug#end()
