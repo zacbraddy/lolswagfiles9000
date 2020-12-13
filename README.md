@@ -9,7 +9,7 @@ This represents probably the most effort I've put into getting my dotfiles in a 
 1. Run this command
 
 ```shell
-sudo add-apt-repository ppa:git-core/ppa -y && apt update -y && apt install git -y
+sudo add-apt-repository ppa:git-core/ppa -y && sudo apt update -y && sudo apt install git -y
 
 ```
 
@@ -20,3 +20,19 @@ git --version
 ```
 
 You should see the version of git that was installed on my test bed I got 2.29.2 so I assume anything at that version or above should be fine. If you didn't get a version number then you dun goof and google is your friend :feelsgood:
+
+3. Clone this dot files repo using the following command:
+
+```shell
+git clone https://github.com/zacbraddy/lolswagfiles9000.git
+```
+
+Don't worry too much for now about us not using SSH or Github CLI for right now, we'll sort that out later in the install script, clever clogs!
+
+4. Make the `install.sh` executable in the repo by running this command in the root of the git repo:
+
+```shell
+chmod +x ./install.sh
+```
+
+5. Execute the install script. Hold on to your butt this is going to do a lot and if any of it doesn't work, again, google is a really good listener.
