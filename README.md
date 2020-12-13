@@ -24,7 +24,7 @@ You should see the version of git that was installed on my test bed I got 2.29.2
 3. Clone this dot files repo using the following command:
 
 ```shell
-git clone https://github.com/zacbraddy/lolswagfiles9000.git
+mkdir ~/Projects && cd ~/Projects && git clone https://github.com/zacbraddy/lolswagfiles9000.git
 ```
 
 Don't worry too much for now about us not using SSH or Github CLI for right now, we'll sort that out later in the install script, clever clogs!
@@ -36,3 +36,5 @@ chmod +x ./install.sh
 ```
 
 5. Execute the install script. Hold on to your butt this is going to do a lot and if any of it doesn't work, again, google is a really good listener.
+
+6. We just did a lot in that terminal you've got open. Probably, gonna want to give that a restart and then you should be good to go. Would've restarted it myself but I didn't want you to lose all that sweet console output. Maybe in future I'll save it as a log so I can do the restart for you too but not going to bother right now.
