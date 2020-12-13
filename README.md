@@ -9,32 +9,20 @@ This represents probably the most effort I've put into getting my dotfiles in a 
 1. Run this command
 
 ```shell
-sudo add-apt-repository ppa:git-core/ppa -y && sudo apt update -y && sudo apt install git -y
+sudo add-apt-repository ppa:ansible/ansible && \
+sudo apt-get update && \
+sudo apt-get install software-properties-common && \
+sudo apt-get install ansible && \
+sudo apt-get install httpie;
 
 ```
 
-2. Make sure you've got git installed by running the command
+You're going to want to check through the output of that command fairly carefully because if that doesn't work right the whole rest of this dealy is gonna go bad.
+
+2. Run these commands to execute the ansible playbook
 
 ```shell
-git --version
+http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/.ansible/hosts > hosts;
+ansible-playbook -i hosts < http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/dev-box-playbook.yml;
+rm hosts dev-box-playbook.yml;
 ```
-
-You should see the version of git that was installed on my test bed I got 2.29.2 so I assume anything at that version or above should be fine. If you didn't get a version number then you dun goof and google is your friend :feelsgood:
-
-3. Clone this dot files repo using the following command:
-
-```shell
-mkdir ~/Projects && cd ~/Projects && git clone https://github.com/zacbraddy/lolswagfiles9000.git
-```
-
-Don't worry too much for now about us not using SSH or Github CLI for right now, we'll sort that out later in the install script, clever clogs!
-
-4. Make the `install.sh` executable in the repo by running this command in the root of the git repo:
-
-```shell
-chmod +x ./install.sh
-```
-
-5. Execute the install script. Hold on to your butt this is going to do a lot and if any of it doesn't work, again, google is a really good listener.
-
-6. We just did a lot in that terminal you've got open. Probably, gonna want to give that a restart and then you should be good to go. Would've restarted it myself but I didn't want you to lose all that sweet console output. Maybe in future I'll save it as a log so I can do the restart for you too but not going to bother right now.

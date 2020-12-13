@@ -1,0 +1,39 @@
+- hosts: all
+  vars:
+    applications:
+      - git
+      - httpie
+    necessaryAptRepos:
+      - ppa:git-core/ppa
+    nvmVersion: 0.37.2
+
+  tasks:
+    - name: Add necessary apt repos
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      loop: "{{ necessaryAptRepos }}"
+
+    - name: Install Applications
+      apt:
+        pkg: "{{ item }}"
+        state: present
+      loop: "{{ applications }}"
+
+    - name: Confirm NVM install
+      shell: source ~/.nvm/nvm.sh && nvm --version
+      register: nvm_installed
+      ignore_errors: true
+      args:
+        executable: /bin/bash
+
+    - name: Install NVM
+      command: http https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh | bash
+      when: nvm_installed.stdout != nvmVersion
+      args:
+        executable: /bin/bash
+
+    - name: Install Node LTS
+      shell: source ~/.nvm/nvm.sh && nvm install --lts
+      args:
+        executable: /bin/bash
