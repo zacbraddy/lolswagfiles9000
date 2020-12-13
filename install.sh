@@ -1,4 +1,5 @@
 #! /usr/bin/env bash
+clear
 SUCCESS='\033[0;32m'
 DANGER='\033[0;31m'
 INFO='\033[0;34m'
