@@ -9,11 +9,10 @@ This represents probably the most effort I've put into getting my dotfiles in a 
 1. Run this command
 
 ```shell
-sudo add-apt-repository ppa:ansible/ansible && \
 sudo apt-get update && \
 sudo apt-get install software-properties-common && \
-sudo apt-get install ansible && \
-sudo apt-get install httpie;
+sudo apt-get install ansible -y && \
+sudo apt-get install httpie -y;
 
 ```
 
@@ -23,6 +22,7 @@ You're going to want to check through the output of that command fairly carefull
 
 ```shell
 http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/.ansible/hosts > hosts;
-ansible-playbook -i hosts < http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/dev-box-playbook.yml;
+http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/dev-box-playbook.yml > dev-box-playbook.yml;
+sudo ansible-playbook -i hosts dev-box-playbook.yml;
 rm hosts dev-box-playbook.yml;
 ```

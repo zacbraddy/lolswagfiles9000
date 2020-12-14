@@ -28,7 +28,7 @@
         executable: /bin/bash
 
     - name: Install NVM
-      command: http https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh | bash
+      shell: http https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh | bash
       when: nvm_installed.stdout != nvmVersion
       args:
         executable: /bin/bash
