@@ -3,6 +3,7 @@
     applications:
       - git
       - httpie
+      - zsh
     necessaryAptRepos:
       - ppa:git-core/ppa
     nvmVersion: 0.37.2
@@ -49,3 +50,28 @@
       shell: source ~/.nvm/nvm.sh && nvm install --lts
       args:
         executable: /bin/bash
+
+    - name: Check if we have ohmyzsh
+      shell: "omz help &> /dev/null"
+      register: ohmyzsh_installed
+      ignore_errors: true
+      args:
+        executable: /bin/bash
+
+    - name: Get ohmyzsh install script
+      uri:
+        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        method: GET
+        return_content: yes
+      register: ohmyzsh_install_script
+      when: ohmyzsh_installed is failed
+
+    - name: Install ohmyzsh
+      shell: "{{ ohmyzsh_install_script.content }}"
+      when: ohmyzsh_installed is failed
+      args:
+        executable: /bin/zsh
+
+    - name: Upgrade ohmyzsh
+      shell: "omz update"
+      when: ohmyzsh_installed is success
