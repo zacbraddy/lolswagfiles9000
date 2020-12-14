@@ -23,6 +23,7 @@ You're going to want to check through the output of that command fairly carefull
 ```shell
 http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/.ansible/hosts > hosts;
 http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/dev-box-playbook.yml > dev-box-playbook.yml;
-sudo ansible-playbook -i hosts dev-box-playbook.yml;
+sudo ls;
+ansible-playbook -i hosts dev-box-playbook.yml;
 rm hosts dev-box-playbook.yml;
 ```

@@ -9,12 +9,16 @@
 
   tasks:
     - name: Add necessary apt repos
+      become: yes
+      become_method: sudo
       apt_repository:
         repo: "{{ item }}"
         state: present
       loop: "{{ necessaryAptRepos }}"
 
     - name: Install Applications
+      become: yes
+      become_method: sudo
       apt:
         pkg: "{{ item }}"
         state: present
@@ -27,8 +31,16 @@
       args:
         executable: /bin/bash
 
+    - name: Get NVM install script
+      uri:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh
+        method: GET
+        return_content: yes
+      register: nvm_install_script
+      when: nvm_installed.stdout != nvmVersion
+
     - name: Install NVM
-      shell: http https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh | bash
+      shell: "{{ nvm_install_script.content }}"
       when: nvm_installed.stdout != nvmVersion
       args:
         executable: /bin/bash
