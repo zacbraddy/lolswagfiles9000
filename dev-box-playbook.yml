@@ -75,3 +75,5 @@
     - name: Upgrade ohmyzsh
       shell: "omz update"
       when: ohmyzsh_installed is success
+      args:
+        executable: /bin/zsh
