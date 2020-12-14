@@ -1,0 +1,24 @@
+# Just for Fun aliases
+# Make amazing cow things happen to commands
+# Usage: ls | amazeballs
+alias amazeballs="cowsay -n | lolcatjs"
+
+# Kubernetes aliases
+# Alias so I only have to type k for the kubectl command and shorten other kubernetes tool commands because ain't nobody got time fo that?!
+alias k="kubectl "
+alias kb="kubens "
+alias kc="kubectx "
+
+# Git aliases
+alias gs="git status | amazeballs"
+alias ga="git add ."
+alias gc="git commit"
+alias gp="git push"
+alias gd="git diff"
+alias gr="git reset | amazeballs"
+
+# Tmux
+alias tmx="tmuxinator"
+
+# Plant UML
+alias plant="java -jar ${HOME}/plantuml.jar"

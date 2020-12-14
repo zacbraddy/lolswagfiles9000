@@ -29,6 +29,8 @@
       shell: source ~/.nvm/nvm.sh && nvm --version
       register: nvm_installed
       ignore_errors: true
+      failed_when: False
+      changed_when: nvm_installed.stdout != nvmVersion
       args:
         executable: /bin/bash
 
@@ -55,6 +57,8 @@
       shell: "omz help &> /dev/null"
       register: ohmyzsh_installed
       ignore_errors: true
+      changed_when: ohmyzsh_install_script is failed
+      failed_when: False
       args:
         executable: /bin/bash
 

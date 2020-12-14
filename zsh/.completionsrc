@@ -1,0 +1,10 @@
+# GCloud completions
+if [ -f '/Users/zac.braddy/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/zac.braddy/google-cloud-sdk/completion.zsh.inc'; fi
+
+# KubeCtx
+unsetopt correct_all
+setopt correct
+autoload -U compinit && compinit
+
+# NVM completions
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

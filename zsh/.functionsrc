@@ -1,0 +1,4 @@
+# kill-all-docker-containers
+kadc() {
+    docker ps -q | for i in $(cat) ; do docker stop $i; docker rm $i; done
+}
