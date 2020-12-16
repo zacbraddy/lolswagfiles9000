@@ -106,6 +106,36 @@
             cmd: "mkdir -p ~/.zsh"
             warn: false
 
+    - name: Setup NVM and Node
+      block:
+        - name: Confirm NVM install
+          shell: nvm --version
+          register: nvm_installed
+          ignore_errors: true
+          failed_when: False
+          changed_when: nvm_installed.stdout != nvmVersion
+          args:
+            executable: /bin/bash
+
+        - name: Get NVM install script
+          uri:
+            url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh
+            method: GET
+            return_content: yes
+          register: nvm_install_script
+          when: nvm_installed.stdout != nvmVersion
+
+        - name: Install NVM
+          shell: "{{ nvm_install_script.content }}"
+          when: nvm_installed.stdout != nvmVersion
+          args:
+            executable: /bin/bash
+
+        - name: Install Node LTS
+          shell: "source ~/.zshrc && nvm install --lts"
+          args:
+            executable: /bin/bash
+
         - name: Setup symlinks for OhMyZSH files
           file:
             src: "~/Projects/Personal/lolswagfiles9000/{{ item.src }}"
@@ -131,35 +161,5 @@
         - name: Upgrade ohmyzsh
           shell: "source ~/.zshrc && omz update"
           when: ohmyzsh_installed.rc == 0
-          args:
-            executable: /bin/zsh
-
-    - name: Setup NVM and Node
-      block:
-        - name: Confirm NVM install
-          shell: nvm --version
-          register: nvm_installed
-          ignore_errors: true
-          failed_when: False
-          changed_when: nvm_installed.stdout != nvmVersion
-          args:
-            executable: /bin/zsh
-
-        - name: Get NVM install script
-          uri:
-            url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh
-            method: GET
-            return_content: yes
-          register: nvm_install_script
-          when: nvm_installed.stdout != nvmVersion
-
-        - name: Install NVM
-          shell: "{{ nvm_install_script.content }}"
-          when: nvm_installed.stdout != nvmVersion
-          args:
-            executable: /bin/zsh
-
-        - name: Install Node LTS
-          shell: "source ~/.zshrc && nvm install --lts"
           args:
             executable: /bin/zsh
