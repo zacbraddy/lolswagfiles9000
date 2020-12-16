@@ -65,12 +65,16 @@
               Authorization: "token {{ github_ssh_auth_token }}"
           when: github_ssh_auth_token|length != 0
 
-    - name: Pull down and integrate dotfiles
-      block:
-        - name: Pull down dotfiles repo
-          git:
-            repo: "git@github.com:zacbraddy/lolswagfiles9000.git"
-            dest: ~/Projects/Personal/lolswagfiles9000
+        - name: Ensure github is present in known_hosts file
+          known_hosts:
+            name: "github.com"
+            state: present
+            key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
+
+    - name: Pull down dotfiles
+      git:
+        repo: "git@github.com:zacbraddy/lolswagfiles9000.git"
+        dest: ~/Projects/Personal/lolswagfiles9000
 
     - name: Setup OhMyZSH
       block:
@@ -156,6 +160,6 @@
             executable: /bin/zsh
 
         - name: Install Node LTS
-          shell: nvm install --lts
+          shell: "source ~/.zshrc && nvm install --lts"
           args:
             executable: /bin/zsh
