@@ -1,4 +1,8 @@
 - hosts: all
+  vars_prompt:
+    - name: github_ssh_auth_token
+      prompt: "If you haven't already uploaded your github ssh key then I need your personal access token to upload it"
+
   vars:
     applications:
       - git
@@ -7,32 +11,99 @@
     necessaryAptRepos:
       - ppa:git-core/ppa
     nvmVersion: 0.37.2
+    sshPublicKeyLocation: ~/.ssh/id_rsa
 
   tasks:
-    - name: Add necessary apt repos
-      become: yes
-      become_method: sudo
-      apt_repository:
-        repo: "{{ item }}"
-        state: present
-      loop: "{{ necessaryAptRepos }}"
+    - name: Setup applications
+      block:
+        - name: Add necessary apt repos
+          become: yes
+          become_method: sudo
+          apt_repository:
+            repo: "{{ item }}"
+            state: present
+          loop: "{{ necessaryAptRepos }}"
 
-    - name: Install Applications
-      become: yes
-      become_method: sudo
-      apt:
-        pkg: "{{ item }}"
-        state: present
-      loop: "{{ applications }}"
+        - name: Install Applications
+          become: yes
+          become_method: sudo
+          apt:
+            pkg: "{{ item }}"
+            state: present
+          loop: "{{ applications }}"
+
+    - name: Setup Github
+      block:
+        - name: Check for existing ssh keys
+          stat:
+            path: ~/.ssh/id_rsa.pub
+          register: sshkeys_exist
+
+        - name: Generate SSH keys
+          shell: "ssh-keygen -t rsa -N '' -f {{ sshPublicKeyLocation }} <<< y"
+          when: not sshkeys_exist.stat.exists
+          args:
+            executable: /bin/bash
+
+        - name: Read SSH keys into memory
+          command: cat ~/.ssh/id_rsa.pub
+          register: sshPublicKey
+          args:
+            executable: /bin/bash
+
+        - name: Upload SSH keys to Github
+          uri:
+            method: POST
+            url: https://api.github.com/user/keys
+            body_format: json
+            status_code:
+              - 201
+              - 304
+            body:
+              key: "{{ sshPublicKey.stdout }}"
+              title: "{{ ansible_hostname }}"
+            headers:
+              Accept: application/vnd.github.v3+json
+              Authorization: "token {{ github_ssh_auth_token }}"
+          when: github_ssh_auth_token|length != 0
+
+    - name: Check if we have ohmyzsh
+      shell: "omz help &> /dev/null"
+      register: ohmyzsh_installed
+      ignore_errors: true
+      changed_when: ohmyzsh_installed.rc != 0
+      failed_when: False
+      args:
+        executable: /bin/zsh
+
+    - name: Get ohmyzsh install script
+      uri:
+        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        method: GET
+        return_content: yes
+      register: ohmyzsh_install_script
+      when: ohmyzsh_installed.rc != 0
+
+    - name: Install ohmyzsh
+      shell: "{{ ohmyzsh_install_script.content }}"
+      when: ohmyzsh_installed.rc != 0
+      args:
+        executable: /bin/zsh
+
+    - name: Upgrade ohmyzsh
+      shell: "omz update"
+      when: ohmyzsh_installed.rc == 0
+      args:
+        executable: /bin/zsh
 
     - name: Confirm NVM install
-      shell: source ~/.nvm/nvm.sh && nvm --version
+      shell: nvm --version
       register: nvm_installed
       ignore_errors: true
       failed_when: False
       changed_when: nvm_installed.stdout != nvmVersion
       args:
-        executable: /bin/bash
+        executable: /bin/zsh
 
     - name: Get NVM install script
       uri:
@@ -46,38 +117,9 @@
       shell: "{{ nvm_install_script.content }}"
       when: nvm_installed.stdout != nvmVersion
       args:
-        executable: /bin/bash
-
-    - name: Install Node LTS
-      shell: source ~/.nvm/nvm.sh && nvm install --lts
-      args:
-        executable: /bin/bash
-
-    - name: Check if we have ohmyzsh
-      shell: "omz help &> /dev/null"
-      register: ohmyzsh_installed
-      ignore_errors: true
-      changed_when: ohmyzsh_install_script is failed
-      failed_when: False
-      args:
-        executable: /bin/bash
-
-    - name: Get ohmyzsh install script
-      uri:
-        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-        method: GET
-        return_content: yes
-      register: ohmyzsh_install_script
-      when: ohmyzsh_installed is failed
-
-    - name: Install ohmyzsh
-      shell: "{{ ohmyzsh_install_script.content }}"
-      when: ohmyzsh_installed is failed
-      args:
         executable: /bin/zsh
 
-    - name: Upgrade ohmyzsh
-      shell: "omz update"
-      when: ohmyzsh_installed is success
+    - name: Install Node LTS
+      shell: nvm install --lts
       args:
         executable: /bin/zsh

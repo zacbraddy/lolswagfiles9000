@@ -22,8 +22,7 @@ You're going to want to check through the output of that command fairly carefull
 ```shell
 http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/.ansible/hosts > hosts;
 http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/dev-box-playbook.yml > dev-box-playbook.yml;
-sudo ls;
-ansible-playbook -i hosts dev-box-playbook.yml;
+ansible-playbook -K -i hosts dev-box-playbook.yml;
 rm hosts dev-box-playbook.yml;
 ```
 
@@ -34,6 +33,7 @@ rm hosts dev-box-playbook.yml;
 - Git
 - [httpie](https://httpie.io/)
 - [NVM](https://github.com/nvm-sh/nvm)
+- [ssh-keyreg](https://github.com/b4b4r07/ssh-keyreg)
 - zsh
 
 ### Frameworks
@@ -82,3 +82,5 @@ Nobody likes typing things, come on!
 The startup runs commands to ensure that the following applications are ready to be interacted with once the console starts up
 
 - NVM
+
+https://docs.github.com/en/free-pro-team@latest/rest/reference/users#create-a-public-ssh-key-for-the-authenticated-user
