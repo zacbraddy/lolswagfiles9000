@@ -5,6 +5,8 @@ ENABLE_CORRECTION="true"
 
 plugins=(git npm kubectl)
 
+source ~/.oh-my-zsh/oh-my-zsh.sh
+
 source ~/.zsh/.envvarsrc
 source ~/.zsh/.aliasrc
 source ~/.zsh/.functionsrc
