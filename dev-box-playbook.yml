@@ -156,8 +156,13 @@
         - name: Install NVM
           shell: "{{ nvm_install_script.content }}"
           when: nvm_installed.stdout != nvmVersion
+          args:
+            executable: /bin/zsh
+
+        - name: Install Node LTS
+          shell: "source ~/.zshrc && nvm install --lts"
           register: node_install
-          failed: node_install.rc != 0 && node_install.rc != 11
+          failed_when: node_install.rc != 0 and node_install.rc != 11
           args:
             executable: /bin/zsh
 
@@ -165,10 +170,5 @@
         - name: If the NVM prefix is borked then fix it
           shell: "source ~/.zshrc && nvm use --delete-prefix --lts"
           when: node_install.rc == 11
-          args:
-            executable: /bin/zsh
-
-        - name: Install Node LTS
-          shell: "source ~/.zshrc && nvm install --lts"
           args:
             executable: /bin/zsh
