@@ -71,6 +71,31 @@
             state: present
             key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
 
+    - name: Setup NVM
+      block:
+        - name: Confirm NVM install
+          shell: "source ~/.zshrc && nvm --version"
+          register: nvm_installed
+          ignore_errors: true
+          failed_when: False
+          changed_when: nvm_installed.stdout != nvmVersion
+          args:
+            executable: /bin/zsh
+
+        - name: Get NVM install script
+          uri:
+            url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh
+            method: GET
+            return_content: yes
+          register: nvm_install_script
+          when: nvm_installed.stdout != nvmVersion
+
+        - name: Install NVM
+          shell: "{{ nvm_install_script.content }}"
+          when: nvm_installed.stdout != nvmVersion
+          args:
+            executable: /bin/bash
+
     - name: Pull down dotfiles
       git:
         repo: "git@github.com:zacbraddy/lolswagfiles9000.git"
@@ -134,31 +159,8 @@
           args:
             executable: /bin/zsh
 
-    - name: Setup NVM and Node
+    - name: Setup Node via NVM
       block:
-        - name: Confirm NVM install
-          shell: "source ~/.zshrc && nvm --version"
-          register: nvm_installed
-          ignore_errors: true
-          failed_when: False
-          changed_when: nvm_installed.stdout != nvmVersion
-          args:
-            executable: /bin/zsh
-
-        - name: Get NVM install script
-          uri:
-            url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvmVersion }}/install.sh
-            method: GET
-            return_content: yes
-          register: nvm_install_script
-          when: nvm_installed.stdout != nvmVersion
-
-        - name: Install NVM
-          shell: "{{ nvm_install_script.content }}"
-          when: nvm_installed.stdout != nvmVersion
-          args:
-            executable: /bin/zsh
-
         - name: Install Node LTS
           shell: "source ~/.zshrc && nvm install --lts"
           register: node_install
