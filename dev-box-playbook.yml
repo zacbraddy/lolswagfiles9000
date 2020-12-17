@@ -106,6 +106,34 @@
             cmd: "mkdir -p ~/.zsh"
             warn: false
 
+        - name: Setup symlinks for OhMyZSH files
+          file:
+            src: "~/Projects/Personal/lolswagfiles9000/{{ item.src }}"
+            dest: "~/{{ item.dest }}"
+            force: true
+            state: link
+          with_items:
+            - src: .zshrc
+              dest: .zshrc
+            - src: zsh/.aliasrc
+              dest: .zsh/.aliasrc
+            - src: zsh/.completionsrc
+              dest: .zsh/.completionsrc
+            - src: zsh/.envvarsrc
+              dest: .zsh/.envvarsrc
+            - src: zsh/.functionsrc
+              dest: .zsh/.functionsrc
+            - src: zsh/.pathrc
+              dest: .zsh/.pathrc
+            - src: zsh/.startuprc
+              dest: .zsh/.startuprc
+
+        - name: Upgrade ohmyzsh
+          shell: "source ~/.zshrc && omz update"
+          when: ohmyzsh_installed.rc == 0
+          args:
+            executable: /bin/zsh
+
     - name: Setup NVM and Node
       block:
         - name: Confirm NVM install
@@ -136,30 +164,3 @@
           args:
             executable: /bin/bash
 
-        - name: Setup symlinks for OhMyZSH files
-          file:
-            src: "~/Projects/Personal/lolswagfiles9000/{{ item.src }}"
-            dest: "~/{{ item.dest }}"
-            force: true
-            state: link
-          with_items:
-            - src: .zshrc
-              dest: .zshrc
-            - src: zsh/.aliasrc
-              dest: .zsh/.aliasrc
-            - src: zsh/.completionsrc
-              dest: .zsh/.completionsrc
-            - src: zsh/.envvarsrc
-              dest: .zsh/.envvarsrc
-            - src: zsh/.functionsrc
-              dest: .zsh/.functionsrc
-            - src: zsh/.pathrc
-              dest: .zsh/.pathrc
-            - src: zsh/.startuprc
-              dest: .zsh/.startuprc
-
-        - name: Upgrade ohmyzsh
-          shell: "source ~/.zshrc && omz update"
-          when: ohmyzsh_installed.rc == 0
-          args:
-            executable: /bin/zsh
