@@ -137,13 +137,13 @@
     - name: Setup NVM and Node
       block:
         - name: Confirm NVM install
-          shell: nvm --version
+          shell: "source ~/.zshrc && nvm --version"
           register: nvm_installed
           ignore_errors: true
           failed_when: False
           changed_when: nvm_installed.stdout != nvmVersion
           args:
-            executable: /bin/bash
+            executable: /bin/zsh
 
         - name: Get NVM install script
           uri:
@@ -156,11 +156,19 @@
         - name: Install NVM
           shell: "{{ nvm_install_script.content }}"
           when: nvm_installed.stdout != nvmVersion
+          register: node_install
+          failed: node_install.rc != 0 && node_install.rc != 11
           args:
-            executable: /bin/bash
+            executable: /bin/zsh
+
+        # https://stackoverflow.com/questions/34718528/nvm-is-not-compatible-with-the-npm-config-prefix-option
+        - name: If the NVM prefix is borked then fix it
+          shell: "source ~/.zshrc && nvm use --delete-prefix --lts"
+          when: node_install.rc == 11
+          args:
+            executable: /bin/zsh
 
         - name: Install Node LTS
           shell: "source ~/.zshrc && nvm install --lts"
           args:
-            executable: /bin/bash
-
+            executable: /bin/zsh
