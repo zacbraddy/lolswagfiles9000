@@ -169,8 +169,8 @@
             executable: /bin/zsh
 
         # https://stackoverflow.com/questions/34718528/nvm-is-not-compatible-with-the-npm-config-prefix-option
-        - name: If the NVM prefix is borked then fix it
-          shell: "source ~/.zshrc && nvm use --delete-prefix --lts"
+        - name: If the NVM prefix is borked then fix it and try the install again
+          shell: "source ~/.zshrc; nvm use --delete-prefix --lts && nvm install --lts"
           when: node_install.rc == 11
           args:
             executable: /bin/zsh
