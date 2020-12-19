@@ -12,7 +12,8 @@ This represents probably the most effort I've put into getting my dotfiles in a 
 sudo apt-get update && \
 sudo apt-get install software-properties-common && \
 sudo apt-get install ansible -y && \
-sudo apt-get install httpie -y;
+sudo apt-get install httpie -y && \
+ansible-galaxy collection install community.general;
 ```
 
 You're going to want to check through the output of that command fairly carefully because if that doesn't work right the whole rest of this dealy is gonna go bad.

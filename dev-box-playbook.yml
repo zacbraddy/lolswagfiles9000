@@ -8,10 +8,14 @@
       - git
       - httpie
       - zsh
+    npmGlobals:
+      - cowsay
+      - lolcatjs
     necessaryAptRepos:
       - ppa:git-core/ppa
     nvmVersion: 0.37.2
     sshPublicKeyLocation: ~/.ssh/id_rsa
+    currentUser: "{{ ansible_user_id }}"
 
   tasks:
     - name: Setup applications
@@ -153,6 +157,12 @@
             - src: zsh/.startuprc
               dest: .zsh/.startuprc
 
+        - name: Set defualt shell to ZSH
+          become: yes
+          user:
+            name: "{{ currentUser }}"
+            shell: /usr/bin/zsh
+
         - name: Upgrade ohmyzsh
           shell: "source ~/.zshrc && omz update"
           when: ohmyzsh_installed.rc == 0
@@ -167,8 +177,14 @@
             dest: "~/.npmrc"
             force: true
             state: link
-
+             
         - name: Install Node LTS
           shell: "source ~/.zshrc && nvm install --lts"
           args:
             executable: /bin/zsh
+
+        - name: Install npm global packages
+          community.general.npm:
+            name: "{{ item }}"
+            global: true
+          loop: "{{ npmGlobals }}"
