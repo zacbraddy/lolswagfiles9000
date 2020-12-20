@@ -1,0 +1,17 @@
+- name: Symlink npmrc
+  file:
+    src: "~/Projects/Personal/lolswagfiles9000/.npmrc"
+    dest: "~/.npmrc"
+    force: true
+    state: link
+
+- name: Install Node LTS
+  shell: "source ~/.zshrc && nvm install --lts"
+  args:
+    executable: /bin/zsh
+
+- name: Install npm global packages
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+  loop: "{{ npmGlobals }}"

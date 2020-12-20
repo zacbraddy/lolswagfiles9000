@@ -1,0 +1,61 @@
+- name: Check if we have ohmyzsh
+  shell: "source ~/.zshrc && omz help &> /dev/null"
+  register: ohmyzsh_installed
+  ignore_errors: true
+  changed_when: ohmyzsh_installed.rc != 0
+  failed_when: False
+  args:
+    executable: /bin/zsh
+
+- name: Get ohmyzsh install script
+  uri:
+    url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    method: GET
+    return_content: yes
+  register: ohmyzsh_install_script
+  when: ohmyzsh_installed.rc != 0
+
+- name: Install ohmyzsh
+  shell: "{{ ohmyzsh_install_script.content }}"
+  when: ohmyzsh_installed.rc != 0
+  args:
+    executable: /bin/zsh
+
+- name: Make the zsh dotfiles directory
+  command:
+    cmd: "mkdir -p ~/.zsh"
+    warn: false
+
+- name: Setup symlinks for OhMyZSH files
+  file:
+    src: "~/Projects/Personal/lolswagfiles9000/{{ item.src }}"
+    dest: "~/{{ item.dest }}"
+    force: true
+    state: link
+  with_items:
+    - src: .zshrc
+      dest: .zshrc
+    - src: zsh/.aliasrc
+      dest: .zsh/.aliasrc
+    - src: zsh/.completionsrc
+      dest: .zsh/.completionsrc
+    - src: zsh/.envvarsrc
+      dest: .zsh/.envvarsrc
+    - src: zsh/.functionsrc
+      dest: .zsh/.functionsrc
+    - src: zsh/.pathrc
+      dest: .zsh/.pathrc
+    - src: zsh/.startuprc
+      dest: .zsh/.startuprc
+
+- name: Set defualt shell to ZSH
+  become: yes
+  user:
+    name: "{{ currentUser }}"
+    shell: /usr/bin/zsh
+
+- name: Upgrade ohmyzsh
+  shell: "source ~/.zshrc && omz update"
+  when: ohmyzsh_installed.rc == 0
+  args:
+    executable: /bin/zsh

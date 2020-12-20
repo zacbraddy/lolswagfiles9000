@@ -6,26 +6,21 @@ This represents probably the most effort I've put into getting my dotfiles in a 
 
 ## Install
 
-1. Run this command
+1. First you need to install httpie using this command:
 
 ```shell
-sudo apt-get update && \
-sudo apt-get install software-properties-common && \
-sudo apt-get install ansible -y && \
-sudo apt-get install httpie -y && \
-ansible-galaxy collection install community.general;
+sudo apt-get update && sudo apt-get httpie
 ```
 
-You're going to want to check through the output of that command fairly carefully because if that doesn't work right the whole rest of this dealy is gonna go bad.
-
-2. Run these commands to execute the ansible playbook
+2. Next you'll need to pull down the Makefile from this repo so it can do all the heavy lifting for you. You can do that with this command:
 
 ```shell
-http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/.ansible/hosts > hosts;
-http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/dev-box-playbook.yml > dev-box-playbook.yml;
-ansible-playbook -K -i hosts dev-box-playbook.yml;
-rm hosts dev-box-playbook.yml;
+http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/Makefile > Makefile
 ```
+
+It needs to be said that the above assumes the machine has Make installed on it but Ubuntu does by default so you should be right there.
+
+3. Next you can run the command `make install`. This is going to install the necessary apps to download and run the ansible dotfile scripts which are going to do a lot of things themselves. Basically you just need to run this command and then fill in the answers to the prompts here and there
 
 ## Whats included with the Ansible Build
 
@@ -33,9 +28,21 @@ rm hosts dev-box-playbook.yml;
 
 - Git
 - [httpie](https://httpie.io/)
+- [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
 - [NVM](https://github.com/nvm-sh/nvm)
-- [ssh-keyreg](https://github.com/b4b4r07/ssh-keyreg)
 - zsh
+
+### Applications I only have because other things need them
+
+**ansible**
+
+- ansible
+- software-properties-common
+
+**kubectl**
+
+- gnupg2
+- apt-transport-https
 
 ### Frameworks
 

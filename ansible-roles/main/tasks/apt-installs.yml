@@ -1,0 +1,31 @@
+- name: Ensure we have the gcloud apt-key
+  become: yes
+  become_method: sudo
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Add necessary url based apt repos
+  become: yes
+  become_method: sudo
+  apt_repository:
+    repo: "{{ item.repoLink }}"
+    state: present
+    filename: "{{ item.filename }}"
+  loop: "{{ urlBasedAptRepos }}"
+
+- name: Add necessary ppa based apt repos
+  become: yes
+  become_method: sudo
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  loop: "{{ ppaBasedAptRepos }}"
+
+- name: Install Applications
+  become: yes
+  become_method: sudo
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  loop: "{{ applications }}"
