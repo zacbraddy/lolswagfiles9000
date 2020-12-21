@@ -9,7 +9,7 @@ This represents probably the most effort I've put into getting my dotfiles in a 
 1. First you need to install httpie using this command:
 
 ```shell
-sudo apt-get update && sudo apt-get httpie
+sudo apt-get update && sudo apt-get install httpie -y
 ```
 
 2. Next you'll need to pull down the Makefile from this repo so it can do all the heavy lifting for you. You can do that with this command:

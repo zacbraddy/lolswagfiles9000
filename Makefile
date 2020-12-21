@@ -1,4 +1,4 @@
-UNPRIVLEDGED_USER := $(whoami)
+UNPRIVLEDGED_USER := $(shell whoami)
 
 install:
 	sudo add-apt-repository ppa:git-core/ppa

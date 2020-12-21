@@ -8,3 +8,4 @@
     dest: ~/Projects/Personal/lolswagfiles9000
 
 - import_tasks: install-configure-omz.yml
+- import_tasks: install-node.yml
