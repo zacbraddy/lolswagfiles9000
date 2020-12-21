@@ -1,4 +1,5 @@
 - hosts: all
-  vars_files: main/defaults/main.yml
+  vars_files:
+    - main/defaults/main.yml
   tasks:
-    import_tasks: main/tasks/main.yml
+    - import_tasks: main/tasks/main.yml
