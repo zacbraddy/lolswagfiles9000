@@ -8,8 +8,8 @@ install:
 	sudo apt-get install ansible -y
 	ansible-galaxy collection install community.general
 	sudo apt-get install git -y
-	git clone https://github.com/zacbraddy/lolswagfiles9000.git
-    pushd lolswagfiles9000
+	sudo -u ${UNPRIVLEDGED_USER} git clone https://github.com/zacbraddy/lolswagfiles9000.git
+	pushd lolswagfiles9000
 	sudo -u ${UNPRIVLEDGED_USER} ansible-playbook -K -i .ansible/hosts dev-box-playbook.yml
 	popd
 	sudo rm -rf lolswagfiles9000
