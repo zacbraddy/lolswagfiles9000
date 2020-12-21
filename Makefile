@@ -1,3 +1,4 @@
+SHELL = /bin/bash
 UNPRIVLEDGED_USER := $(shell whoami)
 
 install:
