@@ -1,3 +1,8 @@
+- name: Load global vars
+  include_vars:
+    dir: main/defaults
+    name: main.yml
+
 - import_tasks: main/tasks/apt-installs.yml
 - import_tasks: main/tasks/configure-git.yml
 - import_tasks: main/tasks/install-nvm.yml
