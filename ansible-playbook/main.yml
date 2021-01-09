@@ -33,3 +33,5 @@
         - npmGlobals: "{{ g_npmGlobals }}"
 
     - import_tasks: main/tasks/kubectx.yml
+
+    - import_tasks: main/tasks/tmux.yml
