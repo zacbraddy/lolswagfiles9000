@@ -5,7 +5,6 @@ g_applications:
   - gnupg2
   - httpie
   - kubectl
-  - kubectx
   - software-properties-common
   - zsh
 
