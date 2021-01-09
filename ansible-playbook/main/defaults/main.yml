@@ -1,5 +1,5 @@
 g_applications:
-- ansible
+  - ansible
   - apt-transport-https
   - git
   - gnupg2
