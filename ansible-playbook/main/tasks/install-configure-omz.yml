@@ -26,6 +26,11 @@
     cmd: "mkdir -p ~/.zsh"
     warn: false
 
+- name: Make sure we have a completions directory
+  command:
+    cmd: "mkdir -p ~/.oh-my-zsh/completions"
+    warn: false
+
 - name: Setup symlinks for OhMyZSH files
   file:
     src: "~/Projects/Personal/lolswagfiles9000/{{ item.src }}"
