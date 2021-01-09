@@ -29,6 +29,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - Git
 - [httpie](https://httpie.io/)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
+- [kubectx + kubens](https://github.com/ahmetb/kubectx/)
 - [NVM](https://github.com/nvm-sh/nvm)
 - zsh
 
