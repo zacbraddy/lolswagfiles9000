@@ -13,4 +13,4 @@ install:
 	sudo rm -rf lolswagfiles9000
 
 update:
-	sudo ansible-playbook -K -i ~/Projects/Personal/lolswagfiles9000/.ansible/hosts ~/Projects/Personal/lolswagfiles9000/ansible-playbook/main.yml
+	sudo -u ${UNPRIVLEDGED_USER} ansible-playbook -K -i ~/Projects/Personal/lolswagfiles9000/.ansible/hosts ~/Projects/Personal/lolswagfiles9000/ansible-playbook/main.yml

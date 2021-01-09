@@ -31,3 +31,5 @@
     - import_tasks: main/tasks/install-node.yml
       vars:
         - npmGlobals: "{{ g_npmGlobals }}"
+
+    - import_tasks: main/tasks/kubectx.yml

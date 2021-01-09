@@ -1,0 +1,27 @@
+- name: Check if we have kubectx
+  shell: kb
+  register: kubectx_installed
+  ignore_errors: true
+  changed_when: kubectx_installed.rc != 0
+  failed_when: false
+  args:
+    executable: /bin/zsh
+
+- name: Get kubectx scripts
+  get_url:
+    url: "https://raw.githubusercontent.com/ahmetb/kubectx/master/{{ item }}"
+    dest: "~/.kubectx/{{ item }}"
+    mode: '0755'
+  with_items:
+    - kubectx
+    - kubens
+
+- name: Setup symlinks for kubectx scripts
+  file:
+    src: "/usr/local/bin/{{ item }}"
+    dest: "~/.kubectx/{{ item }}"
+    force: true
+    state: link
+  with_items:
+    - kubectx
+    - kubens
