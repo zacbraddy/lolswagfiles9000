@@ -21,5 +21,7 @@
     name: "{{ item }}"
     global: true
   loop: "{{ npmGlobals }}"
-  environment: # Path variable won't be updated for node yet so we have to add it for the task so that npm can runn correctly
-    PATH: "{{ ansible_env.PATH }}:~/.nvm/versions/node/{{ nodeVersion.stdout }}/bin/npm"
+  # Path variable won't be updated for node yet so we have to add
+  # it for the task so that npm can runn correctly
+  environment:
+    PATH: "{{ ansible_env.PATH }}:~/.nvm/versions/node/{{ nodeVersion.stdout }}/bin"
