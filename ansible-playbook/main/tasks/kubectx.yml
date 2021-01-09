@@ -7,6 +7,12 @@
   args:
     executable: /bin/zsh
 
+- name: Make the kubectx directory
+  command:
+    cmd: "mkdir -p ~/.kubectx"
+    changed_when: kubectx_installed.rc != 0
+    warn: false
+
 - name: Get kubectx scripts
   get_url:
     url: "https://raw.githubusercontent.com/ahmetb/kubectx/master/{{ item }}"
