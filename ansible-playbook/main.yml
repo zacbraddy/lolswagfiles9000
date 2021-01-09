@@ -17,7 +17,7 @@
 
     - import_tasks: main/tasks/install-nvm.yml
       vars:
-        - nvm_version: "{{ g_nvmVersion }}"
+        - nvmVersion: "{{ g_nvmVersion }}"
 
     - name: Pull down dotfiles
       git:

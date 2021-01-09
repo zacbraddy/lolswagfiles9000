@@ -10,8 +10,15 @@
   args:
     executable: /bin/zsh
 
+- name: Get Current Node Version
+  shell: "source ~/.zshrc && nvm current"
+  register: nodeVersion
+  args:
+    executable: /bin/zsh
+
 - name: Install npm global packages
   community.general.npm:
     name: "{{ item }}"
     global: true
+    executable: "~/.nvm/versions/node/{{ nodeVersion.stdout }}/bin/npm"
   loop: "{{ npmGlobals }}"
