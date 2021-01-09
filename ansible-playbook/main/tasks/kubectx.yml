@@ -23,8 +23,8 @@
 
 - name: Setup symlinks for kubectx scripts
   file:
-    src: "/usr/local/bin/{{ item }}"
-    dest: "~/.kubectx/{{ item }}"
+    src: "~/.kubectx/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
     force: true
     state: link
   with_items:
