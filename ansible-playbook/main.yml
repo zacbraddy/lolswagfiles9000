@@ -1,4 +1,7 @@
 - hosts: all
+  vars_prompt:
+    - name: github_ssh_auth_token
+      prompt: "If you haven't already uploaded your github ssh key then I need your personal access token to upload it"
   vars_files:
     - main/defaults/main.yml
   tasks:
@@ -7,8 +10,14 @@
         - applications: "{{ g_applications }}"
         - ppaBasedAptRepos: "{{ g_ppaBasedAptRepos }}"
         - urlBasedAptRepos: "{{ g_urlBasedAptRepos }}"
+
     - import_tasks: main/tasks/configure-git.yml
+      vars:
+        - sshPublicKeyLocation: "{{ g_sshPublicKeyLocation }}"
+
     - import_tasks: main/tasks/install-nvm.yml
+      vars:
+        - nvm_version: "{{ g_nvmVersion }}"
 
     - name: Pull down dotfiles
       git:
@@ -16,4 +25,9 @@
         dest: ~/Projects/Personal/lolswagfiles9000
 
     - import_tasks: main/tasks/install-configure-omz.yml
+      vars:
+        - currentUser: "{{ g_currentUser }}"
+
     - import_tasks: main/tasks/install-node.yml
+      vars:
+        - npmGlobals: "{{ g_npmGlobals }}"

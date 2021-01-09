@@ -1,29 +1,24 @@
-vars_prompt:
-  - name: github_ssh_auth_token
-    prompt: "If you haven't already uploaded your github ssh key then I need your personal access token to upload it"
+g_applications:
+- ansible
+  - apt-transport-https
+  - git
+  - gnupg2
+  - httpie
+  - kubectl
+  - software-properties-common
+  - zsh
 
-vars:
-  g_applications:
-    - ansible
-    - apt-transport-https
-    - git
-    - gnupg2
-    - httpie
-    - kubectl
-    - software-properties-common
-    - zsh
+g_npmGlobals:
+  - cowsay
+  - lolcatjs
 
-  npmGlobals:
-    - cowsay
-    - lolcatjs
+g_ppaBasedAptRepos:
+  - ppa:git-core/ppa
 
-  g_ppaBasedAptRepos:
-    - ppa:git-core/ppa
+g_urlBasedAptRepos:
+  - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    filename: kubernetes
 
-  g_urlBasedAptRepos:
-    - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
-      filename: kubernetes
-
-  nvmVersion: 0.37.2
-  sshPublicKeyLocation: ~/.ssh/id_rsa
-  currentUser: "{{ ansible_user_id }}"
+g_nvmVersion: 0.37.2
+g_sshPublicKeyLocation: ~/.ssh/id_rsa
+g_currentUser: "{{ ansible_user_id }}"
