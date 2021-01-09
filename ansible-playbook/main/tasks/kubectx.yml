@@ -22,6 +22,7 @@
     - kubens
 
 - name: Setup symlinks for kubectx scripts
+  become: yes
   file:
     src: "~/.kubectx/{{ item }}"
     dest: "/usr/local/bin/{{ item }}"
