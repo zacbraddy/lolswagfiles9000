@@ -24,4 +24,4 @@
   # Path variable won't be updated for node yet so we have to add
   # it for the task so that npm can runn correctly
   environment:
-    PATH: "{{ ansible_env.PATH }}:~/.nvm/versions/node/{{ nodeVersion.stdout }}/bin"
+    PATH: "{{ ansible_env.PATH }}:{{ lookup('env', 'HOME') }}/versions/node/{{ nodeVersion.stdout }}/bin"
