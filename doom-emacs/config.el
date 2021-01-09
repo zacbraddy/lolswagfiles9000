@@ -97,20 +97,22 @@
                              (enable-minor-mode
                               '("\\.svelte?\\'" . prettier-js-mode))))
 
+(add-hook 'python-mode-hook 'anaconda-mode)
+
+(add-hook 'elpy-mode-hook (lambda ()
+                            (add-hook 'before-save-hook
+                                      'elpy-black-fix-code nil t)))
+
 (map! (:when(featurep! :lang python)
        (:map elpy-mode-map :leader
         "r" 'elpy-shell-send-region-or-buffer)))
 
-
 (setq flycheck-python-flake8-executable "python3")
 (setq flycheck-python-pycompile-executable "python3")
-(setq flycheck-python-pylint-executable "python3");; Enable elpy
-(elpy-enable);; Enable Flycheck
-(when(require 'flycheck nil t)
-  (setq elpy-modules(delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode)
-  ;; (add-hook 'after-save-hook 'elpy-autopep8-fix-code)
-  )
+(setq flycheck-python-pylint-executable "python3")
 
+(setq elpy-rpc-python-command "python3")
+
+(elpy-enable)
 
 (add-hook 'js2-mode-hook 'prettier-js-mode)

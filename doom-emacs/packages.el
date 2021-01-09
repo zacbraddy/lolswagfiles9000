@@ -57,4 +57,5 @@
 (package! svelte-mode)
 (package! company-tabnine)
 (package! elpy)
-(package! py-autopep8)
+(package! blacken)
+(package! exec-path-from-shell)

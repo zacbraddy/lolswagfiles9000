@@ -1,3 +1,8 @@
+- name: Load global vars
+  include_vars:
+    dir: ../defaults
+    name: main.yml
+
 - name: Ensure we have the gcloud apt-key
   become: yes
   become_method: sudo

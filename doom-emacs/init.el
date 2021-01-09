@@ -183,3 +183,5 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+
+(exec-path-from-shell-initialize)

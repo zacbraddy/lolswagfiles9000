@@ -3,7 +3,7 @@ vars_prompt:
     prompt: "If you haven't already uploaded your github ssh key then I need your personal access token to upload it"
 
 vars:
-  applications:
+  g_applications:
     - ansible
     - apt-transport-https
     - git
@@ -17,10 +17,10 @@ vars:
     - cowsay
     - lolcatjs
 
-  ppaBasedAptRepos:
+  g_ppaBasedAptRepos:
     - ppa:git-core/ppa
 
-  urlBasedAptRepos:
+  g_urlBasedAptRepos:
     - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
       filename: kubernetes
 
