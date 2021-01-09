@@ -17,8 +17,5 @@ alias gp="git push"
 alias gd="git diff"
 alias gr="git reset | amazeballs"
 
-# Tmux
-alias tmx="tmuxinator"
-
 # Plant UML
 alias plant="java -jar ${HOME}/plantuml.jar"

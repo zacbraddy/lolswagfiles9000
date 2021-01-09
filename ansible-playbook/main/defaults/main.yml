@@ -6,6 +6,7 @@ g_applications:
   - httpie
   - kubectl
   - software-properties-common
+  - tmux
   - zsh
 
 g_npmGlobals:

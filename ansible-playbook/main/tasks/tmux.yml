@@ -1,0 +1,15 @@
+- name: Setup symlinks for OhMyZSH files
+  file:
+    src: "~/Projects/Personal/lolswagfiles9000/.tmux.conf"
+    dest: "~/.tmux.conf"
+    state: link
+
+- name: Install tmux plugin manager
+  git:
+    repo: "https://github.com/tmux-plugins/tpm"
+    dest: ~/.tmux/plugins/tpm
+
+- name: Run TPM installer
+  shell: "~/.tmux/plugins/tpm/bin/install_plugins"
+  args:
+    exectuable: /bin/zsh
