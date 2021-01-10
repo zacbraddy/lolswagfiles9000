@@ -116,3 +116,5 @@
 (elpy-enable)
 
 (add-hook 'js2-mode-hook 'prettier-js-mode)
+
+(exec-path-from-shell-initialize)

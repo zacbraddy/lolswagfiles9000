@@ -51,9 +51,7 @@
 
     - import_tasks: main/tasks/docker.yml
 
-    # - import_tasks: main/tasks/doom-emacs.yml
-    #   vars:
-    #     emacs_version: "{{ g_emacs_version }}"
+    - import_tasks: main/tasks/doom-emacs.yml
 
     - name: Clean up install temp directory
       file:

@@ -59,3 +59,5 @@
 (package! elpy)
 (package! blacken)
 (package! exec-path-from-shell)
+(package! xml)
+(package! treemacs-evil)

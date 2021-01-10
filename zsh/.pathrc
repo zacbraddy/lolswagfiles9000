@@ -19,3 +19,6 @@ PATH="$HOME/.local/bin:$PATH"
 
 # Kubectx path
 PATH="$HOME/.kubectx:$PATH"
+
+# Doom emacs
+PATH="$HOME/.emacs.d/bin"

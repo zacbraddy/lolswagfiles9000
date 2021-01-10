@@ -41,7 +41,6 @@
        ;;pretty-code       ; replace bits of code with pretty symbols
        ;;tabs              ; an tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
-       treemacs-evil
        ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -105,7 +104,6 @@
        :lang
        (json +lsp)
        (yaml +lsp)
-       (xml +lsp)
 
        ;;agda              ; types of types of types of types...
        ;;assembly          ; assembly for fun or debugging
@@ -178,10 +176,6 @@
        ;;(rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
-       tty
-
        :config
        ;;literate
        (default +bindings +smartparens))
-
-(exec-path-from-shell-initialize)
