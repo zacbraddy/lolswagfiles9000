@@ -26,6 +26,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 
 ### Applications
 
+- [Docker](https://www.docker.com/)
 - Git
 - [Google Cloud CLI](https://cloud.google.com/sdk)
 - [httpie](https://httpie.io/)
@@ -42,16 +43,24 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - ansible
 - software-properties-common
 
-**kubectl**
+**docker**
 
-- gnupg2
 - apt-transport-https
+- ca-certificates
+- curl
+- gnupg-agent
+- software-properties-common
 
 **gcloud-cli**
 
 - apt-transport-https
 - ca-certificates
 - gnupg
+
+**kubectl**
+
+- gnupg2
+- apt-transport-https
 
 **PlantUML**
 

@@ -7,8 +7,9 @@
   become: yes
   become_method: sudo
   apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    url: "{{ item }}"
     state: present
+  loop: "{{ aptKeysNeeded }}"
 
 - name: Add necessary url based apt repos
   become: yes

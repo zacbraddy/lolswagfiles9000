@@ -2,10 +2,15 @@ g_applications:
   - ansible
   - apt-transport-https
   - ca-certificates
+  - containerd.io
+  - curl
+  - docker-ce
+  - docker-ce-cli
   - default-jdk
   - git
   - gnupg
   - gnupg2
+  - gnupg-agent
   - google-cloud-sdk
   - httpie
   - kubectl
@@ -27,6 +32,12 @@ g_urlBasedAptRepos:
     filename: kubernetes
   - repoLink: deb https://packages.cloud.google.com/apt cloud-sdk main
     filename: google-cloud-sdk
+  - repoLink: deb https://download.docker.com/linux/ubuntu bionic stable
+    filename: docker
+
+g_aptKeysNeeded:
+  - https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  - https://download.docker.com/linux/ubuntu/gpg
 
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
