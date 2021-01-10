@@ -67,6 +67,13 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - Open Flavour of Java
 - Python3
 
+### Pipx modules available at the commandline
+
+- [Black](https://github.com/psf/black)
+- [Flake8](https://flake8.pycqa.org/en/latest/)
+- [Pylint](https://pylint.org/)
+- [mypy](http://mypy-lang.org/)
+
 ## ZSH settings
 
 ### Env vars

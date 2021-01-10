@@ -4,11 +4,12 @@ g_applications:
   - ca-certificates
   - default-jdk
   - git
-  - google-cloud-sdk
   - gnupg
   - gnupg2
+  - google-cloud-sdk
   - httpie
   - kubectl
+  - python3
   - software-properties-common
   - tmux
   - zsh
@@ -29,3 +30,9 @@ g_urlBasedAptRepos:
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
 g_currentUser: "{{ ansible_user_id }}"
+
+g_pipx_modules:
+  - black
+  - flake8
+  - pylint
+  - mypy
