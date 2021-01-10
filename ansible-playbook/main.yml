@@ -5,6 +5,12 @@
   vars_files:
     - main/defaults/main.yml
   tasks:
+    - name: Make the temporary install directory
+      file:
+        path: ~/.inst_temp
+        state: directory
+        mode: '0755'
+
     - import_tasks: main/tasks/apt-installs.yml
       vars:
         - applications: "{{ g_applications }}"
