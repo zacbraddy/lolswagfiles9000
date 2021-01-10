@@ -2,4 +2,5 @@
   get_url:
     url: https://sourceforge.net/projects/plantuml/files/plantuml.jar
     dest: ~/plantuml.jar
-  creates: ~/plantuml.jar
+  args:
+    creates: ~/plantuml.jar
