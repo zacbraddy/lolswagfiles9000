@@ -21,6 +21,6 @@
     - packages.el
 
 - name: Install/Upgrade doom emacs
-  shell: "source ~/.zshrc && doom install"
+  shell: "source ~/.zshrc && doom -y install"
   args:
     executable: "/bin/zsh"
