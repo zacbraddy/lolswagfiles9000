@@ -50,3 +50,5 @@ g_pipx_modules:
   - flake8
   - pylint
   - mypy
+
+g_emacs_version: 27.1
