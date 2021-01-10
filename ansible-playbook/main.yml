@@ -37,3 +37,5 @@
     - import_tasks: main/tasks/tmux.yml
 
     - import_tasks: main/tasks/plant-uml.yml
+
+    - import_tasks: main/tasks/pipx.yml

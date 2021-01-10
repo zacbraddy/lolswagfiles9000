@@ -1,0 +1,9 @@
+- name: Install pipx
+  shell: python3 -m pip install --user pipx
+  args:
+    executable: /bin/zsh
+
+- name: Ensure that pipx is in the path variable
+  shell: python3 -m pipx ensurepath
+  args:
+    executable: /bin/zsh

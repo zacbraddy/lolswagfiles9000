@@ -32,6 +32,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
 - [kubectx + kubens](https://github.com/ahmetb/kubectx/)
 - [NVM](https://github.com/nvm-sh/nvm)
+- [pipx](https://github.com/pipxproject/pipx)
 - zsh
 
 ### Applications I only have because other things need them
@@ -59,6 +60,12 @@ It needs to be said that the above assumes the machine has Make installed on it 
 ### Frameworks
 
 - [OhMyZSH!](https://ohmyz.sh/)
+
+### Available Language Editors/Runtimes
+
+- NodeJS LTS
+- Open Flavour of Java
+- Python3
 
 ## ZSH settings
 
