@@ -34,6 +34,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [kubectx + kubens](https://github.com/ahmetb/kubectx/)
 - [NVM](https://github.com/nvm-sh/nvm)
 - [pipx](https://github.com/pipxproject/pipx)
+- [tmux](https://github.com/tmux/tmux)
 - zsh
 
 ### Applications I only have because other things need them
@@ -127,3 +128,29 @@ The startup runs commands to ensure that the following applications are ready to
 - NVM
 
 https://docs.github.com/en/free-pro-team@latest/rest/reference/users#create-a-public-ssh-key-for-the-authenticated-user
+
+## TMUX configuration
+
+### Key bindings
+
+I have my prefix keybind rebound from the default `ctrl+b` to be instead `ctrl+s` so all sequences below will obviously need to happen **after** you've smashed that `ctrl+s`:
+
+| Key bind | It does? | |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------- | |
+| `|` | Splits window in what is described in the notes as horizontal but you end up with two vertical windows side by side basically |
+| `-` | A split as well but in the other direction to above | |
+| `r` | should reload the tmux config but I've never actually gotten this to work! | |
+| `hjkl` | Resizes the current pane to the left/down/up/right by a small about, keep hitting the letter you just hit to repeat this command without having to hit the prefix again |
+| `HJKL` | Same as above but does it by a larger amount |
+
+You can also hit Meta-hjkl (Alt is meta) to move between panes without having to hit the prefix sequence first.
+
+### Tmux plugins
+
+I also have a series of tmux plugins installed that are handled by [Tmux plugin manager](https://github.com/tmux-plugins/tpm)
+
+The plugins I'm using are:
+
+- [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect)
+- [tmux-yank](https://github.com/tmux-plugins/tmux-yank)
+- [tmux-continuum](https://github.com/tmux-plugins/tmux-continuum)
