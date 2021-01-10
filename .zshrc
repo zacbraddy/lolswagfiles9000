@@ -3,7 +3,7 @@ ZSH_THEME="pygmalion"
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="true"
 
-plugins=(git npm kubectl)
+plugins=(git npm kubectl gcloud)
 
 source ~/.oh-my-zsh/oh-my-zsh.sh
 
