@@ -7,6 +7,7 @@ g_applications:
   - docker-ce
   - docker-ce-cli
   - default-jdk
+  - emacs27
   - fd-find
   - git
   - gnupg
@@ -28,6 +29,7 @@ g_npmGlobals:
 
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
+  - ppa:kelleyk/emacs
 
 g_urlBasedAptRepos:
   - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
@@ -50,5 +52,3 @@ g_pipx_modules:
   - flake8
   - pylint
   - mypy
-
-g_emacs_version: 27.1
