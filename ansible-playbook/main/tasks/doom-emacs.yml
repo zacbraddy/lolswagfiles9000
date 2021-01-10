@@ -4,15 +4,21 @@
     dest: ~/.emacs.d
     depth: "1"
 
-- name: Setup symlinks for OhMyZSH files
+- name: Make sure we have a doom emacs directory
+  command:
+    cmd: "mkdir -p ~/.doom.d"
+    warn: false
+
+- name: Setup symlinks for doom emacs
   file:
-    src: "~/Projects/Personal/lolswagfiles9000/doom-emacs/{{ item.src }}"
-    dest: "~/{{ item.dest }}"
+    src: "~/Projects/Personal/lolswagfiles9000/doom-emacs/{{ item }}"
+    dest: "~/.doom.d/{{ item }}"
     force: true
     state: link
   with_items:
-    - src: .zshrc
-      dest: .zshrc
+    - config.el
+    - init.el
+    - packages.el
 
 - name: Install/Upgrade doom emacs
   shell: "source ~/.zshrc && doom install"
