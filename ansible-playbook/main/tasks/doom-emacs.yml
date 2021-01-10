@@ -20,7 +20,14 @@
     - init.el
     - packages.el
 
+- name: Generate doom emacs env file
+  shell: "source ~/.zshrc && doom env"
+  args:
+    executable: "/bin/zsh"
+     
 - name: Install/Upgrade doom emacs
-  shell: "source ~/.zshrc && doom -y install"
+  command: "source ~/.zshrc && doom -y install"
+  reponses:
+    (?i)all-the-icon: "y"
   args:
     executable: "/bin/zsh"
