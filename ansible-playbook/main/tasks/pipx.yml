@@ -1,3 +1,25 @@
+- name: Ensure we actually have pip itself, crazy but it happens!
+  shell: python3 -m pip --version
+  register: pip_installed
+  changed_when: pip_installed.rc != 0
+  failed_when: False
+  args:
+    executable: /bin/zsh
+
+- name: Get the pip install script
+  uri:
+    url: https://bootstrap.pypa.io/get-pip.py
+    method: GET
+    return_content: yes
+  register: pip_install_script
+  when: pip_installed.rc != 0
+
+- name: Install pip
+  shell: "echo {{ pip_install_script.content }} | python3 "
+  when: pip_installed.rc != 0
+  args:
+    executable: /bin/zsh
+   
 - name: Install pipx
   shell: python3 -m pip install --user pipx
   args:
