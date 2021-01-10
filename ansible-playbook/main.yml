@@ -11,11 +11,11 @@
         - ppaBasedAptRepos: "{{ g_ppaBasedAptRepos }}"
         - urlBasedAptRepos: "{{ g_urlBasedAptRepos }}"
 
-    - import_tasks: main/tasks/configure-git.yml
+    - import_tasks: main/tasks/git.yml
       vars:
         - sshPublicKeyLocation: "{{ g_sshPublicKeyLocation }}"
 
-    - import_tasks: main/tasks/install-nvm.yml
+    - import_tasks: main/tasks/nvm.yml
       vars:
         - nvmVersion: "{{ g_nvmVersion }}"
 
@@ -24,14 +24,16 @@
         repo: "git@github.com:zacbraddy/lolswagfiles9000.git"
         dest: ~/Projects/Personal/lolswagfiles9000
 
-    - import_tasks: main/tasks/install-configure-omz.yml
+    - import_tasks: main/tasks/oh-my-zsh.yml
       vars:
         - currentUser: "{{ g_currentUser }}"
 
-    - import_tasks: main/tasks/install-node.yml
+    - import_tasks: main/tasks/node.yml
       vars:
         - npmGlobals: "{{ g_npmGlobals }}"
 
     - import_tasks: main/tasks/kubectx.yml
 
     - import_tasks: main/tasks/tmux.yml
+
+    - import_tasks: main/tasks/plant-uml.yml

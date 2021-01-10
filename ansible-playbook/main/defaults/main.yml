@@ -1,6 +1,7 @@
 g_applications:
   - ansible
   - apt-transport-https
+  - default-jdk
   - git
   - gnupg2
   - httpie
