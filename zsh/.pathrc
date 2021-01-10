@@ -21,4 +21,4 @@ PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.kubectx:$PATH"
 
 # Doom emacs
-PATH="$HOME/.emacs.d/bin"
+PATH="$HOME/.emacs.d/bin:$PATH"
