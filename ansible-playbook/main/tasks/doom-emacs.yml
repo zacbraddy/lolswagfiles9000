@@ -26,8 +26,7 @@
     executable: "/bin/zsh"
      
 - name: Install/Upgrade doom emacs
-  command: "source ~/.zshrc && doom -y install"
-  reponses:
-    (?i)all-the-icon: "y"
-  args:
-    executable: "/bin/zsh"
+  expect:
+    command: "source ~/.zshrc && doom -y install"
+    responses:
+      (?i)all-the-icon: "y"
