@@ -1,8 +1,11 @@
 g_applications:
   - ansible
   - apt-transport-https
+  - ca-certificates
   - default-jdk
   - git
+  - google-cloud-sdk
+  - gnupg
   - gnupg2
   - httpie
   - kubectl
@@ -20,6 +23,8 @@ g_ppaBasedAptRepos:
 g_urlBasedAptRepos:
   - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
     filename: kubernetes
+  - repoLink: deb https://packages.cloud.google.com/apt cloud-sdk main
+    filename: google-cloud-sdk
 
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
