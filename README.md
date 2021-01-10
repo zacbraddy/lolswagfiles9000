@@ -27,6 +27,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 ### Applications
 
 - [Docker](https://www.docker.com/)
+- [Doom Emacs](https://github.com/hlissner/doom-emacs)
 - Git
 - [Google Cloud CLI](https://cloud.google.com/sdk)
 - [httpie](https://httpie.io/)
@@ -51,6 +52,11 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - curl
 - gnupg-agent
 - software-properties-common
+
+**Doom Emacs**
+
+- fd-find
+- ripgrep
 
 **gcloud-cli**
 

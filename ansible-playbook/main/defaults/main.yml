@@ -7,6 +7,7 @@ g_applications:
   - docker-ce
   - docker-ce-cli
   - default-jdk
+  - fd-find
   - git
   - gnupg
   - gnupg2
@@ -16,6 +17,7 @@ g_applications:
   - kubectl
   - python3
   - python3-venv
+  - ripgrep
   - software-properties-common
   - tmux
   - zsh

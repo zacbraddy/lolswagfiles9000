@@ -1,0 +1,28 @@
+- name: Is the right version of emacs installed
+  shell: "emacs --version | grep {{ emacs_version }}"
+  register: emacs_installed
+  changed_when: emacs_installed.rc != 0 or emacs_installed.stdout == "0"
+  failed_when: False
+  args:
+    executable: /bin/zsh
+
+- name: Download emacs source for the version we like
+  unarchive:
+    src: "https://ftp.gnu.org/pub/gnu/emacs/emacs-{{ emacs_version }}.tar.gz"
+    dest: ~/.inst_temp
+    remote_src: yes
+    force: no
+    creates: "~/.inst_temp/emacs-{{ emacs_version }}"
+  when: emacs_installed.rc != 0 or emacs_installed.stdout == "0"
+
+- name: Build emacs source
+  shell: "cd ~/.inst_temp/emacs-{{ emacs_version }} && ./configure && make"
+  when: emacs_installed.rc != 0 or emacs_installed.stdout == "0"
+  args:
+    executable: /bin/zsh
+
+- name: Install emacs
+  shell: "cd ~/.inst_temp/emacs-{{ emacs_version }} && make install"
+  when: emacs_installed.rc != 0 or emacs_installed.stdout == "0"
+  args:
+    executable: /bin/zsh
