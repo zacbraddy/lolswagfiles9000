@@ -29,7 +29,7 @@
     executable: /bin/zsh
 
 - name: Install pipx modules
-  shell: "pipx install {{ item }}"
+  shell: "source ~/.zshrc && pipx install {{ item }}"
   loop: "{{ pipx_modules }}"
   args:
     executable: /bin/zsh
