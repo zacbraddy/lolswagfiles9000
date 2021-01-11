@@ -32,6 +32,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [Doom Emacs](https://github.com/hlissner/doom-emacs)
 - Git
 - [Google Cloud CLI](https://cloud.google.com/sdk)
+- [Google Chrome](https://www.google.co.uk/chrome/)
 - [Gnome Tweaks](https://wiki.gnome.org/Apps/Tweaks)
 - [httpie](https://httpie.io/)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
