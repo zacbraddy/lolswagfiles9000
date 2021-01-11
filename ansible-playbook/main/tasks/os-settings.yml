@@ -8,6 +8,11 @@
   args:
     executable: /bin/zsh
 
+- name: Install psutil so we can do gnome tweaks
+  shell: "source ~/.zshrc && pip install psutil"
+  args:
+    executable: /bin/zsh
+
 - name: Set desktop settings to be dark as the night
   community.general.dconf:
     key: /org/gnome/desktop/interface/gtk-theme
