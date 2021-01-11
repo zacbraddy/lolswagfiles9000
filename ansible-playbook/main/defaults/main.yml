@@ -24,6 +24,7 @@ g_applications:
   - software-properties-common
   - spotify-client
   - tmux
+  - virtualbox
   - zsh
 
 g_externalDebs:
@@ -52,6 +53,8 @@ g_urlBasedAptRepos:
     filename: docker
   - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal universe
     filename: universe
+  - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal multiverse
+    filename: multiverse
   - repoLink: deb http://repository.spotify.com stable non-free
     filename: spotify
   - repoLink: deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main

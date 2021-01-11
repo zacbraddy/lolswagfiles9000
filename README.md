@@ -43,6 +43,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [Slack](https://slack.com/intl/en-gb/)
 - [Spotify](https://www.spotify.com/us/)
 - [tmux](https://github.com/tmux/tmux)
+- [VirtualBox](https://www.virtualbox.org/)
 - zsh
 - [Zoom](https://zoom.us/)
 
