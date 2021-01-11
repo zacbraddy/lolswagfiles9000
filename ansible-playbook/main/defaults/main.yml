@@ -52,3 +52,5 @@ g_pipx_modules:
   - flake8
   - pylint
   - mypy
+
+g_jetBrainsMonoVersion: 2.221

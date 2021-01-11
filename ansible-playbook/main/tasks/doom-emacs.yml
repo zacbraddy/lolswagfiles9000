@@ -43,15 +43,21 @@
   args:
     executable: /bin/zsh
 
+- name: Make sure we have a fonts directory
+  command:
+    cmd: "mkdir -p ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}"
+    warn: false
+  when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
+
 - name: Download JetBrains Mono fonts
   unarchive:
-    src: https://download.jetbrains.com/fonts/JetBrainsMono-2.221.zip
-    dest: ~/.inst_temp/JetBrainsMono-2.221
+    src: "https://download.jetbrains.com/fonts/JetBrainsMono-{{ jetBrainsMonoVersion }}.zip"
+    dest: "~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}"
     remote_src: yes
   when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
 
 - name: Place fonts in font folder
-  shell: mv ~/.inst_temp/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Regular.tff ~/.local/share/fonts/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Regular.tff && mv ~/.inst_temp/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Italic.tff ~/.local/share/fonts/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Italic.tff
+  shell: "mv ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Regular.tff ~/.local/share/fonts/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Regular.tff && mv ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Italic.tff ~/.local/share/fonts/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Italic.tff"
   when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
   args:
     executable: /bin/zsh

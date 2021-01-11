@@ -52,6 +52,8 @@
     - import_tasks: main/tasks/docker.yml
 
     - import_tasks: main/tasks/doom-emacs.yml
+      vars:
+        jetBrainsMonoVersion: "{{ g_jetBrainsMonoVersion }}"
 
     - name: Clean up install temp directory
       file:
