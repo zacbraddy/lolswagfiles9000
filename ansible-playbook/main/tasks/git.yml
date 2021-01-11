@@ -34,3 +34,13 @@
     name: "github.com"
     state: present
     key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
+
+- name: Setup symlinks for gitconfig
+  file:
+    src: "~/Projects/Personal/lolswagfiles9000/{{ item }}"
+    dest: "~/{{ item }}"
+    force: true
+    state: link
+  with_items:
+    - .gitconfig
+    - .gitignore_global

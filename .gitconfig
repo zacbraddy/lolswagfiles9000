@@ -1,0 +1,13 @@
+[user]
+  email = zacharybraddy@gmail.com
+  name = Zac Braddy
+[alias]
+  edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; /c/vim/vim80/vim.exe `f`"
+  add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
+  prune-branches = !git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -d
+  prune-branches-force = !git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D
+  yeet = !git reset --hard @{u}
+  list-tags = !git tag -l --format=' %(subject)'
+[core]
+  editor = vim
+  excludesfile = ~/.gitignore_global
