@@ -54,7 +54,7 @@ g_pipx_modules:
   - black
   - flake8
   - mypy
-  - psutils
+  - psutil
   - pylint
 
 g_jetBrainsMonoVersion: 2.221
