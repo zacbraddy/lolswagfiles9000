@@ -37,6 +37,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [kubectx + kubens](https://github.com/ahmetb/kubectx/)
 - [NVM](https://github.com/nvm-sh/nvm)
 - [pipx](https://github.com/pipxproject/pipx)
+- [Postman](https://getpostman.com)
 - [Slack](https://slack.com/intl/en-gb/)
 - [Spotify](https://www.spotify.com/us/)
 - [tmux](https://github.com/tmux/tmux)

@@ -43,3 +43,10 @@
     deb: "{{ item }}"
     state: present
   loop: "{{ externalDebs }}"
+
+- name: Install Postman
+  become: yes
+  become_method: sudo
+  community.general.snap:
+    name:
+      - postman
