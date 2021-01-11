@@ -44,6 +44,4 @@
 - name: Install Zoom
   become: yes
   become_method: sudo
-  apt:
-    pkg: ~/.inst_temp/zoom_amd64.deb
-    state: present
+  shell: apt-get install ~/.inst_temp/zoom_amd64.deb
