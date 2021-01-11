@@ -26,6 +26,6 @@
     executable: "/bin/zsh"
      
 - name: Install/Upgrade doom emacs
-  shell: "yes 'y' | source ~/.zshrc && doom -y install"
+  shell: "source ~/.zshrc && (yes | doom -y install)"
   args:
     executable: "/bin/zsh"
