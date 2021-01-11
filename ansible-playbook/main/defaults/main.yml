@@ -1,6 +1,7 @@
 g_applications:
   - ansible
   - apt-transport-https
+  - brave-browser
   - ca-certificates
   - containerd.io
   - curl
@@ -44,11 +45,14 @@ g_urlBasedAptRepos:
     filename: universe
   - repoLink: deb http://repository.spotify.com stable non-free
     filename: spotify
+  - repoLink: deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
+    filename: brave-browser-release
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
   - https://download.docker.com/linux/ubuntu/gpg
   - https://download.spotify.com/debian/pubkey_0D811D58.gpg
+  - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
 
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
