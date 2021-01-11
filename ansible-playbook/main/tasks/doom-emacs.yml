@@ -38,7 +38,8 @@
 - name: Check if JetBrains Mono is installed
   shell: "ls -al ~/.local/share/fonts | grep -c JetBrains"
   register: jetbrains_mono_installed
-  changed_when: jetbrains_mono_installed.stdout != 2
+  changed_when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
+  failed_when: False
   args:
     executable: /bin/zsh
 
@@ -47,16 +48,16 @@
     src: https://download.jetbrains.com/fonts/JetBrainsMono-2.221.zip
     dest: ~/.inst_temp
     remote_src: yes
-  when: jetbrains_mono_installed.stdout != 2
+  when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
 
 - name: Place fonts in font folder
   shell: mv ~/.inst_temp/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Regular.tff ~/.local/share/fonts/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Regular.tff && mv ~/.inst_temp/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Italic.tff ~/.local/share/fonts/JetBrainsMono-2.221/fonts/ttf/JetBrainsMono-Italic.tff
-  when: jetbrains_mono_installed.stdout != 2
+  when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
   args:
     executable: /bin/zsh
 
 - name: Refresh fonts cache
   shell: fc-cache -f
-  when: jetbrains_mono_installed.stdout != 2
+  when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
   args:
     executable: /bin/zsh
