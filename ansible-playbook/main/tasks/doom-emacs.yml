@@ -57,7 +57,7 @@
   when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
 
 - name: Place fonts in font folder
-  shell: "mv ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Regular.ttf ~/.local/share/fonts/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Regular.ttf && mv ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Italic.ttf ~/.local/share/fonts/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Italic.ttf"
+  shell: "mv ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Regular.ttf ~/.local/share/fonts/JetBrainsMono-Regular.ttf && mv ~/.inst_temp/JetBrainsMono-{{ jetBrainsMonoVersion }}/fonts/ttf/JetBrainsMono-Italic.ttf ~/.local/share/fonts/JetBrainsMono-Italic.ttf"
   when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
   args:
     executable: /bin/zsh
