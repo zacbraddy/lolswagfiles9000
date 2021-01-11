@@ -48,5 +48,6 @@
   become: yes
   become_method: sudo
   community.general.snap:
-    name:
-      - postman
+    name: "{{ item }}"
+    state: present
+  loop: "{{ snapApplications }}"

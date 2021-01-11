@@ -27,6 +27,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 ### Applications
 
 - [Brave browser](https://brave.com/)
+- [Discord](https://discord.com/)
 - [Docker](https://www.docker.com/)
 - [Doom Emacs](https://github.com/hlissner/doom-emacs)
 - Git

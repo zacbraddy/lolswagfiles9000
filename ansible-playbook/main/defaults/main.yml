@@ -30,6 +30,10 @@ g_externalDebs:
   - https://zoom.us/client/latest/zoom_amd64.deb
   - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.12.1-amd64.deb
 
+g_snapApplications:
+  - postman
+  - discord
+
 g_npmGlobals:
   - cowsay
   - lolcatjs

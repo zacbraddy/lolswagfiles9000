@@ -18,6 +18,7 @@
         - urlBasedAptRepos: "{{ g_urlBasedAptRepos }}"
         - aptKeysNeeded: "{{ g_aptKeysNeeded }}"
         - externalDebs: "{{ g_externalDebs }}"
+        - snapApplications: "{{ g_snapApplications }}"
 
     - import_tasks: main/tasks/git.yml
       vars:
