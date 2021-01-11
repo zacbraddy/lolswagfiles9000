@@ -1,17 +1,19 @@
-- name: Make UK keyboard the only keyboard input layout
-  shell: gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'gb')]"
-  args:
-    executable: /bin/zsh
-
-- name: Maybe redundant but make sure that the Jolly ol GB keyboard is selected as the keyboard to us
-  shell: gsettings set org.gnome.desktop.input-sources current 0
-  args:
-    executable: /bin/zsh
-
 - name: Install psutil so we can do gnome tweaks
   shell: "source ~/.zshrc && pip3 install psutil"
   args:
     executable: /bin/zsh
+
+- name: Make UK keyboard the only keyboard input layout
+  community.general.dconf:
+    key: "/org/gnome/desktop/input-sources/sources"
+    value: "[('xkb', 'gb')]"
+    state: present
+
+- name: Maybe redundant but make sure that the Jolly ol GB keyboard is selected as the keyboard to us
+  community.general.dconf:
+    key: "/org/gnome/desktop/input-sources/current"
+    value: "0"
+    state: present
 
 - name: Set desktop settings to be dark as the night
   community.general.dconf:
