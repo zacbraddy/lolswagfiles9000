@@ -31,6 +31,7 @@ g_npmGlobals:
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
   - ppa:kelleyk/emacs
+  - universe
 
 g_urlBasedAptRepos:
   - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
