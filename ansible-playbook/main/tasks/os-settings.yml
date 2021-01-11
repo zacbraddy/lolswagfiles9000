@@ -38,3 +38,17 @@
     key: "/org/gnome/desktop/input-sources/xkb-options"
     value: "['caps:backspace', 'shift:both_capslock']"
     state: present
+
+- name: Is GB locale in the house?
+  locale_gen:
+    name: en_GB.UTF-8
+    state: present
+
+- name: I'm in GB ya'll so set it that way
+  command: localectl set-locale LANG=en_GB.UTF-8 LC_ALL=en_GB.UTF-8
+
+- name: Also I like my dates all GB-y
+  community.general.dconf:
+    key: "/system/locale/region"
+    value: "'en_GB.UTF-8'"
+    state: present
