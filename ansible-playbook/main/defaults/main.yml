@@ -21,6 +21,7 @@ g_applications:
   - python3-venv
   - ripgrep
   - software-properties-common
+  - spotify-client
   - tmux
   - zsh
 
@@ -41,10 +42,13 @@ g_urlBasedAptRepos:
     filename: docker
   - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal universe
     filename: universe
+  - repoLink: deb http://repository.spotify.com stable non-free
+    filename: spotify
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
   - https://download.docker.com/linux/ubuntu/gpg
+  - https://download.spotify.com/debian/pubkey_0D811D58.gpg
 
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
