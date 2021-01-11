@@ -3,6 +3,12 @@
   args:
     executable: /bin/zsh
 
+- name: Nobody likes looking at docks all the time now do they?
+  communit.general.dconf:
+    key: "/org/gnome/shell/extensions/dash-to-dock/dock-fixed"
+    value: "false"
+    state: present
+     
 - name: Make UK keyboard the only keyboard input layout
   community.general.dconf:
     key: "/org/gnome/desktop/input-sources/sources"
@@ -38,3 +44,16 @@
     key: "/org/gnome/desktop/input-sources/xkb-options"
     value: "['caps:backspace', 'shift:both_capslock']"
     state: present
+
+- name: And all my favourite apps will be there
+  community.general.dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    value: "['slack.desktop', 'spotify.desktop', 'brave-browser.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'gnome-control-center.desktop', 'org.gnome.Characters.desktop', 'postman_postman.desktop', 'discord_discord.desktop', 'snap-store_ubuntu-software.desktop']"
+    state: present
+
+- name: Setup symlinks for default applications
+  file:
+    src: "~/Projects/Personal/lolswagfiles9000/mimeapps.list"
+    dest: "~/.config/mimeapps.list"
+    force: true
+    state: link
