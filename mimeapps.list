@@ -1,16 +1,16 @@
 [Default Applications]
-x-scheme-handler/http=google-chrome.desktop
-text/html=google-chrome.desktop
-text/xml=google-chrome.desktop
-application/xhtml_xml=google-chrome.desktop
-image/webp=google-chrome.desktop
-x-scheme-handler/https=google-chrome.desktop
-x-scheme-handler/ftp=google-chrome.desktop
+x-scheme-handler/http=brave-browser.desktop
+text/html=brave-browser.desktop
+text/xml=brave-browser.desktop
+application/xhtml_xml=brave-browser.desktop
+image/webp=brave-browser.desktop
+x-scheme-handler/https=brave-browser.desktop
+x-scheme-handler/ftp=brave-browser.desktop
 
 [Added Associations]
-text/html=google-chrome.desktop;
-text/xml=google-chrome.desktop;
-application/xhtml_xml=google-chrome.desktop;
-image/webp=google-chrome.desktop;
-x-scheme-handler/https=google-chrome.desktop;
-x-scheme-handler/ftp=google-chrome.desktop;
+text/html=brave-browser.desktop;
+text/xml=brave-browser.desktop;
+application/xhtml_xml=brave-browser.desktop;
+image/webp=brave-browser.desktop;
+x-scheme-handler/https=brave-browser.desktop;
+x-scheme-handler/ftp=brave-browser.desktop;
