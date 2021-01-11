@@ -53,7 +53,8 @@ g_currentUser: "{{ ansible_user_id }}"
 g_pipx_modules:
   - black
   - flake8
-  - pylint
   - mypy
+  - psutils
+  - pylint
 
 g_jetBrainsMonoVersion: 2.221
