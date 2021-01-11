@@ -31,15 +31,16 @@ g_npmGlobals:
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
   - ppa:kelleyk/emacs
-  - universe
 
 g_urlBasedAptRepos:
-  - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
+  - repoLink: deb https://apt.kubernetes.io/ kubernetes-focal main
     filename: kubernetes
   - repoLink: deb https://packages.cloud.google.com/apt cloud-sdk main
     filename: google-cloud-sdk
-  - repoLink: deb https://download.docker.com/linux/ubuntu bionic stable
+  - repoLink: deb https://download.docker.com/linux/ubuntu focal stable
     filename: docker
+  - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal universe
+    filename: universe
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
