@@ -24,6 +24,6 @@
     executable: /bin/zsh
 
 - name: Put in my keyboard tweaks
-  shell: gsettings set org.gnome.desktop.input-sources xkb-options \"['caps:backspace', 'shift:both_capslock']\"
+  shell: gsettings set org.gnome.desktop.input-sources xkb-options "['caps:backspace', 'shift:both_capslock']"
   args:
     executable: /bin/zsh
