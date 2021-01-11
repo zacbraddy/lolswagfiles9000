@@ -10,6 +10,7 @@ g_applications:
   - emacs27
   - fd-find
   - git
+  - gnome-tweaks
   - gnupg
   - gnupg2
   - gnupg-agent

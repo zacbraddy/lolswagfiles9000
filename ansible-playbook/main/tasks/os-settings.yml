@@ -7,3 +7,23 @@
   shell: gsettings set org.gnome.desktop.input-sources current 0
   args:
     executable: /bin/zsh
+
+- name: Set desktop settings to be dark as the night
+  shell: gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+  args:
+    executable: /bin/zsh
+
+- name: Mouse cursor gotta be white
+  shell: gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
+  args:
+    executable: /bin/zsh
+
+- name: Icons wanna be dark
+  shell: gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
+  args:
+    executable: /bin/zsh
+
+- name: Put in my keyboard tweaks
+  shell: gsettings set org.gnome.desktop.input-sources xkb-options \"['caps:backspace', 'shift:both_capslock']\"
+  args:
+    executable: /bin/zsh
