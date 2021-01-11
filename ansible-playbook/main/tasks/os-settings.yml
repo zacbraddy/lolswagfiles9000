@@ -16,19 +16,19 @@
 - name: Set desktop settings to be dark as the night
   community.general.dconf:
     key: "/org/gnome/desktop/interface/gtk-theme"
-    value: "Adwaita-dark"
+    value: "'Adwaita-dark'"
     state: present
 
 - name: Mouse cursor gotta be white
   community.general.dconf:
     key: "/org/gnome/desktop/interface/cursor-theme"
-    value: "DMZ-White"
+    value: "'DMZ-White'"
     state: present
 
 - name: Icons wanna be dark
   community.general.dconf:
     key: "/org/gnome/desktop/interface/icon-theme"
-    value: "ubuntu-mono-dark"
+    value: "'ubuntu-mono-dark'"
     state: present
 
 - name: Put in my keyboard tweaks
