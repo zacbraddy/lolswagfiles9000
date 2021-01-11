@@ -37,11 +37,7 @@
   loop: "{{ applications }}"
 
 - name: Get Zoom deb package
-  get_url:
-    url: https://zoom.us/client/latest/zoom_amd64.deb
-    dest: ~/.inst_temp/zoom_amd64.deb
-
-- name: Install Zoom
   become: yes
   become_method: sudo
-  shell: apt-get install ~/.inst_temp/zoom_amd64.deb
+  apt:
+    deb: https://zoom.us/client/latest/zoom_amd64.deb
