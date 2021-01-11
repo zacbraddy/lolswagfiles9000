@@ -46,7 +46,7 @@
 - name: Download JetBrains Mono fonts
   unarchive:
     src: https://download.jetbrains.com/fonts/JetBrainsMono-2.221.zip
-    dest: ~/.inst_temp
+    dest: ~/.inst_temp/JetBrainsMono-2.221
     remote_src: yes
   when: jetbrains_mono_installed.rc != 0 or jetbrains_mono_installed.stdout != 2
 
