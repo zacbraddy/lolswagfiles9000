@@ -17,6 +17,7 @@
         - ppaBasedAptRepos: "{{ g_ppaBasedAptRepos }}"
         - urlBasedAptRepos: "{{ g_urlBasedAptRepos }}"
         - aptKeysNeeded: "{{ g_aptKeysNeeded }}"
+        - externalDebs: "{{ g_externalDebs }}"
 
     - import_tasks: main/tasks/git.yml
       vars:
