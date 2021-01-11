@@ -9,7 +9,7 @@
     executable: /bin/zsh
 
 - name: Install psutil so we can do gnome tweaks
-  shell: "source ~/.zshrc && pip install psutil"
+  shell: "source ~/.zshrc && pip3 install psutil"
   args:
     executable: /bin/zsh
 
