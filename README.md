@@ -26,6 +26,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 
 ### Applications
 
+- [Audacity](https://www.audacityteam.org/)
 - [Brave browser](https://brave.com/)
 - [Discord](https://discord.com/)
 - [Docker](https://www.docker.com/)
@@ -38,12 +39,14 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
 - [kubectx + kubens](https://github.com/ahmetb/kubectx/)
 - [NVM](https://github.com/nvm-sh/nvm)
+- [OBS](https://obsproject.com/)
 - [pipx](https://github.com/pipxproject/pipx)
 - [Postman](https://getpostman.com)
 - [Slack](https://slack.com/intl/en-gb/)
 - [Spotify](https://www.spotify.com/us/)
 - [tmux](https://github.com/tmux/tmux)
 - [VirtualBox](https://www.virtualbox.org/)
+- [vlc](https://www.videolan.org/)
 - zsh
 - [Zoom](https://zoom.us/)
 
