@@ -55,6 +55,8 @@
       vars:
         jetBrainsMonoVersion: "{{ g_jetBrainsMonoVersion }}"
 
+    - import_tasks: main/tasks/os-settings.yml
+
     - name: Clean up install temp directory
       file:
         path: ~/.inst_temp

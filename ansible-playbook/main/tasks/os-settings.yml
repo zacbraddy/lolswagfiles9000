@@ -1,0 +1,9 @@
+- name: Make UK keyboard the only keyboard input layout
+  shell: gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'gb')]"
+  args:
+    executable: /bin/zsh
+
+- name: Maybe redundant but make sure that the Jolly ol GB keyboard is selected as the keyboard to us
+  shell: gsettings set org.gnome.desktop.input-sources current 0
+  args:
+    executable: /bin/zsh
