@@ -3,4 +3,5 @@
     url: https://sourceforge.net/projects/plantuml/files/plantuml.jar
     dest: ~/plantuml.jar
     force: no
-  creates: ~/plantuml.jar
+  args:
+    creates: ~/plantuml.jar
