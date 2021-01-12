@@ -17,6 +17,7 @@ g_applications:
   - gnupg2
   - gnupg-agent
   - google-cloud-sdk
+  - guvcview
   - httpie
   - kubectl
   - python3

@@ -118,3 +118,4 @@
 (add-hook 'js2-mode-hook 'prettier-js-mode)
 
 (exec-path-from-shell-initialize)
+(setq multi-term-program "/bin/zsh")
