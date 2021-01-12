@@ -59,6 +59,8 @@
 
     - import_tasks: main/tasks/os-settings.yml
 
+    - import_tasks: main/tasks/aws.yml
+
     - name: Clean up install temp directory
       file:
         path: ~/.inst_temp
