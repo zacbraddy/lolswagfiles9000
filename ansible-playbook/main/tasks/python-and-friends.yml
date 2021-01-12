@@ -33,3 +33,23 @@
   loop: "{{ pipx_modules }}"
   args:
     executable: /bin/zsh
+
+- name: Ensure we have poetry
+  shell: poetry --version
+  register: poetry_installed
+  changed_when: poetry_installed.rc != 0
+  failed_when: False
+  args:
+    executable: /bin/zsh
+
+- name: Get the poetry install script
+  get_url:
+    url: https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py
+    dest: ~/.inst_temp/get-poetry.py
+  when: poetry_installed.rc != 0
+
+- name: Install poetry
+  shell: "python3 ~/.inst_temp/get-poetry.py"
+  when: poetry_installed.rc != 0
+  args:
+    executable: /bin/zsh

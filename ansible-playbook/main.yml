@@ -47,7 +47,7 @@
 
     - import_tasks: main/tasks/plant-uml.yml
 
-    - import_tasks: main/tasks/pipx.yml
+    - import_tasks: main/tasks/python-and-friends.yml
       vars:
         pipx_modules: "{{ g_pipx_modules }}"
 

@@ -32,6 +32,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [Docker](https://www.docker.com/)
 - [Doom Emacs](https://github.com/hlissner/doom-emacs)
 - Git
+- [Git LFS](https://git-lfs.github.com/)
 - [Google Cloud CLI](https://cloud.google.com/sdk)
 - [Google Chrome](https://www.google.co.uk/chrome/)
 - [Gnome Tweaks](https://wiki.gnome.org/Apps/Tweaks)
@@ -41,6 +42,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [NVM](https://github.com/nvm-sh/nvm)
 - [OBS](https://obsproject.com/)
 - [pipx](https://github.com/pipxproject/pipx)
+- [Poetry](https://python-poetry.org/)
 - [Postman](https://getpostman.com)
 - [Slack](https://slack.com/intl/en-gb/)
 - [Spotify](https://www.spotify.com/us/)
