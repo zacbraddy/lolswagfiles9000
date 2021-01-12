@@ -4,6 +4,11 @@
     state: started
     enabled: yes
 
+- name: "Do we have docker-compose because force=no doesn't seem to work!!"
+  stat:
+    path: /usr/local/bin/docker-compose
+  register: dockerCompose
+
 - name: Install docker-compose
   become: yes
   become_method: sudo
@@ -12,5 +17,4 @@
     dest: /usr/local/bin/docker-compose
     mode: '0755'
     force: no
-  args:
-    creates: /usr/local/bin/docker-compose
+  when: not dockerCompose.stat.exists
