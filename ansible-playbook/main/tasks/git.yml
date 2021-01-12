@@ -53,7 +53,7 @@
   register: gitlfs_install_script
 
 - name: Run git LFS install script
-  shell: "{{ ohmyzsh_install_script.content }}"
+  shell: "{{ gitlfs_install_script.content }}"
 
 - name: Install Git LFS into git
   shell: "git lfs install"
