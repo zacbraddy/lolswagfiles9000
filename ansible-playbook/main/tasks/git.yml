@@ -57,6 +57,8 @@
   environment:
     - os: "ubuntu"
     - dist: "focal"
+  args:
+    executable: /bin/bash
 
 - name: Install Git LFS into git
   shell: "git lfs install"
