@@ -50,13 +50,13 @@
     url: https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh
     method: GET
     return_content: yes
-  environment:
-    - os: "ubuntu"
-    - dist: "focal"
   register: gitlfs_install_script
 
 - name: Run git LFS install script
   shell: "{{ gitlfs_install_script.content }}"
+  environment:
+    - os: "ubuntu"
+    - dist: "focal"
 
 - name: Install Git LFS into git
   shell: "git lfs install"
