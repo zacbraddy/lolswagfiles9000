@@ -12,6 +12,7 @@ g_applications:
   - emacs27
   - fd-find
   - git
+  - git-lfs=2.13.1
   - gnome-tweak-tool
   - gnupg
   - gnupg2
@@ -33,7 +34,6 @@ g_externalDebs:
   - https://zoom.us/client/latest/zoom_amd64.deb
   - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.12.1-amd64.deb
   - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - https://packagecloud.io/github/git-lfs/packages/ubuntu/focal/git-lfs_2.13.1_amd64.deb
 
 g_snapApplications:
   - discord
