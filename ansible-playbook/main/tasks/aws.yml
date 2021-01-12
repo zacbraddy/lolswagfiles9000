@@ -22,7 +22,7 @@
 - name: Install AWS CLI
   become: yes
   become_method: sudo
-  shell: ~/.inst_temp/awscli/install
+  shell: "/home/{{ currentUser }}/.inst_temp/awscli/install"
   args:
     executable: /bin/zsh
   when: aws_installed.rc != 0

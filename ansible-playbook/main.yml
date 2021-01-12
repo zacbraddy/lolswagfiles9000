@@ -60,6 +60,8 @@
     - import_tasks: main/tasks/os-settings.yml
 
     - import_tasks: main/tasks/aws.yml
+      vars:
+        - currentUser: "{{ g_currentUser }}"
 
     - name: Clean up install temp directory
       file:
