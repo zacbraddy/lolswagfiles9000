@@ -44,3 +44,6 @@
   with_items:
     - .gitconfig
     - .gitignore_global
+
+- name: Install lfs into git
+  shell: git lfs install

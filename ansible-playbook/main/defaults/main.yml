@@ -65,8 +65,8 @@ g_urlBasedAptRepos:
     filename: spotify
   - repoLink: deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
     filename: brave-browser-release
-  - repoLink: https://packagecloud.io/install/repositories/github/git-lfs/config_file.list?os=ubuntu&dist=focal&source=script
-    filename: git-lfs
+  - repoLink: deb https://packagecloud.io/github/git-lfs/ubuntu/ focal main
+    filename: github_git-lfs
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
