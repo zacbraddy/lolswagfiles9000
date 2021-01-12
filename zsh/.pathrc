@@ -22,3 +22,6 @@ PATH="$HOME/.kubectx:$PATH"
 
 # Doom emacs
 PATH="$HOME/.emacs.d/bin:$PATH"
+
+# Poetry
+PATH="$HOME/.poetry/bin:$PATH"
