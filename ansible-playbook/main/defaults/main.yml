@@ -42,8 +42,10 @@ g_snapApplications:
   - vlc
    
 g_npmGlobals:
+  - c4builder
   - cowsay
   - lolcatjs
+  - marked
 
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
