@@ -45,7 +45,7 @@ g_npmGlobals:
   - c4builder
   - cowsay
   - lolcatjs
-  - marked
+  - yarn
 
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
