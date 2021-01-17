@@ -61,3 +61,5 @@
 (package! exec-path-from-shell)
 (package! xml)
 (package! treemacs-evil)
+(package! yasnippet)
+(package! company-jedi)

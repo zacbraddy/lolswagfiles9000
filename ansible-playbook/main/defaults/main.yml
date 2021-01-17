@@ -86,5 +86,6 @@ g_pipx_modules:
   - flake8
   - mypy
   - pylint
+  - virtualenv
 
 g_jetBrainsMonoVersion: 2.221
