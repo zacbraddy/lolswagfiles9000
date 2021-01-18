@@ -62,4 +62,5 @@
 (package! xml)
 (package! treemacs-evil)
 (package! yasnippet)
+(package! yasnippet-snippets)
 (package! company-jedi)

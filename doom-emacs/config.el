@@ -119,3 +119,6 @@
 
 (exec-path-from-shell-initialize)
 (setq multi-term-program "/bin/zsh")
+
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/snippets")

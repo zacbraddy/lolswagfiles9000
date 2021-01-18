@@ -11,7 +11,11 @@
         state: directory
         mode: '0755'
 
-    - import_tasks: main/tasks/apt-installs.yml
+    - import_tasks: main/tasks/homebrew.yml
+      vars:
+        - homebrewVersion: "{{ g_homebrewVersion }}"
+
+    - import_tasks: main/tasks/application-installs.yml
       vars:
         - applications: "{{ g_applications }}"
         - ppaBasedAptRepos: "{{ g_ppaBasedAptRepos }}"
@@ -19,6 +23,7 @@
         - aptKeysNeeded: "{{ g_aptKeysNeeded }}"
         - externalDebs: "{{ g_externalDebs }}"
         - snapApplications: "{{ g_snapApplications }}"
+        - homebrewApplications: "{{ g_homebrewApplications }}"
 
     - import_tasks: main/tasks/git.yml
       vars:

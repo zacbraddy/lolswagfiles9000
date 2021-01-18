@@ -44,10 +44,16 @@
     state: present
   loop: "{{ externalDebs }}"
 
-- name: Install Postman
+- name: Install Snap packages
   become: yes
   become_method: sudo
   community.general.snap:
     name: "{{ item }}"
     state: present
   loop: "{{ snapApplications }}"
+
+- name: Install homebrew packages
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrewApplications }}"

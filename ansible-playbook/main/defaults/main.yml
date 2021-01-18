@@ -40,6 +40,9 @@ g_snapApplications:
   - obs-studio
   - postman
   - vlc
+
+g_homebrewApplications:
+  - aws-vault
    
 g_npmGlobals:
   - c4builder
@@ -89,3 +92,4 @@ g_pipx_modules:
   - virtualenv
 
 g_jetBrainsMonoVersion: 2.221
+g_homebrewVersion: 2.7.5
