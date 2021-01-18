@@ -91,6 +91,7 @@ g_pipx_modules:
   - flake8
   - mypy
   - pylint
+  - pytest
   - virtualenv
 
 g_jetBrainsMonoVersion: 2.221
