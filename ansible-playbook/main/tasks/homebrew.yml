@@ -16,6 +16,8 @@
   when: homebrew_installed.stdout != homebrewVersion
 
 - name: Install Homebrew
+  become: yes
+  become_method: sudo
   shell: "{{ homebrew_install_script.content }}"
   when: homebrew_installed.stdout != homebrewVersion
   args:
