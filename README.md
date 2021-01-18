@@ -27,6 +27,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 ### Applications
 
 - [Audacity](https://www.audacityteam.org/)
+- [AWS Vault](https://github.com/99designs/aws-vault)
 - [Brave browser](https://brave.com/)
 - [Discord](https://discord.com/)
 - [Docker](https://www.docker.com/)
@@ -59,6 +60,14 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - ansible
 - software-properties-common
 
+**AWS Vault**
+
+- build-essential
+- curl
+- file
+- git
+- Homebrew
+
 **docker**
 
 - apt-transport-https
@@ -90,6 +99,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 ### Frameworks
 
 - [OhMyZSH!](https://ohmyz.sh/)
+- [Homebrew](https://docs.brew.sh/Homebrew-on-Linux)
 
 ### Available Language Editors/Runtimes
 

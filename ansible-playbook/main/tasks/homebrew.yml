@@ -17,6 +17,14 @@
 
 - name: Install Homebrew
   shell: "{{ homebrew_install_script.content }}"
+  become: yes
+  become_method: sudo
   when: homebrew_installed.stdout != homebrewVersion
   args:
     executable: /bin/bash
+
+- name: Install homebrew packages
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrewApplications }}"

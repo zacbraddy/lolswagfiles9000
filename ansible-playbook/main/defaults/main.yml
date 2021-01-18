@@ -3,6 +3,7 @@ g_applications:
   - apt-transport-https
   - audacity
   - brave-browser
+  - build-essential
   - ca-certificates
   - containerd.io
   - curl
@@ -10,6 +11,7 @@ g_applications:
   - docker-ce-cli
   - default-jdk
   - emacs27
+  - file
   - fd-find
   - git
   - git-lfs=2.13.1

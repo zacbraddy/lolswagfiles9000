@@ -51,9 +51,3 @@
     name: "{{ item }}"
     state: present
   loop: "{{ snapApplications }}"
-
-- name: Install homebrew packages
-  community.general.homebrew:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ homebrewApplications }}"
