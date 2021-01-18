@@ -1,9 +1,9 @@
 - name: Confirm homebrew install
-  shell: "source ~/.zshrc && brew --version"
+  shell: "source ~/.zshrc && brew --version | grep {{ homebrewVersion }} -c"
   register: homebrew_installed
   ignore_errors: true
   failed_when: False
-  changed_when: homebrew_installed.stdout != homebrewVersion
+  changed_when: homebrew_installed.stdout != 1
   args:
     executable: /bin/zsh
 
@@ -13,11 +13,11 @@
     method: GET
     return_content: yes
   register: homebrew_install_script
-  when: homebrew_installed.stdout != homebrewVersion
+  when: homebrew_installed.stdout != 1
 
 - name: Install Homebrew
   shell: "{{ homebrew_install_script.content }}"
-  when: homebrew_installed.stdout != homebrewVersion
+  when: homebrew_installed.stdout != 1
   args:
     executable: /bin/bash
 
@@ -26,3 +26,7 @@
     name: "{{ item }}"
     state: present
   loop: "{{ homebrewApplications }}"
+  # Path variable won't be updated for brew yet so we have to add
+  # it for the task so that brew can run correctly
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin"
