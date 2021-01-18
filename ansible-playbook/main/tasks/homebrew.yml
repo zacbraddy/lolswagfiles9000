@@ -17,8 +17,6 @@
 
 - name: Install Homebrew
   shell: "{{ homebrew_install_script.content }}"
-  become: yes
-  become_method: sudo
   when: homebrew_installed.stdout != homebrewVersion
   args:
     executable: /bin/bash

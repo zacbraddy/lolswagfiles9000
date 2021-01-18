@@ -24,3 +24,6 @@ PATH="$HOME/.emacs.d/bin:$PATH"
 
 # Poetry
 PATH="$HOME/.poetry/bin:$PATH"
+
+# Homebrew
+PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
