@@ -14,7 +14,7 @@ g_applications:
   - file
   - fd-find
   - git
-  - git-lfs=2.13.1
+  - git-lfs=2.13.2
   - gnome-tweak-tool
   - gnupg
   - gnupg2
