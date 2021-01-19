@@ -13,3 +13,4 @@ source ~/.zsh/.functionsrc
 source ~/.zsh/.pathrc
 source ~/.zsh/.completionsrc
 source ~/.zsh/.startuprc
+source ~/.zsh/.anonrc

@@ -53,6 +53,12 @@
     - src: zsh/.startuprc
       dest: .zsh/.startuprc
 
+- name: Make sure that the anon zsh config exists
+  file:
+    path: ~/.zsh/.anonrc
+    state: touch
+    mode: '0755'
+
 - name: Set default shell to ZSH
   become: yes
   user:
