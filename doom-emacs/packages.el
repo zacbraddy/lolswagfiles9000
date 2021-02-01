@@ -64,3 +64,4 @@
 (package! yasnippet)
 (package! yasnippet-snippets)
 (package! company-jedi)
+(package! undo-tree)

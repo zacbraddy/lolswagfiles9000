@@ -11,6 +11,7 @@ g_applications:
   - docker-ce-cli
   - default-jdk
   - emacs27
+  - entr
   - file
   - fd-find
   - git
@@ -36,6 +37,7 @@ g_externalDebs:
   - https://zoom.us/client/latest/zoom_amd64.deb
   - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.12.2-amd64.deb
   - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  - https://github.com/Arattian/DynamoDb-GUI-Client/releases/download/v2.1.1/DynamoDbGUI-linux-amd64-2.1.1.deb
 
 g_snapApplications:
   - discord

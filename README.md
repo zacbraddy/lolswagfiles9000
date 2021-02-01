@@ -32,6 +32,8 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [Discord](https://discord.com/)
 - [Docker](https://www.docker.com/)
 - [Doom Emacs](https://github.com/hlissner/doom-emacs)
+- [DynamoDB GUI](https://github.com/Arattian/DynamoDb-GUI-Client)
+- [Entr](http://eradman.com/entrproject/)
 - Git
 - [Git LFS](https://git-lfs.github.com/)
 - [Google Cloud CLI](https://cloud.google.com/sdk)

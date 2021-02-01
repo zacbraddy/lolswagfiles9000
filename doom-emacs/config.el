@@ -110,6 +110,7 @@
 (setq flycheck-python-flake8-executable "python3")
 (setq flycheck-python-pycompile-executable "python3")
 (setq flycheck-python-pylint-executable "python3")
+(setq flycheck-flake8rc ".flake8")
 
 (setq elpy-rpc-python-command "python3")
 
@@ -122,3 +123,6 @@
 
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/snippets")
+
+(global-undo-tree-mode)
+(evil-set-undo-system 'undo-tree)
