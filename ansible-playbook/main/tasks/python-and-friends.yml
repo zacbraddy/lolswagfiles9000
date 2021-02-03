@@ -40,7 +40,7 @@
 - name: Install pipx modules
   shell: "source ~/.zshrc && pipx install {{ item }}"
   register: pip_module_install
-  changed_when: pip_module_install.rc == 0 or pip_module_install.stdout is search("already seems to be installed")
+  changed_when: pip_module_install.rc == 0 or "already seems to be installed" in pip_module_install.stdout
   loop: "{{ pipx_modules }}"
   args:
     executable: /bin/zsh
