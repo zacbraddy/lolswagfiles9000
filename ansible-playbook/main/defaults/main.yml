@@ -25,6 +25,8 @@ g_applications:
   - httpie
   - kubectl
   - python3
+  - python3.9
+  - python3.9-dev
   - python3-venv
   - ripgrep
   - software-properties-common
@@ -59,6 +61,7 @@ g_ppaBasedAptRepos:
   - ppa:git-core/ppa
   - ppa:kelleyk/emacs
   - ppa:ubuntuhandbook1/audacity
+  - ppa:deadsnakes/ppa
 
 g_urlBasedAptRepos:
   - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
