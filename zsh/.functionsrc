@@ -2,3 +2,16 @@
 kadc() {
     docker ps -q | for i in $(cat) ; do docker stop $i; docker rm $i; done
 }
+
+explode_local_docker() {
+    echo "=================== CONTAINERS ==================="
+    docker ps -a
+    echo "=============== CLEANING CONTAINERS =============="
+    docker rm -f $(docker ps -aq)
+    echo "================ CLEANING VOLUMES ================"
+    docker volume prune -f
+    echo "=================== CONTAINERS ==================="
+    docker ps -a
+}
+
+

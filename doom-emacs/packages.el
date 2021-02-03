@@ -65,3 +65,4 @@
 (package! yasnippet-snippets)
 (package! company-jedi)
 (package! undo-tree)
+(package! python-black)

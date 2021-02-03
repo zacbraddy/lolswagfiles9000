@@ -97,11 +97,6 @@
                              (enable-minor-mode
                               '("\\.svelte?\\'" . prettier-js-mode))))
 
-(add-hook 'python-mode-hook 'anaconda-mode)
-
-(add-hook 'elpy-mode-hook (lambda ()
-                            (add-hook 'before-save-hook
-                                      'elpy-black-fix-code nil t)))
 
 (map! (:when(featurep! :lang python)
        (:map elpy-mode-map :leader
@@ -109,8 +104,32 @@
 
 (setq flycheck-python-flake8-executable "python3")
 (setq flycheck-python-pycompile-executable "python3")
-(setq flycheck-python-pylint-executable "python3")
 (setq flycheck-flake8rc ".flake8")
+;; I don't want to use pylint right now but might want to in the future
+(setq flycheck-python-pylint-executable "python3")
+(setq-default flycheck-disabled-checkers '(python-pylint))
+
+;;(add-hook 'python-mode-hook 'anaconda-mode)
+(add-hook 'python-mode-hook 'lsp)
+(add-hook 'python-mode-hook 'python-black-on-save-mode)
+
+;; BEGIN COPY PASTA FROM https://github.com/flycheck/flycheck/issues/1762#issuecomment-749789589
+;; Add buffer local Flycheck checkers after LSP for different major modes.
+(defvar-local my-flycheck-local-cache nil)
+(defun my-flycheck-local-checker-get (fn checker property)
+  ;; Only check the buffer local cache for the LSP checker, otherwise we get
+  ;; infinite loops.
+  (if (eq checker 'lsp)
+      (or (alist-get property my-flycheck-local-cache)
+          (funcall fn checker property))
+    (funcall fn checker property)))
+(advice-add 'flycheck-checker-get
+            :around 'my-flycheck-local-checker-get)
+(add-hook 'lsp-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'python-mode)
+              (setq my-flycheck-local-cache '((next-checkers . (python-flake8)))))))
+;; END COPY PASTA
 
 (setq elpy-rpc-python-command "python3")
 
