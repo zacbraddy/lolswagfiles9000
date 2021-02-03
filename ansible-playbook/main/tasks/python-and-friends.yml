@@ -1,3 +1,10 @@
+- name: Symlink python to latest version
+  file:
+    src: "/usr/bin/python3.9"
+    dest: "/usr/bin/python3"
+    force: true
+    state: link
+
 - name: Ensure we actually have pip itself, crazy but it happens!
   shell: python3 -m pip --version
   register: pip_installed
