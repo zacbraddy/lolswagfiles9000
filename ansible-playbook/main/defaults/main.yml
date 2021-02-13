@@ -24,7 +24,6 @@ g_applications:
   - guvcview
   - httpie
   - kubectl
-  - mongodb-org
   - python3
   - python3.9
   - python3.9-dev
@@ -81,8 +80,6 @@ g_urlBasedAptRepos:
     filename: brave-browser-release
   - repoLink: deb https://packagecloud.io/github/git-lfs/ubuntu/ focal main
     filename: github_git-lfs
-  - repoLink: deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse
-    filename: mongodb-org-4.4
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -90,7 +87,6 @@ g_aptKeysNeeded:
   - https://download.spotify.com/debian/pubkey_0D811D58.gpg
   - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
   - https://packagecloud.io/github/git-lfs/gpgkey
-  - https://www.mongodb.org/static/pgp/server-4.4.asc
 
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
