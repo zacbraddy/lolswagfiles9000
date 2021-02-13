@@ -43,6 +43,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [httpie](https://httpie.io/)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
 - [kubectx + kubens](https://github.com/ahmetb/kubectx/)
+- [MongoDB Community Edition](https://www.mongodb.com/)
 - [NVM](https://github.com/nvm-sh/nvm)
 - [OBS](https://obsproject.com/)
 - [pipx](https://github.com/pipxproject/pipx)
