@@ -112,6 +112,7 @@
 ;;(add-hook 'python-mode-hook 'anaconda-mode)
 (add-hook 'python-mode-hook 'lsp)
 (add-hook 'python-mode-hook 'python-black-on-save-mode)
+(add-hook 'python-mode-hook (lambda() (add-hook 'before-save-hook 'py-isort-before-save)))
 
 ;; BEGIN COPY PASTA FROM https://github.com/flycheck/flycheck/issues/1762#issuecomment-749789589
 ;; Add buffer local Flycheck checkers after LSP for different major modes.
