@@ -142,7 +142,7 @@
 (setq multi-term-program "/bin/zsh")
 
 (yas/initialize)
-(yas/load-directory "~/.emacs.d/snippets")
+;; (yas/load-directory "~/.emacs.d/snippets")
 
 (global-undo-tree-mode)
 (evil-set-undo-system 'undo-tree)

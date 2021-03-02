@@ -88,6 +88,10 @@ g_aptKeysNeeded:
   - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
   - https://packagecloud.io/github/git-lfs/gpgkey
 
+g_appImages:
+  - url: https://github.com/bitwarden/desktop/releases/download/v1.24.6/Bitwarden-1.24.6-x86_64.AppImage
+    destName: Bitwarden-1.24.6-x86_64
+
 g_nvmVersion: 0.37.2
 g_sshPublicKeyLocation: ~/.ssh/id_rsa
 g_currentUser: "{{ ansible_user_id }}"

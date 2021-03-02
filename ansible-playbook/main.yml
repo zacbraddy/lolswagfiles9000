@@ -19,6 +19,7 @@
         - aptKeysNeeded: "{{ g_aptKeysNeeded }}"
         - externalDebs: "{{ g_externalDebs }}"
         - snapApplications: "{{ g_snapApplications }}"
+        - appImages: "{{ g_appImages }}"
 
     - import_tasks: main/tasks/git.yml
       vars:
