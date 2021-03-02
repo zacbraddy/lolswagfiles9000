@@ -54,7 +54,8 @@
 
 - name: Download appImages
   get_url:
-    url: "{{ appImages.url }}"
-    dest: "~/appImages/{{ appImages.destName }}.AppImage"
+    url: "{{ item.url }}"
+    dest: "~/appImages/{{ item.destName }}.AppImage"
     mode: '0755'
     force: no
+  loop: "{{ appImages }}"
