@@ -52,10 +52,15 @@
     state: present
   loop: "{{ snapApplications }}"
 
+- name: Make sure we have a appImages directory
+  command:
+    cmd: "mkdir -p ~/.appImages"
+    warn: false
+
 - name: Download appImages
   get_url:
     url: "{{ item.url }}"
-    dest: "~/appImages/{{ item.destName }}.AppImage"
+    dest: "~/.appImages/{{ item.destName }}.AppImage"
     mode: '0755'
     force: no
   loop: "{{ appImages }}"
