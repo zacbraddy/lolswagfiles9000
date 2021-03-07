@@ -11,3 +11,6 @@ bashcompinit
 eval "$(register-python-argcomplete pipx)"
 
 autoload -U compinit compdef && compinit
+
+# Serverless framework completions
+[ -f ~/.config/tabtab/__tabtab.bash ] && . ~/.config/tabtab/__tabtab.bash || true
