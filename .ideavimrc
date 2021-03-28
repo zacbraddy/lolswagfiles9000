@@ -1,0 +1,55 @@
+" Vim Settings ------------------------------
+  syntax on
+
+  " Turn on line numbers
+  set number
+
+  " Turn on relative line number
+  set relativenumber
+
+  " Remap the leader key
+  nnoremap <SPACE> <Nop>
+  let mapleader = " "
+
+" Productivity commands ----------------------
+  " Toggle case on the current word
+  inoremap <c-u> <esc>viw~<esc>ea
+  nnoremap <c-u> viw~<esc>
+
+  " Exit insert/visual mode easier
+  inoremap jk <esc>
+  vnoremap jk <esc>
+
+  " Quick re-source
+  nnoremap <Leader>sv :source ~/.ideavimrc<cr>
+
+  " Try and make copy pasting less painful
+  nnoremap <Leader>y "+y
+  nnoremap <Leader>Y "+Y
+  nnoremap <Leader>c "+c
+  nnoremap <Leader>C "+C
+  nnoremap <Leader>d "+d
+  nnoremap <Leader>D "+D
+  nnoremap <Leader>p "+p
+  nnoremap <Leader>P "+P
+
+  " quicksave
+  nnoremap <Leader>fs :w<cr>
+  nnoremap <Leader>fS :wa<cr>
+
+" Mappings for IDEA actions
+  map <Leader><Leader> <Action>(SearchEverywhere)
+  map <Leader>ot <Action>(ActivateTerminalToolWindow)
+  map <Leader>. <Action>(Switcher)
+  map <Leader>gg <Action>(ActivateVersionControlToolWindow)
+  map <Leader>, <Action>(NewFile)
+
+" NERDTree settings
+  nnoremap <Leader>op :NERDTree<cr>
+
+" IdeaVim Plugins ------------------------------
+  set easymotion
+  set NERDTree
+  set surround
+  set commentary
+  set highlightedyank
