@@ -43,6 +43,7 @@
   map <Leader>. <Action>(Switcher)
   map <Leader>gg <Action>(ActivateVersionControlToolWindow)
   map <Leader>, <Action>(NewFile)
+  map <Leader>cr <Action>(RenameElement)
 
 " NERDTree settings
   nnoremap <Leader>op :NERDTree<cr>
