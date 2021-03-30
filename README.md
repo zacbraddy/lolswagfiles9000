@@ -32,11 +32,9 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [DBeaver](https://dbeaver.io/)
 - [Discord](https://discord.com/)
 - [Docker](https://www.docker.com/)
-- [Doom Emacs](https://github.com/hlissner/doom-emacs)
 - [DynamoDB GUI](https://github.com/Arattian/DynamoDb-GUI-Client)
 - [Entr](http://eradman.com/entrproject/)
 - Git
-- [Git LFS](https://git-lfs.github.com/)
 - [Google Cloud CLI](https://cloud.google.com/sdk)
 - [Google Chrome](https://www.google.co.uk/chrome/)
 - [Gnome Tweaks](https://wiki.gnome.org/Apps/Tweaks)
@@ -51,6 +49,7 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [Slack](https://slack.com/intl/en-gb/)
 - [Spotify](https://www.spotify.com/us/)
 - [tmux](https://github.com/tmux/tmux)
+- [Jetbrains Toolbox](https://www.jetbrains.com/toolbox-app) - So I can install all my Jetbrains tools
 - [VirtualBox](https://www.virtualbox.org/)
 - [vlc](https://www.videolan.org/)
 - zsh

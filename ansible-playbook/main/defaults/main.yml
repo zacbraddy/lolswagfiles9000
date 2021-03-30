@@ -10,12 +10,10 @@ g_applications:
   - docker-ce
   - docker-ce-cli
   - default-jdk
-  - emacs27
   - entr
   - file
   - fd-find
   - git
-  - git-lfs=2.13.2
   - gnome-tweak-tool
   - gnupg
   - gnupg2
@@ -61,7 +59,6 @@ g_npmGlobals:
 
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
-  - ppa:kelleyk/emacs
   - ppa:ubuntuhandbook1/audacity
   - ppa:deadsnakes/ppa
 
@@ -80,8 +77,6 @@ g_urlBasedAptRepos:
     filename: spotify
   - repoLink: deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
     filename: brave-browser-release
-  - repoLink: deb https://packagecloud.io/github/git-lfs/ubuntu/ focal main
-    filename: github_git-lfs
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -106,5 +101,4 @@ g_pipx_modules:
   - pytest
   - virtualenv
 
-g_jetBrainsMonoVersion: 2.221
 g_homebrewVersion: 2.7.5

@@ -59,9 +59,7 @@
 
     - import_tasks: main/tasks/docker.yml
 
-    - import_tasks: main/tasks/doom-emacs.yml
-      vars:
-        jetBrainsMonoVersion: "{{ g_jetBrainsMonoVersion }}"
+    - import_tasks: main/tasks/jetbrains.yml
 
     - import_tasks: main/tasks/os-settings.yml
 

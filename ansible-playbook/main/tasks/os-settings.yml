@@ -39,12 +39,6 @@
     value: "'ubuntu-mono-dark'"
     state: present
 
-- name: Put in my keyboard tweaks
-  community.general.dconf:
-    key: "/org/gnome/desktop/input-sources/xkb-options"
-    value: "['caps:backspace', 'shift:both_capslock']"
-    state: present
-
 - name: And all my favourite apps will be there
   community.general.dconf:
     key: "/org/gnome/shell/favorite-apps"
