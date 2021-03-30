@@ -35,7 +35,7 @@ g_applications:
 
 g_externalDebs:
   - https://zoom.us/client/latest/zoom_amd64.deb
-  - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.13.0-amd64.deb
+  - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.14.0-amd64.deb
   - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   - https://github.com/Arattian/DynamoDb-GUI-Client/releases/download/v2.1.1/DynamoDbGUI-linux-amd64-2.1.1.deb
   - https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
