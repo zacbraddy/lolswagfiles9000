@@ -46,6 +46,12 @@ g_snapApplications:
   - postman
   - vlc
 
+g_flatpakApplications:
+  - com.discordapp.Discord
+  - com.obsproject.Studio
+  - com.getpostman.Postman
+  - org.videolan.VLC
+
 g_homebrewApplications:
   - aws-vault
    

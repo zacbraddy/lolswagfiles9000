@@ -44,7 +44,7 @@
     state: present
   loop: "{{ externalDebs }}"
 
-- name: "Do we have docker-compose because force=no doesn't seem to work!!"
+- name: "Do we have snap installed?"
   stat:
     path: /usr/bin/snap
   register: snap_installed
@@ -57,6 +57,20 @@
     state: present
   loop: "{{ snapApplications }}"
   when: snap_installed.stat.exists
+
+- name: "Do we have flatpak installed?"
+  stat:
+    path: /usr/bin/flatpak
+  register: flatpak_installed
+
+- name: Install flatpak packages if we haven't already done so with snap
+  become: yes
+  become_method: sudo
+  flatpak:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ flatpakApplications }}"
+  when: not snap_installed.stat.exists and flatpak_installed.stat.exists
 
 - name: Make sure we have a appImages directory
   command:
