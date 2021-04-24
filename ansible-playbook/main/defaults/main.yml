@@ -31,6 +31,7 @@ g_applications:
   - spotify-client
   - tmux
   - virtualbox
+  - v4l-utils
   - zsh
 
 g_externalDebs:

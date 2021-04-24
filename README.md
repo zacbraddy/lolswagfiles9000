@@ -186,3 +186,14 @@ The plugins I'm using are:
 - [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect)
 - [tmux-yank](https://github.com/tmux-plugins/tmux-yank)
 - [tmux-continuum](https://github.com/tmux-plugins/tmux-continuum)
+
+## Things I haven't included in the dot files that I need to do
+### Webcam fix
+The logitech webcam I use struggles to work correctly on linux so I have to set some settings for it. I need to automate the camera-fix-script stuff so that it looks alright and doesn't lose it's settings every time I reboot
+
+Below doesn't seem to work right now but it's something like this I want to do
+```shell
+sudo ln -s ~/Projects/Personal/lolswagfiles9000/camera-fix.service /etc/systemd/system/camera-fix.service
+sudo chmod 644 /etc/systemd/system/camera-fix.service
+sudo systemctl enable camera-fix.service
+```
