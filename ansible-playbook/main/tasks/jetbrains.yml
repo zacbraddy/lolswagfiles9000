@@ -1,6 +1,6 @@
 - name: "Do we have jetbrains toolbox because force=no doesn't seem to work!!"
   stat:
-    path: /usr/local/bin/docker-compose
+    path: "~/jetbrains-toolbox"
   register: jetbrainsToolbox
 
 - name: Download Jetbrains Toolbox
