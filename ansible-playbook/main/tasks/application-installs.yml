@@ -56,7 +56,7 @@
     name: "{{ item }}"
     state: present
   loop: "{{ snapApplications }}"
-  when: snap.stat.exists
+  when: snap_installed.stat.exists
 
 - name: Make sure we have a appImages directory
   command:
