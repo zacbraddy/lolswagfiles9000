@@ -21,6 +21,7 @@
         - snapApplications: "{{ g_snapApplications }}"
         - appImages: "{{ g_appImages }}"
         - flatpakApplications: "{{g_flatpakApplications}}"
+        - flatpakRepos: "{{g_flatpakRepos}}"
 
     - import_tasks: main/tasks/git.yml
       vars:

@@ -63,6 +63,16 @@
     path: /usr/bin/flatpak
   register: flatpak_installed
 
+- name: "Ensure we have the flatpak repos we need"
+  become: yes
+  become_method: sudo
+  flatpak_remote:
+    name: "{{ item.name }}"
+    state: present
+    flatpakrepo_url: "{{ item.url }}"
+  loop: "{{ flatpakRepos }}"
+  when: not snap_installed.stat.exists and flatpak_installed.stat.exists
+
 - name: Install flatpak packages if we haven't already done so with snap
   become: yes
   become_method: sudo
