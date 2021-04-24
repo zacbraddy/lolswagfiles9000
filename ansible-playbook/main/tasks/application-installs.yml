@@ -44,6 +44,15 @@
     state: present
   loop: "{{ externalDebs }}"
 
+- name: Check if we have snap
+  shell: "snap --version"
+  register: snap_installed
+  ignore_errors: true
+  changed_when: snap_installed.rc != 0
+  failed_when: False
+  args:
+    executable: /bin/zsh
+
 - name: Install Snap packages
   become: yes
   become_method: sudo
@@ -51,6 +60,7 @@
     name: "{{ item }}"
     state: present
   loop: "{{ snapApplications }}"
+  when: snap_installed.rc != 0
 
 - name: Make sure we have a appImages directory
   command:
