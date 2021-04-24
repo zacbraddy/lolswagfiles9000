@@ -44,14 +44,10 @@
     state: present
   loop: "{{ externalDebs }}"
 
-- name: Check if we have snap
-  shell: "snap --version"
+- name: "Do we have docker-compose because force=no doesn't seem to work!!"
+  stat:
+    path: /usr/bin/snap
   register: snap_installed
-  ignore_errors: true
-  changed_when: snap_installed.rc != 0
-  failed_when: False
-  args:
-    executable: /bin/zsh
 
 - name: Install Snap packages
   become: yes
@@ -60,7 +56,7 @@
     name: "{{ item }}"
     state: present
   loop: "{{ snapApplications }}"
-  when: snap_installed.rc != 0
+  when: snap.stat.exists
 
 - name: Make sure we have a appImages directory
   command:
