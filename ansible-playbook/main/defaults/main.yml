@@ -107,6 +107,7 @@ g_currentUser: "{{ ansible_user_id }}"
 g_pipx_modules:
   - black
   - flake8
+  - isort
   - mypy
   - pylint
   - pytest
