@@ -45,6 +45,11 @@
     - .gitconfig
     - .gitignore_global
 
+- name: Make the templates config directory
+  command:
+    cmd: "mkdir -p ~/.config/git/template"
+    warn: false
+
 - name: Add template so git names root branches main
   file:
     src: "~/Projects/Personal/lolswagfiles9000/HEAD"
