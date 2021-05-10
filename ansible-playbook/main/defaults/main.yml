@@ -22,6 +22,7 @@ g_applications:
   - google-cloud-sdk
   - graphviz
   - guvcview
+  - heroku
   - httpie
   - kubectl
   - libpq-dev
@@ -91,6 +92,8 @@ g_urlBasedAptRepos:
     filename: spotify
   - repoLink: deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
     filename: brave-browser-release
+  - repoLink: deb https://cli-assets.heroku.com/apt ./
+    filename: heroku
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -98,6 +101,7 @@ g_aptKeysNeeded:
   - https://download.spotify.com/debian/pubkey_0D811D58.gpg
   - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
   - https://packagecloud.io/github/git-lfs/gpgkey
+  - https://cli-assets.heroku.com/apt/release.key
 
 g_appImages:
   - url: https://github.com/bitwarden/desktop/releases/download/v1.24.6/Bitwarden-1.24.6-x86_64.AppImage

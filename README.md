@@ -106,6 +106,9 @@ It needs to be said that the above assumes the machine has Make installed on it 
 **postgres**
 - libpq-dev
 
+**heroku-cli**
+- heroku
+
 ### Frameworks
 
 - [OhMyZSH!](https://ohmyz.sh/)
