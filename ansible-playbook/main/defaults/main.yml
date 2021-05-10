@@ -7,6 +7,7 @@ g_applications:
   - ca-certificates
   - containerd.io
   - curl
+  - default-libmysqlclient-dev
   - docker-ce
   - docker-ce-cli
   - default-jdk
@@ -19,9 +20,11 @@ g_applications:
   - gnupg2
   - gnupg-agent
   - google-cloud-sdk
+  - graphviz
   - guvcview
   - httpie
   - kubectl
+  - libpq-dev
   - python3
   - python3.9
   - python3.9-dev
