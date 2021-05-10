@@ -53,6 +53,6 @@
 - name: Add template so git names root branches main
   file:
     src: "~/Projects/Personal/lolswagfiles9000/HEAD"
-    dest: "~/.config/git/template"
+    dest: "~/.config/git/template/HEAD"
     force: true
     state: link

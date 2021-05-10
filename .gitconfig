@@ -1,5 +1,7 @@
 [init]
     templateDir = ~/.config/git/template/
+    defaultBranch = main
+
 [user]
   email = zacharybraddy@gmail.com
   name = Zac Braddy
