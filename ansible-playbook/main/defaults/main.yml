@@ -26,6 +26,7 @@ g_applications:
   - httpie
   - kubectl
   - libpq-dev
+  - mysql-server
   - python3
   - python3.9
   - python3.9-dev
@@ -44,7 +45,6 @@ g_externalDebs:
   - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   - https://github.com/Arattian/DynamoDb-GUI-Client/releases/download/v2.1.1/DynamoDbGUI-linux-amd64-2.1.1.deb
   - https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
-  - https://dev.mysql.com/get/mysql-apt-config_0.8.17-1_all.deb
 
 g_snapApplications:
   - discord
