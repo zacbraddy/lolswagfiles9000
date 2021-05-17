@@ -102,6 +102,7 @@ g_aptKeysNeeded:
   - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
   - https://packagecloud.io/github/git-lfs/gpgkey
   - https://cli-assets.heroku.com/apt/release.key
+  - https://www.postgresql.org/media/keys/ACCC4CF8.asc
 
 g_appImages:
   - url: https://github.com/bitwarden/desktop/releases/download/v1.24.6/Bitwarden-1.24.6-x86_64.AppImage
