@@ -92,7 +92,7 @@ g_urlBasedAptRepos:
     filename: brave-browser-release
   - repoLink: deb https://cli-assets.heroku.com/apt ./
     filename: heroku
-  - repoLink: deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main
+  - repoLink: deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main
     filename: pgdg
 
 g_aptKeysNeeded:
