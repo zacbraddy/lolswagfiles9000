@@ -29,10 +29,8 @@ It needs to be said that the above assumes the machine has Make installed on it 
 - [Audacity](https://www.audacityteam.org/)
 - [AWS Vault](https://github.com/99designs/aws-vault)
 - [Brave browser](https://brave.com/)
-- [DBeaver](https://dbeaver.io/)
 - [Discord](https://discord.com/)
 - [Docker](https://www.docker.com/)
-- [DynamoDB GUI](https://github.com/Arattian/DynamoDb-GUI-Client)
 - [Entr](http://eradman.com/entrproject/)
 - Git
 - [Google Cloud CLI](https://cloud.google.com/sdk)
@@ -100,11 +98,9 @@ It needs to be said that the above assumes the machine has Make installed on it 
 
 ### Things are only installed so I can work with clients that
 
-**mysql**
-- default-libmysqlclient-dev
-
 **postgres**
 - libpq-dev
+- postgres
 
 **heroku-cli**
 - heroku

@@ -7,7 +7,6 @@ g_applications:
   - ca-certificates
   - containerd.io
   - curl
-  - default-libmysqlclient-dev
   - docker-ce
   - docker-ce-cli
   - default-jdk
@@ -26,7 +25,7 @@ g_applications:
   - httpie
   - kubectl
   - libpq-dev
-  - mysql-server
+  - postgresql
   - python3
   - python3.9
   - python3.9-dev
@@ -43,8 +42,6 @@ g_externalDebs:
   - https://zoom.us/client/latest/zoom_amd64.deb
   - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.14.0-amd64.deb
   - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - https://github.com/Arattian/DynamoDb-GUI-Client/releases/download/v2.1.1/DynamoDbGUI-linux-amd64-2.1.1.deb
-  - https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
 
 g_snapApplications:
   - discord
@@ -95,6 +92,8 @@ g_urlBasedAptRepos:
     filename: brave-browser-release
   - repoLink: deb https://cli-assets.heroku.com/apt ./
     filename: heroku
+  - repoLink: deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main
+    filename: pgdg
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
