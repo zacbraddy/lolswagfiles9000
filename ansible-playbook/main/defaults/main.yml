@@ -61,6 +61,7 @@ g_flatpakRepos:
 
 g_homebrewApplications:
   - aws-vault
+  - act
    
 g_npmGlobals:
   - c4builder
