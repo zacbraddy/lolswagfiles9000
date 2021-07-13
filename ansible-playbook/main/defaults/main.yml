@@ -102,7 +102,6 @@ g_aptKeysNeeded:
   - https://download.docker.com/linux/ubuntu/gpg
   - https://download.spotify.com/debian/pubkey_0D811D58.gpg
   - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
-  - https://packagecloud.io/github/git-lfs/gpgkey
   - https://cli-assets.heroku.com/apt/release.key
   - https://www.postgresql.org/media/keys/ACCC4CF8.asc
 
