@@ -25,6 +25,7 @@ g_applications:
   - httpie
   - kubectl
   - libpq-dev
+  - pavucontrol
   - postgresql
   - python3
   - python3.9

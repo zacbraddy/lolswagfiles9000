@@ -51,3 +51,10 @@
     dest: "~/.config/mimeapps.list"
     force: true
     state: link
+
+- name: Setup symlink for pulse pulse audio
+  file:
+    src: "~/Projects/Personal/lolswagfiles9000/default.pa"
+    dest: "/etc/pulse/default.pa"
+    force: true
+    state: link
