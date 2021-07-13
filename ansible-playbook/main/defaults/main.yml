@@ -75,7 +75,6 @@ g_npmGlobals:
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
   - ppa:ubuntuhandbook1/audacity
-  - ppa:deadsnakes/ppa
 
 g_urlBasedAptRepos:
   - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
@@ -96,6 +95,8 @@ g_urlBasedAptRepos:
     filename: heroku
   - repoLink: deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main
     filename: pgdg
+  - repoLink: deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu/ focal main
+    filename: deadsnakes
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
