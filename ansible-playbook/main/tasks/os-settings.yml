@@ -53,6 +53,7 @@
     state: link
 
 - name: Setup symlink for pulse pulse audio
+  become: yes
   file:
     src: "~/Projects/Personal/lolswagfiles9000/default.pa"
     dest: "/etc/pulse/default.pa"
