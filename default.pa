@@ -142,12 +142,3 @@ load-module module-snap-policy
 ### loading modules and rerouting streams.
 load-module module-filter-heuristics
 load-module module-filter-apply
-
-### Make some devices default
-#set-default-sink output
-#set-default-source input
-
-### Begin Zac changes
-load-module module-null-sink
-load-module module-loopback
-load-module module-loopback
