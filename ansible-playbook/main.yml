@@ -64,6 +64,8 @@
     - import_tasks: main/tasks/jetbrains.yml
 
     - import_tasks: main/tasks/os-settings.yml
+      vars:
+        - currentUser: "{{ g_currentUser }}"
 
     - import_tasks: main/tasks/aws.yml
       vars:
