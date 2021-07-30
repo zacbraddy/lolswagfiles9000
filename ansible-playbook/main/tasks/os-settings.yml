@@ -60,3 +60,12 @@
     dest: "/etc/pulse/default.pa"
     force: true
     state: link
+
+- name: Setup symlink for Tuxedo keyboard colours
+  become: yes
+  become_method: sudo
+  file:
+    src: "/home/{{ currentUser }}/Projects/Personal/lolswagfiles9000/tuxedo_keyboard.conf"
+    dest: "/etc/modprobe.d/tuxedo_keyboard.conf"
+    force: true
+    state: link
