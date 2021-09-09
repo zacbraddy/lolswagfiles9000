@@ -4,6 +4,7 @@ g_applications:
   - audacity
   - brave-browser
   - build-essential
+  - blueman
   - ca-certificates
   - containerd.io
   - curl
