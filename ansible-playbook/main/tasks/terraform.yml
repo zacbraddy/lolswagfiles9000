@@ -6,6 +6,12 @@
   args:
     executable: /bin/zsh
 
+- name: Make sure we have the terraform cli install directory
+  command:
+    cmd: "mkdir -p ~/.inst_temp/terraform"
+    warn: false
+  when: terraform_installed.rc != 0
+
 - name: Download Terraform CLI
   unarchive:
     src: https://releases.hashicorp.com/terraform/1.0.7/terraform_1.0.7_linux_amd64.zip
