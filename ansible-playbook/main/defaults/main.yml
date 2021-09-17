@@ -20,6 +20,7 @@ g_applications:
   - gnupg2
   - gnupg-agent
   - google-cloud-sdk
+  - google-chrome-stable
   - graphviz
   - guvcview
   - heroku
@@ -43,7 +44,6 @@ g_applications:
 g_externalDebs:
   - https://zoom.us/client/latest/zoom_amd64.deb
   - https://downloads.slack-edge.com/linux_releases/slack-desktop-4.19.2-amd64.deb
-  - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
 g_snapApplications:
   - discord
