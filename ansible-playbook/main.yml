@@ -71,6 +71,8 @@
       vars:
         - currentUser: "{{ g_currentUser }}"
 
+    - import_tasks: main/tasks/terraform.yml
+
     - name: Clean up install temp directory
       file:
         path: ~/.inst_temp
