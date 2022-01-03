@@ -76,7 +76,6 @@ g_npmGlobals:
 
 g_ppaBasedAptRepos:
   - ppa:git-core/ppa
-  - ppa:ubuntuhandbook1/audacity
 
 g_urlBasedAptRepos:
   - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
