@@ -79,7 +79,7 @@ g_ppaBasedAptRepos:
   - ppa:ubuntuhandbook1/audacity
 
 g_urlBasedAptRepos:
-  - repoLink: deb https://apt.kubernetes.io/ kubernetes-impish main
+  - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
     filename: kubernetes
   - repoLink: deb https://packages.cloud.google.com/apt cloud-sdk main
     filename: google-cloud-sdk
