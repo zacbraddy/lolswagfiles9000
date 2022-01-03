@@ -83,11 +83,11 @@ g_urlBasedAptRepos:
     filename: kubernetes
   - repoLink: deb https://packages.cloud.google.com/apt cloud-sdk main
     filename: google-cloud-sdk
-  - repoLink: deb https://download.docker.com/linux/ubuntu impish stable
+  - repoLink: deb https://download.docker.com/linux/ubuntu focal stable
     filename: docker
-  - repoLink: deb http://archive.ubuntu.com/ubuntu/ impish universe
+  - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal universe
     filename: universe
-  - repoLink: deb http://archive.ubuntu.com/ubuntu/ impish multiverse
+  - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal multiverse
     filename: multiverse
   - repoLink: deb http://repository.spotify.com stable non-free
     filename: spotify
@@ -95,13 +95,13 @@ g_urlBasedAptRepos:
     filename: brave-browser-release
   - repoLink: deb https://cli-assets.heroku.com/apt ./
     filename: heroku
-  - repoLink: deb http://apt.postgresql.org/pub/repos/apt impish-pgdg main
+  - repoLink: deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main
     filename: pgdg
   - repoLink: deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu/ focal main
     filename: deadsnakes
-  - repoLink: deb http://cz.archive.ubuntu.com/ubuntu impish main
+  - repoLink: deb http://cz.archive.ubuntu.com/ubuntu focal main
     filename: python-dependencies
-  - repoLink: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
+  - repoLink: deb [arch=amd64] https://apt.releases.hashicorp.com focal main
     filename: terraform
 
 g_aptKeysNeeded:
