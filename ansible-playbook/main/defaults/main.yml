@@ -97,7 +97,7 @@ g_urlBasedAptRepos:
     filename: heroku
   - repoLink: deb http://apt.postgresql.org/pub/repos/apt impish-pgdg main
     filename: pgdg
-  - repoLink: deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu/ impish main
+  - repoLink: deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu/ focal main
     filename: deadsnakes
   - repoLink: deb http://cz.archive.ubuntu.com/ubuntu impish main
     filename: python-dependencies
