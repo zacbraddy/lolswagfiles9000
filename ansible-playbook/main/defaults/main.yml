@@ -37,6 +37,7 @@ g_applications:
   - software-properties-common
   - spotify-client
   - tmux
+  - terraform
   - virtualbox
   - v4l-utils
   - zsh
@@ -78,15 +79,15 @@ g_ppaBasedAptRepos:
   - ppa:ubuntuhandbook1/audacity
 
 g_urlBasedAptRepos:
-  - repoLink: deb https://apt.kubernetes.io/ kubernetes-xenial main
+  - repoLink: deb https://apt.kubernetes.io/ kubernetes-impish main
     filename: kubernetes
   - repoLink: deb https://packages.cloud.google.com/apt cloud-sdk main
     filename: google-cloud-sdk
-  - repoLink: deb https://download.docker.com/linux/ubuntu focal stable
+  - repoLink: deb https://download.docker.com/linux/ubuntu impish stable
     filename: docker
-  - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal universe
+  - repoLink: deb http://archive.ubuntu.com/ubuntu/ impish universe
     filename: universe
-  - repoLink: deb http://archive.ubuntu.com/ubuntu/ focal multiverse
+  - repoLink: deb http://archive.ubuntu.com/ubuntu/ impish multiverse
     filename: multiverse
   - repoLink: deb http://repository.spotify.com stable non-free
     filename: spotify
@@ -94,10 +95,13 @@ g_urlBasedAptRepos:
     filename: brave-browser-release
   - repoLink: deb https://cli-assets.heroku.com/apt ./
     filename: heroku
-  - repoLink: deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main
+  - repoLink: deb http://apt.postgresql.org/pub/repos/apt impish-pgdg main
     filename: pgdg
-  - repoLink: deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu/ focal main
+  - repoLink: deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu/ impish main
     filename: deadsnakes
+  - repoLink: deb http://cz.archive.ubuntu.com/ubuntu impish main
+    filename: python-dependencies
+  - repoLink: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -106,6 +110,7 @@ g_aptKeysNeeded:
   - https://brave-browser-apt-release.s3.brave.com/brave-core.asc
   - https://cli-assets.heroku.com/apt/release.key
   - https://www.postgresql.org/media/keys/ACCC4CF8.asc
+  - https://apt.releases.hashicorp.com/gpg
 
 g_appImages:
   - url: https://github.com/bitwarden/desktop/releases/download/v1.24.6/Bitwarden-1.24.6-x86_64.AppImage
