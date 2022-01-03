@@ -19,5 +19,3 @@ alias gr="git reset | amazeballs"
 
 # Plant UML
 alias plant="java -jar ${HOME}/plantuml.jar"
-
-alias terraform="~/terraform"
