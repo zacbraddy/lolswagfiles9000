@@ -23,7 +23,7 @@
 
 - name: Get completions for ZSH
   get_url:
-    url: "https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/{{ item }}.zsh"
+    url: "https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_{{ item }}.zsh"
     dest: "~/.oh-my-zsh/completions/_{{ item }}.zsh"
     mode: '0755'
   with_items:
