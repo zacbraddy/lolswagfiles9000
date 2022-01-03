@@ -102,6 +102,7 @@ g_urlBasedAptRepos:
   - repoLink: deb http://cz.archive.ubuntu.com/ubuntu impish main
     filename: python-dependencies
   - repoLink: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
+    filename: terraform
 
 g_aptKeysNeeded:
   - https://packages.cloud.google.com/apt/doc/apt-key.gpg
