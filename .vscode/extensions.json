@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "zhuangtongfa.Material-theme", // One Dark Pro
+    "dracula-theme.theme-dracula", // Dracula Official Theme
     "ms-python.python",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
