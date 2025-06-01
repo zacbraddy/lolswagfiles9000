@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "zhuangtongfa.Material-theme", // One Dark Pro
+    "ms-python.python",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-azuretools.vscode-docker",
+    "eamodio.gitlens",
+    "ms-vscode-remote.remote-containers",
+    "mhutchie.git-graph",
+    "ms-ossdata.vscode-postgresql",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}
