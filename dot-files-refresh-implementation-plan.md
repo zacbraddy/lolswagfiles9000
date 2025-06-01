@@ -5,7 +5,8 @@
 - [ ] Bootstrap Home Manager integration
 - [x] Implement shell.nix module (zsh, oh-my-zsh, terminal tools)
   - Base implementation complete and tested. Next: flesh out advanced zsh/oh-my-zsh customizations (prompt, plugins, aliases, etc.)
-- [ ] Implement editors.nix module (Cursor, PyCharm, DbBeaver, vim configs)
+- [x] Implement editors.nix module (Cursor, PyCharm, DbBeaver, vim configs)
+  - **2025-06-01:** Added Home Manager activation script to automatically fix permissions for the Cursor config directory, preventing EACCES errors in Cursor/VSCode.
 - [ ] Implement languages.nix module (Python/Poetry, Node/pnpm, version managers)
 - [ ] Implement devops.nix module (Terraform, cloud CLIs, GitHub CLI, Docker)
 - [ ] Implement system.nix module (base system packages, fonts, utilities)
@@ -159,7 +160,11 @@ All discovery and planning complete. Architecture designed for:
 **Phase**: Discovery - Information Gathering
 **Next**: Continue interviewing to understand current setup and requirements
 
-## Next Steps
 
-- Focus next on advanced zsh/oh-my-zsh customization: prompt, plugins, aliases, and workflow enhancements.
-- Start a new chat session from this context to continue with zsh improvements.
+## Recent Progress
+
+- **2025-06-01:** Implemented a Home Manager activation script in `editors.nix` to automatically fix permissions for the Cursor config directory. This ensures Cursor/VSCode can always write to its settings files, eliminating EACCES errors.
+
+## Next Steps (Reminder)
+
+- **Next:** Migrate zsh settings from legacy dotfiles to the new Home Manager environment. Review old zsh configs, extract relevant customizations, and declaratively integrate them into the Nix-based setup.

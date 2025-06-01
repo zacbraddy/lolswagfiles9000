@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -111,4 +111,11 @@
       }
     '';
   };
+
+  home.activation.fixCursorPermissions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ -d "$HOME/.config/Cursor" ]; then
+      chown -R $USER:$USER "$HOME/.config/Cursor"
+      chmod -R u+rwX "$HOME/.config/Cursor"
+    fi
+  '';
 }
