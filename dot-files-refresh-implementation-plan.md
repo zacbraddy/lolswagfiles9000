@@ -1,3 +1,20 @@
+# Outstanding Tasks
+- [x] Set up project directory structure for Nix/Home Manager modules
+- [x] Create base Nix configuration (flake or default.nix)
+- [ ] Bootstrap Home Manager integration
+- [ ] Implement shell.nix module (zsh, oh-my-zsh, terminal tools)
+- [ ] Implement editors.nix module (Cursor, PyCharm, DbBeaver, vim configs)
+- [ ] Implement languages.nix module (Python/Poetry, Node/pnpm, version managers)
+- [ ] Implement devops.nix module (Terraform, cloud CLIs, GitHub CLI, Docker)
+- [ ] Implement system.nix module (base system packages, fonts, utilities)
+- [ ] Implement secrets.nix module (SSH keys, API tokens, encrypted configs)
+- [ ] Design and implement CLI wizard (Justfile or similar)
+- [ ] Integrate sops-nix for secrets management
+- [ ] Test full rebuild and rollback process
+- [ ] Review and migrate relevant configs/scripts from ansible-playbook and zsh directories
+
+---
+
 # Dotfiles Reimagination Project Plan
 
 ## Project Protocol
@@ -6,6 +23,7 @@
 - **Approach**: Interview → Plan → Implement
 - **Interview Style**: ONE question at a time, prefer yes/no or short answers
 - **Artifact Usage**: Track progress, goals, and implementation plan across multiple chat sessions
+- **Assistant Change Protocol**: The assistant will make changes directly without asking for permission. The user will request rollbacks if any changes are incorrect.
 
 ## Discovery Phase - Information Gathering
 
@@ -81,8 +99,16 @@ Setup languages? [Y/n] → Y
 **Result**: Fast default installs (6 Y's), full granularity when needed, smart dependency resolution
 
 ## Current Status
-**Phase**: Implementation Planning - Complete ✅
+**Phase**: Implementation - In Progress 🚀
 **Next**: Begin implementation with project structure and base Nix configuration
+
+## Implementation Progress Notes
+- 2024-06-10: Implementation phase started. Outstanding tasks checklist added. Ready to begin with repo structure and base Nix config.
+- 2024-06-10: Existing Ansible playbooks and zsh configs identified. Will review and migrate relevant configs/scripts to new Nix modules as part of implementation.
+- 2024-06-10: Nix/Home Manager directory structure and placeholder module files created. Ready to begin base Nix configuration.
+- 2024-06-10: Modern flake.nix scaffolded with Home Manager integration and modular structure. Ready to bootstrap Home Manager and begin module implementation.
+- 2024-06-10: Using nixos-unstable for latest features, but will revisit and switch to stable if all requirements are met with a stable channel. Prioritize stability if possible.
+- 2024-06-10: Home Manager successfully bootstrapped using flake-based configuration. Legacy config warning is expected; always use --flake flag with home-manager commands. Assistant now makes changes without asking for permission, user will request rollbacks if needed.
 
 ## Ready for Implementation
 All discovery and planning complete. Architecture designed for:
