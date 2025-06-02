@@ -5,6 +5,12 @@
 - [ ] Bootstrap Home Manager integration
 - [x] Implement shell.nix module (zsh, oh-my-zsh, terminal tools)
   - Base implementation complete and tested. Next: flesh out advanced zsh/oh-my-zsh customizations (prompt, plugins, aliases, etc.)
+  - Migrated all relevant zsh customizations (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager.
+  - Legacy .zshrc and related files are no longer needed; all config is now declarative and managed by Nix.
+  - asdf is installed via home.packages, not as a Home Manager program.
+  - Added robust trash management helpers and automatic cleanup on shell startup.
+  - Added project jump, network info, and reload helpers for improved workflow.
+  - Spicetify path is now managed by Nix.
 - [x] Implement editors.nix module (Cursor, PyCharm, DbBeaver, vim configs)
   - **2025-06-01:** Added Home Manager activation script to automatically fix permissions for the Cursor config directory, preventing EACCES errors in Cursor/VSCode.
 - [ ] Implement languages.nix module (Python/Poetry, Node/pnpm, version managers)
@@ -14,7 +20,8 @@
 - [ ] Design and implement CLI wizard (Justfile or similar)
 - [ ] Integrate sops-nix for secrets management
 - [ ] Test full rebuild and rollback process
-- [ ] Review and migrate relevant configs/scripts from ansible-playbook and zsh directories
+- [ ] Review and migrate relevant configs/scripts from ansible-playbook directory (zsh migration complete)
+- [ ] Design and implement persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes
 
 ---
 
@@ -121,12 +128,15 @@ Setup languages? [Y/n] → Y
 
 ## Implementation Progress Notes
 
-- 2024-06-10: Implementation phase started. Outstanding tasks checklist added. Ready to begin with repo structure and base Nix config.
-- 2024-06-10: Existing Ansible playbooks and zsh configs identified. Will review and migrate relevant configs/scripts to new Nix modules as part of implementation.
-- 2024-06-10: Nix/Home Manager directory structure and placeholder module files created. Ready to begin base Nix configuration.
-- 2024-06-10: Modern flake.nix scaffolded with Home Manager integration and modular structure. Ready to bootstrap Home Manager and begin module implementation.
-- 2024-06-10: Using nixos-unstable for latest features, but will revisit and switch to stable if all requirements are met with a stable channel. Prioritize stability if possible.
-- 2024-06-10: Home Manager successfully bootstrapped using flake-based configuration. Legacy config warning is expected; always use --flake flag with home-manager commands. Assistant now makes changes without asking for permission, user will request rollbacks if needed.
+- 2025-06-01: Implementation phase started. Outstanding tasks checklist added. Ready to begin with repo structure and base Nix config.
+- 2025-06-01: Existing Ansible playbooks and zsh configs identified. Will review and migrate relevant configs/scripts to new Nix modules as part of implementation.
+- 2025-06-01: Nix/Home Manager directory structure and placeholder module files created. Ready to begin base Nix configuration.
+- 2025-06-01: Modern flake.nix scaffolded with Home Manager integration and modular structure. Ready to bootstrap Home Manager and begin module implementation.
+- 2025-06-01: Using nixos-unstable for latest features, but will revisit and switch to stable if all requirements are met with a stable channel. Prioritize stability if possible.
+- 2025-06-01: Home Manager successfully bootstrapped using flake-based configuration. Legacy config warning is expected; always use --flake flag with home-manager commands. Assistant now makes changes without asking for permission, user will request rollbacks if needed.
+- 2025-06-02: Migrated all zsh config (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager. Legacy .zshrc and related files are now obsolete. asdf is installed via home.packages, not as a Home Manager program. Trash management and workflow helpers added. Spicetify path managed by Nix.
+- 2025-06-02: Next focus: Translate ansible-playbook scripts to Nix modules for full migration.
+- 2025-06-02: Add a plan to explore/implement a persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes.
 
 ## Ready for Implementation
 
