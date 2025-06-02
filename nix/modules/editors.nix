@@ -1,4 +1,36 @@
 { config, pkgs, lib, ... }:
+
+let
+  httpie-desktop = pkgs.stdenv.mkDerivation {
+    pname = "httpie-desktop";
+    version = "2025.2.0";
+    src = pkgs.fetchurl {
+      url = "https://github.com/httpie/desktop/releases/download/v2025.2.0/HTTPie-2025.2.0.AppImage";
+      sha256 = "0kv5dna3rinzys9xmxildjv0qmgyavv62q08g5q0hq0vfhay4l58";
+    };
+    dontUnpack = true;
+    installPhase = ''
+      mkdir -p $out/bin
+      cp $src $out/bin/httpie-desktop.AppImage
+      chmod +x $out/bin/httpie-desktop.AppImage
+      ln -s $out/bin/httpie-desktop.AppImage $out/bin/httpie-desktop
+      mkdir -p $out/share/applications
+      cat > $out/share/applications/httpie-desktop.desktop <<EOF
+      [Desktop Entry]
+      Name=HTTPie Desktop
+      Exec=$out/bin/httpie-desktop.AppImage
+      Icon=httpie
+      Type=Application
+      Categories=Development;
+      EOF
+    '';
+    meta = with pkgs.lib; {
+      description = "HTTPie Desktop AppImage";
+      homepage = "https://httpie.io/desktop";
+      platforms = platforms.linux;
+    };
+  };
+in
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -118,4 +150,18 @@
       chmod -R u+rwX "$HOME/.config/Cursor"
     fi
   '';
+
+  home.packages = with pkgs; [
+    audacity
+    brave
+    google-chrome
+    guvcview
+    slack
+    discord
+    obs-studio
+    postman
+    vlc
+    bitwarden
+    httpie-desktop
+  ];
 }

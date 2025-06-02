@@ -13,14 +13,16 @@
   - Spicetify path is now managed by Nix.
 - [x] Implement editors.nix module (Cursor, PyCharm, DbBeaver, vim configs)
   - **2025-06-01:** Added Home Manager activation script to automatically fix permissions for the Cursor config directory, preventing EACCES errors in Cursor/VSCode.
-- [ ] Implement languages.nix module (Python/Poetry, Node/pnpm, version managers)
-- [ ] Implement devops.nix module (Terraform, cloud CLIs, GitHub CLI, Docker)
-- [ ] Implement system.nix module (base system packages, fonts, utilities)
+- [x] Implement languages.nix module (Python/Poetry, Node/pnpm, version managers)
+  - All global npm packages (e.g., c4builder) are now installed via Home Manager activation scripts if not available in Nixpkgs.
+- [x] Implement devops.nix module (Terraform, cloud CLIs, GitHub CLI, Docker)
+- [x] Implement system.nix module (base system packages, fonts, utilities)
 - [ ] Implement secrets.nix module (SSH keys, API tokens, encrypted configs)
 - [ ] Design and implement CLI wizard (Justfile or similar)
 - [ ] Integrate sops-nix for secrets management
 - [ ] Test full rebuild and rollback process
-- [ ] Review and migrate relevant configs/scripts from ansible-playbook directory (zsh migration complete)
+- [x] Review and migrate relevant configs/scripts from ansible-playbook directory (application installs migration complete)
+- [ ] Review and migrate remaining configs/scripts from ansible-playbook directory (in progress)
 - [ ] Design and implement persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes
 
 ---
@@ -134,9 +136,11 @@ Setup languages? [Y/n] → Y
 - 2025-06-01: Modern flake.nix scaffolded with Home Manager integration and modular structure. Ready to bootstrap Home Manager and begin module implementation.
 - 2025-06-01: Using nixos-unstable for latest features, but will revisit and switch to stable if all requirements are met with a stable channel. Prioritize stability if possible.
 - 2025-06-01: Home Manager successfully bootstrapped using flake-based configuration. Legacy config warning is expected; always use --flake flag with home-manager commands. Assistant now makes changes without asking for permission, user will request rollbacks if needed.
-- 2025-06-02: Migrated all zsh config (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager. Legacy .zshrc and related files are now obsolete. asdf is installed via home.packages, not as a Home Manager program. Trash management and workflow helpers added. Spicetify path managed by Nix.
+- 2025-06-02: Migrated all zsh config (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager. Legacy .zshrc and related files are now obsolete. asdf is installed via home.packages, not as a Home Manager program. Trash management and workflow helpers added. Spicetify path managed by Nix. **Zsh migration is now fully complete.**
 - 2025-06-02: Next focus: Translate ansible-playbook scripts to Nix modules for full migration.
 - 2025-06-02: Add a plan to explore/implement a persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes.
+- 2025-06-03: Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
+- 2025-06-03: Next: Continue migration of remaining Ansible scripts (e.g., system tweaks, cloud tools, editor configs, etc.) to Nix modules.
 
 ## Ready for Implementation
 
@@ -174,6 +178,9 @@ All discovery and planning complete. Architecture designed for:
 ## Recent Progress
 
 - **2025-06-01:** Implemented a Home Manager activation script in `editors.nix` to automatically fix permissions for the Cursor config directory. This ensures Cursor/VSCode can always write to its settings files, eliminating EACCES errors.
+- **2025-06-02:** Migrated all zsh config (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager. Legacy .zshrc and related files are now obsolete. asdf is installed via home.packages, not as a Home Manager program. Trash management and workflow helpers added. Spicetify path managed by Nix. **Zsh migration is now fully complete.**
+- **2025-06-03:** Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
+- **2025-06-03:** Next: Continue migration of remaining Ansible scripts (e.g., system tweaks, cloud tools, editor configs, etc.) to Nix modules.
 
 ## Next Steps (Reminder)
 
