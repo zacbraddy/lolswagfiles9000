@@ -28,6 +28,21 @@
           ./nix/modules/secrets.nix
         ];
       };
+      pop-os = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          overlays = [ nix-vscode-extensions.overlays.default ];
+        };
+        modules = [
+          ./nix/home.nix
+          ./nix/modules/shell.nix
+          ./nix/modules/editors.nix
+          ./nix/modules/languages.nix
+          ./nix/modules/devops.nix
+          ./nix/modules/system.nix
+          ./nix/modules/secrets.nix
+        ];
+      };
     };
   };
 }

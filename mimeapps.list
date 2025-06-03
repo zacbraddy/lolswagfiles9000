@@ -1,16 +1,48 @@
 [Default Applications]
+application/pdf=org.gnome.Evince.desktop
+text/plain=org.gnome.gedit.desktop
+image/png=gimp.desktop
+image/jpeg=gimp.desktop
+image/svg+xml=gimp.desktop
+audio/mpeg=vlc.desktop
+audio/x-wav=vlc.desktop
+video/mp4=vlc.desktop
+video/x-matroska=vlc.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=libreoffice-calc.desktop
+application/vnd.openxmlformats-officedocument.presentationml.presentation=libreoffice-impress.desktop
+application/zip=org.gnome.FileRoller.desktop
+application/x-tar=org.gnome.FileRoller.desktop
+application/json=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop
+application/javascript=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop
+text/x-python=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop
+text/x-shellscript=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop
+
+# Existing web associations
 x-scheme-handler/http=brave-browser.desktop
+x-scheme-handler/https=brave-browser.desktop
+x-scheme-handler/ftp=brave-browser.desktop
 text/html=brave-browser.desktop
 text/xml=brave-browser.desktop
 application/xhtml_xml=brave-browser.desktop
 image/webp=brave-browser.desktop
-x-scheme-handler/https=brave-browser.desktop
-x-scheme-handler/ftp=brave-browser.desktop
 
 [Added Associations]
-text/html=brave-browser.desktop;
-text/xml=brave-browser.desktop;
-application/xhtml_xml=brave-browser.desktop;
-image/webp=brave-browser.desktop;
-x-scheme-handler/https=brave-browser.desktop;
-x-scheme-handler/ftp=brave-browser.desktop;
+application/pdf=org.gnome.Evince.desktop;
+text/plain=org.gnome.gedit.desktop;
+image/png=gimp.desktop;
+image/jpeg=gimp.desktop;
+image/svg+xml=gimp.desktop;
+audio/mpeg=vlc.desktop;
+audio/x-wav=vlc.desktop;
+video/mp4=vlc.desktop;
+video/x-matroska=vlc.desktop;
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=libreoffice-calc.desktop;
+application/vnd.openxmlformats-officedocument.presentationml.presentation=libreoffice-impress.desktop;
+application/zip=org.gnome.FileRoller.desktop;
+application/x-tar=org.gnome.FileRoller.desktop;
+application/json=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop;
+application/javascript=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop;
+text/x-python=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop;
+text/x-shellscript=appimagekit_8246b927d8328f353f88d08403b0637c-cursor.desktop;

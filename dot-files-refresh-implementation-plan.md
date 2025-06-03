@@ -13,6 +13,7 @@
   - Spicetify path is now managed by Nix.
 - [x] Implement editors.nix module (Cursor, PyCharm, DbBeaver, vim configs)
   - **2025-06-01:** Added Home Manager activation script to automatically fix permissions for the Cursor config directory, preventing EACCES errors in Cursor/VSCode.
+  - **2025-06-03:** Automated Cursor AppImage installation and MIME association using official API, robust to upstream changes. Script is idempotent and works on fresh systems. Justfile recipe provided for manual install as well.
 - [x] Implement languages.nix module (Python/Poetry, Node/pnpm, version managers)
   - All global npm packages (e.g., c4builder) are now installed via Home Manager activation scripts if not available in Nixpkgs.
 - [x] Implement devops.nix module (Terraform, cloud CLIs, GitHub CLI, Docker)
@@ -22,6 +23,7 @@
 - [ ] Integrate sops-nix for secrets management
 - [ ] Test full rebuild and rollback process
 - [x] Review and migrate relevant configs/scripts from ansible-playbook directory (application installs migration complete)
+  - **2025-06-03:** Adobe Reader and Cursor install tasks fully migrated to robust Justfile/bash automation. No longer managed by Ansible.
 - [ ] Review and migrate remaining configs/scripts from ansible-playbook directory (in progress)
 - [ ] Design and implement persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes
 
@@ -141,6 +143,7 @@ Setup languages? [Y/n] → Y
 - 2025-06-02: Add a plan to explore/implement a persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes.
 - 2025-06-03: Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
 - 2025-06-03: Next: Continue migration of remaining Ansible scripts (e.g., system tweaks, cloud tools, editor configs, etc.) to Nix modules.
+- 2025-06-03: Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
 
 ## Ready for Implementation
 
@@ -180,8 +183,22 @@ All discovery and planning complete. Architecture designed for:
 - **2025-06-01:** Implemented a Home Manager activation script in `editors.nix` to automatically fix permissions for the Cursor config directory. This ensures Cursor/VSCode can always write to its settings files, eliminating EACCES errors.
 - **2025-06-02:** Migrated all zsh config (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager. Legacy .zshrc and related files are now obsolete. asdf is installed via home.packages, not as a Home Manager program. Trash management and workflow helpers added. Spicetify path managed by Nix. **Zsh migration is now fully complete.**
 - **2025-06-03:** Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
-- **2025-06-03:** Next: Continue migration of remaining Ansible scripts (e.g., system tweaks, cloud tools, editor configs, etc.) to Nix modules.
+- **2025-06-03:** Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
 
-## Next Steps (Reminder)
+## Next Steps (as of 2025-06-03)
 
-- **Next:** Migrate zsh settings from legacy dotfiles to the new Home Manager environment. Review old zsh configs, extract relevant customizations, and declaratively integrate them into the Nix-based setup.
+**The current focus is to complete the migration away from Ansible:**
+
+- For each file in `ansible-playbook/main/tasks/`:
+  1. Review and summarize what it does.
+  2. Decide if it should be:
+     - Migrated to a Nix module (preferred for declarative config)
+     - Automated via a Justfile/bash script (if it requires imperative logic or root)
+     - Deleted as obsolete (if no longer needed)
+  3. Migrate or remove, and update this plan/checklist accordingly.
+
+**Once all Ansible tasks are reviewed and handled, proceed to:**
+- Implement secrets management (`secrets.nix` + sops-nix)
+- Design and implement the CLI wizard
+- Test full rebuild/rollback
+- Plan/implement persistent file sync/backup

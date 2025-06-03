@@ -146,6 +146,7 @@
     zsh-powerlevel10k
     asdf
     trash-cli
+    just
   ];
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   # Direnv integration
