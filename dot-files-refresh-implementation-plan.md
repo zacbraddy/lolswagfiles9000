@@ -24,8 +24,8 @@
 - [ ] Test full rebuild and rollback process
 - [x] Review and migrate relevant configs/scripts from ansible-playbook directory (application installs migration complete)
   - **2025-06-03:** Adobe Reader, Cursor, and JetBrains Toolbox install tasks fully migrated to robust Justfile/bash automation. No longer managed by Ansible. .ideavimrc is now symlinked via Home Manager.
-- [ ] Review and migrate remaining configs/scripts from ansible-playbook directory (in progress)
-  - **2025-06-11:** JetBrains Toolbox install is now fully automated via Justfile (downloads, extracts, and launches the app). .ideavimrc is symlinked via Home Manager. All previous Ansible logic for these is obsolete and removed.
+- [x] Review and migrate remaining configs/scripts from ansible-playbook directory (in progress)
+  - **2025-06-12:** All remaining Ansible tasks and playbooks in ansible-playbook/main have been reviewed and deleted as obsolete. Migration from Ansible is now fully complete. All package management, configuration, and automation is handled by Nix/Home Manager and Justfile/bash scripts.
 - [ ] Design and implement persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes
 - [ ] **Automation Principle:** Always prefer automation over manual steps. The Home Manager bootstrap and sync process for dotfiles/settings should be as pain-free and automated as possible.
 - [ ] **Justfile Shell Variables:** Always use single $ for shell variable expansion in Justfile recipes (not $$). Double $$ causes bugs and has bitten us multiple times.
@@ -190,20 +190,10 @@ All discovery and planning complete. Architecture designed for:
 - **2025-06-03:** Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
 - **2025-06-03:** Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. JetBrains Toolbox is now automated via Justfile and launches after install. .ideavimrc is symlinked via Home Manager. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
 
-## Next Steps (as of 2025-06-03)
+## Next Steps (as of 2025-06-12)
 
-**The current focus is to complete the migration away from Ansible:**
-
-- For each file in `ansible-playbook/main/tasks/`:
-  1. Review and summarize what it does.
-  2. Decide if it should be:
-     - Migrated to a Nix module (preferred for declarative config)
-     - Automated via a Justfile/bash script (if it requires imperative logic or root)
-     - Deleted as obsolete (if no longer needed)
-  3. Migrate or remove, and update this plan/checklist accordingly.
-
-**Once all Ansible tasks are reviewed and handled, proceed to:**
-- Implement secrets management (`secrets.nix` + sops-nix)
-- Design and implement the CLI wizard
-- Test full rebuild/rollback
-- Plan/implement persistent file sync/backup
+With the Ansible migration complete, the next focus areas are:
+- Implement secrets management (secrets.nix + sops-nix)
+- Design and implement the CLI wizard (Justfile or similar)
+- Test full rebuild and rollback process
+- Plan and implement persistent file sync/backup solution
