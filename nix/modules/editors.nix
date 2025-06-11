@@ -99,30 +99,7 @@ in
   };
 
   # Cursor global settings and extensions management (identical to VSCode, but only recommendations)
-  home.file.".config/Cursor/User/settings.json" = {
-    text = ''
-      {
-        // Font and appearance
-        "editor.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
-        "editor.fontLigatures": true,
-        "editor.fontSize": 14,
-        "workbench.colorTheme": "Dracula",
-        // Editor behavior
-        "editor.formatOnSave": true,
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true,
-        "files.autoSave": "onWindowChange",
-        "files.trimTrailingWhitespace": true,
-        "files.insertFinalNewline": true,
-        "editor.minimap.enabled": false,
-        // Terminal
-        "terminal.integrated.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
-        "terminal.integrated.fontSize": 13,
-        // Misc
-        "explorer.confirmDelete": false
-      }
-    '';
-  };
+  home.file.".config/Cursor/User/settings.json".source = ./cursor-settings.json;
 
   home.file.".config/Cursor/User/extensions.json" = {
     text = ''
