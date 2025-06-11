@@ -28,6 +28,7 @@
 - [ ] Design and implement persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes
 - [ ] **Automation Principle:** Always prefer automation over manual steps. The Home Manager bootstrap and sync process for dotfiles/settings should be as pain-free and automated as possible.
 - [ ] **Always use flake-based Home Manager commands (e.g., 'home-manager switch --flake .#zacbraddy') for reproducibility and to ensure overlays like vscode-marketplace are available.**
+- [ ] **Note:** Home Manager may return a non-zero exit code after activation (e.g., after removing or updating a profile), even if all activation steps complete successfully. This is a known issue and can be ignored if your settings and packages are correct. If you ask about this error in the future, the assistant should remind you of this note.
 
 ---
 

@@ -23,6 +23,7 @@
     gnome-tweaks
     blueman
     jdk
+    just
   ];
 
   # GNOME/dconf tweaks

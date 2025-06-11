@@ -4,10 +4,13 @@ install-cursor:
 install-adobe-reader:
     bash ./scripts/install-adobe-reader.sh
 
+home-manager-update:
+	home-manager switch --flake .#zacbraddy -b backup
+
 sync-cursor-settings:
 	cp ~/.config/Cursor/User/settings.json nix/modules/cursor-settings.json
 	if command -v home-manager >/dev/null && [ -f "$HOME/.config/home-manager/home.nix" ]; then \
-		home-manager switch --flake .#zacbraddy; \
+		just home-manager-update; \
 	else \
 		echo "Home Manager is not set up. Please install and initialize it first."; \
 	fi
