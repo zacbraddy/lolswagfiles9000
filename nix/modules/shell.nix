@@ -149,6 +149,9 @@
     just
   ];
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
+  home.file.".gitconfig".source = ../../.gitconfig;
+  home.file.".gitignore_global".source = ../../.gitignore_global;
+  home.file.".ideavimrc".source = ../../.ideavimrc;
   # Direnv integration
   programs.direnv = {
     enable = true;

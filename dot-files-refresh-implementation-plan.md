@@ -23,10 +23,12 @@
 - [ ] Integrate sops-nix for secrets management
 - [ ] Test full rebuild and rollback process
 - [x] Review and migrate relevant configs/scripts from ansible-playbook directory (application installs migration complete)
-  - **2025-06-03:** Adobe Reader and Cursor install tasks fully migrated to robust Justfile/bash automation. No longer managed by Ansible.
+  - **2025-06-03:** Adobe Reader, Cursor, and JetBrains Toolbox install tasks fully migrated to robust Justfile/bash automation. No longer managed by Ansible. .ideavimrc is now symlinked via Home Manager.
 - [ ] Review and migrate remaining configs/scripts from ansible-playbook directory (in progress)
+  - **2025-06-11:** JetBrains Toolbox install is now fully automated via Justfile (downloads, extracts, and launches the app). .ideavimrc is symlinked via Home Manager. All previous Ansible logic for these is obsolete and removed.
 - [ ] Design and implement persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes
 - [ ] **Automation Principle:** Always prefer automation over manual steps. The Home Manager bootstrap and sync process for dotfiles/settings should be as pain-free and automated as possible.
+- [ ] **Justfile Shell Variables:** Always use single $ for shell variable expansion in Justfile recipes (not $$). Double $$ causes bugs and has bitten us multiple times.
 - [ ] **Always use flake-based Home Manager commands (e.g., 'home-manager switch --flake .#zacbraddy') for reproducibility and to ensure overlays like vscode-marketplace are available.**
 - [ ] **Note:** Home Manager may return a non-zero exit code after activation (e.g., after removing or updating a profile), even if all activation steps complete successfully. This is a known issue and can be ignored if your settings and packages are correct. If you ask about this error in the future, the assistant should remind you of this note.
 
@@ -146,7 +148,7 @@ Setup languages? [Y/n] → Y
 - 2025-06-02: Add a plan to explore/implement a persistent file sync/backup solution (e.g., Google Drive, cloud sync) to automate keeping important files across system refreshes.
 - 2025-06-03: Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
 - 2025-06-03: Next: Continue migration of remaining Ansible scripts (e.g., system tweaks, cloud tools, editor configs, etc.) to Nix modules.
-- 2025-06-03: Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
+- 2025-06-03: Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. JetBrains Toolbox is now automated via Justfile and launches after install. .ideavimrc is symlinked via Home Manager. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
 
 ## Ready for Implementation
 
@@ -186,7 +188,7 @@ All discovery and planning complete. Architecture designed for:
 - **2025-06-01:** Implemented a Home Manager activation script in `editors.nix` to automatically fix permissions for the Cursor config directory. This ensures Cursor/VSCode can always write to its settings files, eliminating EACCES errors.
 - **2025-06-02:** Migrated all zsh config (aliases, functions, completions, PATH, trash helpers, project jump, network info, reload, direnv, syntax highlighting, spicetify, etc.) to Home Manager. Legacy .zshrc and related files are now obsolete. asdf is installed via home.packages, not as a Home Manager program. Trash management and workflow helpers added. Spicetify path managed by Nix. **Zsh migration is now fully complete.**
 - **2025-06-03:** Application installation is now fully managed by Nix/Home Manager. All relevant CLI, GUI, devops, and language tools are declaratively specified. Global npm packages not in Nixpkgs are installed via activation scripts. Ansible application install scripts have been fully migrated to Nix modules.
-- **2025-06-03:** Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
+- **2025-06-03:** Cursor and Adobe Reader installation is now fully automated via Justfile/bash scripts. Cursor uses the official API for AppImage download and robust MIME association logic. Justfile is now robust and idempotent. JetBrains Toolbox is now automated via Justfile and launches after install. .ideavimrc is symlinked via Home Manager. Next: review and migrate/delete remaining Ansible tasks (system tweaks, cloud tools, editor configs, etc.) to Nix modules or remove if obsolete.
 
 ## Next Steps (as of 2025-06-03)
 
