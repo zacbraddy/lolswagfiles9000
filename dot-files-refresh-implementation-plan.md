@@ -31,6 +31,7 @@
 - [ ] **Justfile Shell Variables:** Always use single $ for shell variable expansion in Justfile recipes (not $$). Double $$ causes bugs and has bitten us multiple times.
 - [ ] **Always use flake-based Home Manager commands (e.g., 'home-manager switch --flake .#zacbraddy') for reproducibility and to ensure overlays like vscode-marketplace are available.**
 - [ ] **Note:** Home Manager may return a non-zero exit code after activation (e.g., after removing or updating a profile), even if all activation steps complete successfully. This is a known issue and can be ignored if your settings and packages are correct. If you ask about this error in the future, the assistant should remind you of this note.
+- [ ] **Justfile Indentation Troubleshooting:** When writing multi-line script blocks in Justfiles, always use exactly four spaces (no tabs) for indentation under the 'script:' keyword. Extra spaces, tabs, or inconsistent indentation will cause 'extra leading whitespace' errors. If you encounter this, check for invisible characters and ensure all lines are indented with four spaces only. See the 'Justfile Shell Variables' note for related pitfalls.
 
 ---
 
@@ -197,3 +198,37 @@ With the Ansible migration complete, the next focus areas are:
 - Design and implement the CLI wizard (Justfile or similar)
 - Test full rebuild and rollback process
 - Plan and implement persistent file sync/backup solution
+
+# Implementation Plan
+
+## Lessons Learned: Creating Justfiles Correctly
+
+1. **Multi-line Recipes:**
+   - Each line in a multi-line recipe must end with a backslash (`\`), except the last line.
+   - This ensures the shell treats the recipe as a single logical line.
+   - When writing multi-line script blocks in Justfiles, always use exactly four spaces (no tabs) for indentation under the 'script:' keyword.
+   - Extra spaces, tabs, or inconsistent indentation will cause 'extra leading whitespace' errors.
+   - Check for invisible characters and ensure all lines are indented with four spaces only.
+
+2. **Argument Passing:**
+   - Named arguments in Just are passed as environment variables to the recipe.
+   - Use `$name` (not `$1` or `name="$1"`) to reference named arguments.
+   - Always use single `$` for shell variable expansion in Justfile recipes (not `$$`).
+   - Double `$$` causes bugs and has bitten us multiple times.
+   - If the shell is running with `set -u` (nounset), unset variables will cause errors. Use `${name:-}` to provide a default value if needed.
+
+3. **Interactive CLI with Node.js:**
+   - For complex, interactive workflows (e.g., multi-select, confirmation prompts), consider using Node.js with libraries like `inquirer`.
+   - This approach provides a more pleasant user experience and robust error handling.
+   - Ensure the Node.js script is compatible with ES modules (use `import` instead of `require`).
+
+4. **Error Handling:**
+   - Always check for errors in command execution and provide clear error messages.
+   - Use `try-catch` blocks in Node.js scripts to handle errors gracefully.
+   - Test recipes thoroughly, especially when dealing with file operations or external commands.
+   - Use `set -x` for debugging to see the exact commands being executed.
+
+## Next Steps
+
+- Debug and rewrite other secrets-related Justfile scripts to ensure they work as expected.
+- Ensure consistency in argument handling, error messages, and interactive features across all secrets management scripts.

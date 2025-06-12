@@ -1,4 +1,2 @@
 .idea/
-
-# Ignore unencrypted secrets
-nix/secrets/secrets.plain.yaml
+node_modules/

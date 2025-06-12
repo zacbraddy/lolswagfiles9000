@@ -67,111 +67,97 @@ install-jetbrains-toolbox:
 
 # List all available secrets
 secrets-list:
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
     @echo "Available secrets:"
-    @sops -d secrets.yaml | yq e '. | keys | .[]' -
+    @SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml | yq '. | keys | .[]'
 
 # Interactive wizard to manage secrets
 secrets-wizard:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # Function to get current secrets
-    get_secrets() {
-        sops -d secrets.yaml
-    }
-
-    # Function to update a secret
-    update_secret() {
-        local key=$1
-        local value
-        echo "Enter new value for $key (press Ctrl+D when done):"
-        value=$(cat)
-        sops -d secrets.yaml | yq e ".$key = \"$value\"" - | sops -e -i secrets.yaml
-    }
-
-    # Function to add a new secret
-    add_secret() {
-        local key
-        local value
-        echo "Enter name for new secret:"
-        read -r key
-        echo "Enter value (press Ctrl+D when done):"
-        value=$(cat)
-        sops -d secrets.yaml | yq e ".$key = \"$value\"" - | sops -e -i secrets.yaml
-    }
-
-    # Function to remove a secret
-    remove_secret() {
-        local key=$1
-        sops -d secrets.yaml | yq e "del(.$key)" - | sops -e -i secrets.yaml
-    }
-
-    # Main menu
-    while true; do
-        echo "=== Secrets Management ==="
-        echo "1) List all secrets"
-        echo "2) Update existing secret"
-        echo "3) Add new secret"
-        echo "4) Remove secret"
-        echo "5) Exit"
-        echo "Choose an option (1-5):"
-        read -r choice
-
-        case $choice in
-            1)
-                echo "Current secrets:"
-                get_secrets | yq e '. | keys | .[]' -
-                ;;
-            2)
-                echo "Select secret to update:"
-                get_secrets | yq e '. | keys | .[]' -
-                read -r key
-                update_secret "$key"
-                ;;
-            3)
-                add_secret
-                ;;
-            4)
-                echo "Select secret to remove:"
-                get_secrets | yq e '. | keys | .[]' -
-                read -r key
-                remove_secret "$key"
-                ;;
-            5)
-                exit 0
-                ;;
-            *)
-                echo "Invalid option"
-                ;;
-        esac
-    done
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
+    @echo "Secrets Management Wizard"
+    @echo "1. List secrets"
+    @echo "2. Update secret"
+    @echo "3. Add secret"
+    @echo "4. Remove secret"
+    @read -p "Choose an option: " option; \
+    case $$option in \
+        1) just secrets-list ;; \
+        2) read -p "Enter secret name: " name; just secrets-update $$name ;; \
+        3) read -p "Enter secret name: " name; just secrets-add $$name ;; \
+        4) read -p "Enter secret name: " name; just secrets-remove $$name ;; \
+        *) echo "Invalid option" ;; \
+    esac
 
 # Decrypt secrets to view them
 secrets-view:
-    @sops -d secrets.yaml
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
+    @SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml
 
 # Encrypt secrets from plain file
 secrets-encrypt:
-    @sops -e -i secrets.yaml
+    @sops -e --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml > nix/secrets/secrets.yaml.encrypted && mv nix/secrets/secrets.yaml.encrypted nix/secrets/secrets.yaml
 
 # Decrypt secrets to plain file for editing
 secrets-decrypt:
-    @sops -d secrets.yaml > secrets.plain.yaml
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
+    @SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml > nix/secrets/secrets.plain.yaml
 
 # Edit secrets in your default editor
 secrets-edit:
-    @sops secrets.yaml
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
+    @SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml
 
 # Add a new secret (usage: just secrets-add name)
 secrets-add name:
-    @echo "Enter value for $name (press Ctrl+D when done):"
-    @sops -d secrets.yaml | yq e ".$name = \"$$(cat)\"" - | sops -e -i secrets.yaml
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
+    @read -p "Enter value for $$name: " value; \
+    SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml | yq ".$$name = \"$$value\"" | sops -e --config nix/secrets/.sops.yaml > nix/secrets/secrets.yaml.encrypted && mv nix/secrets/secrets.yaml.encrypted nix/secrets/secrets.yaml
 
 # Remove a secret (usage: just secrets-remove name)
-secrets-remove name:
-    @sops -d secrets.yaml | yq e "del(.$name)" - | sops -e -i secrets.yaml
+secrets-remove:
+    node scripts/secrets-cli.js
 
 # Update a secret (usage: just secrets-update name)
 secrets-update name:
-    @echo "Enter new value for $name (press Ctrl+D when done):"
-    @sops -d secrets.yaml | yq e ".$name = \"$$(cat)\"" - | sops -e -i secrets.yaml
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "Error: Age key file not found at ~/.config/sops/age/keys.txt. Please ensure it exists for decryption."; \
+        exit 1; \
+    fi
+    @read -p "Enter new value for $$name: " value; \
+    SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml | yq ".$$name = \"$$value\"" | sops -e --config nix/secrets/.sops.yaml > nix/secrets/secrets.yaml.encrypted && mv nix/secrets/secrets.yaml.encrypted nix/secrets/secrets.yaml
+
+# Setup SOPS age key for secrets management
+secrets-setup-key:
+    @read -p "Enter your public key: " public_key; \
+    read -p "Enter your private key: " private_key; \
+    mkdir -p ~/.config/sops/age; \
+    echo "# created: $$(date -Iseconds)" > ~/.config/sops/age/keys.txt; \
+    echo "# public key: $$public_key" >> ~/.config/sops/age/keys.txt; \
+    echo "$$private_key" >> ~/.config/sops/age/keys.txt; \
+    echo "Keys updated at ~/.config/sops/age/keys.txt"; \
+    echo "Your public key is: $$public_key"; \
+    echo "Copying public key into .sops.yaml..."; \
+    sed -i "s/age:.*/age: $$public_key/" nix/secrets/.sops.yaml; \
+    echo "Public key copied into .sops.yaml."
+
+# Test recipe to verify argument passing
+test-arg name:
+    echo "test name=$name"

@@ -3,7 +3,7 @@
   imports = [ sops-nix.homeManagerModules.sops ];
 
   sops = {
-    age.keyFile = "/home/zacbraddy/.config/sops/age/keys.txt";
+    age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
     defaultSopsFile = ../secrets/secrets.yaml;
 
     # SSH Keys
@@ -38,7 +38,8 @@
     createSecretDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p $VERBOSE_ARG \
         ${config.home.homeDirectory}/.config/github \
-        ${config.home.homeDirectory}/.aws
+        ${config.home.homeDirectory}/.aws \
+        ${config.home.homeDirectory}/.config/sops/age
     '';
   };
 }
