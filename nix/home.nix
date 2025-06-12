@@ -12,6 +12,8 @@
   # Essential packages (add more as needed)
   home.packages = with pkgs; [
     git
+    sops
+    age
     # Add tmux, neovim, or other tools here if needed
   ];
 

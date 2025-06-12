@@ -9,9 +9,13 @@
     };
     # Add more inputs as needed (e.g., sops-nix, etc.)
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-vscode-extensions, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, nix-vscode-extensions, sops-nix, ... }@inputs: {
     homeConfigurations = {
       zacbraddy = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
@@ -27,6 +31,7 @@
           ./nix/modules/system.nix
           ./nix/modules/secrets.nix
         ];
+        extraSpecialArgs = { inherit sops-nix; };
       };
       pop-os = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
@@ -44,5 +49,6 @@
         ];
       };
     };
+    home-manager.backupFileExtension = "backup";
   };
 }

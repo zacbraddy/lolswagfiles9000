@@ -18,9 +18,9 @@
   - All global npm packages (e.g., c4builder) are now installed via Home Manager activation scripts if not available in Nixpkgs.
 - [x] Implement devops.nix module (Terraform, cloud CLIs, GitHub CLI, Docker)
 - [x] Implement system.nix module (base system packages, fonts, utilities)
-- [ ] Implement secrets.nix module (SSH keys, API tokens, encrypted configs)
+- [x] Implement secrets.nix module (SSH keys, API tokens, encrypted configs)
 - [ ] Design and implement CLI wizard (Justfile or similar)
-- [ ] Integrate sops-nix for secrets management
+- [x] Integrate sops-nix for secrets management
 - [ ] Test full rebuild and rollback process
 - [x] Review and migrate relevant configs/scripts from ansible-playbook directory (application installs migration complete)
   - **2025-06-03:** Adobe Reader, Cursor, and JetBrains Toolbox install tasks fully migrated to robust Justfile/bash automation. No longer managed by Ansible. .ideavimrc is now symlinked via Home Manager.
@@ -193,7 +193,7 @@ All discovery and planning complete. Architecture designed for:
 ## Next Steps (as of 2025-06-12)
 
 With the Ansible migration complete, the next focus areas are:
-- Implement secrets management (secrets.nix + sops-nix)
+- ~~Implement secrets management (secrets.nix + sops-nix)~~ ✅
 - Design and implement the CLI wizard (Justfile or similar)
 - Test full rebuild and rollback process
 - Plan and implement persistent file sync/backup solution
