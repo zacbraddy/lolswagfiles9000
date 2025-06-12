@@ -24,6 +24,7 @@
     blueman
     jdk
     just
+    yq
   ];
 
   # GNOME/dconf tweaks

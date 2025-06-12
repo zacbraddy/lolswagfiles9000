@@ -62,3 +62,116 @@ install-jetbrains-toolbox:
 	  echo "JetBrains Toolbox install failed"; \
 	  exit 1; \
 	fi
+
+# Secrets Management Recipes
+
+# List all available secrets
+secrets-list:
+    @echo "Available secrets:"
+    @sops -d secrets.yaml | yq e '. | keys | .[]' -
+
+# Interactive wizard to manage secrets
+secrets-wizard:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Function to get current secrets
+    get_secrets() {
+        sops -d secrets.yaml
+    }
+
+    # Function to update a secret
+    update_secret() {
+        local key=$1
+        local value
+        echo "Enter new value for $key (press Ctrl+D when done):"
+        value=$(cat)
+        sops -d secrets.yaml | yq e ".$key = \"$value\"" - | sops -e -i secrets.yaml
+    }
+
+    # Function to add a new secret
+    add_secret() {
+        local key
+        local value
+        echo "Enter name for new secret:"
+        read -r key
+        echo "Enter value (press Ctrl+D when done):"
+        value=$(cat)
+        sops -d secrets.yaml | yq e ".$key = \"$value\"" - | sops -e -i secrets.yaml
+    }
+
+    # Function to remove a secret
+    remove_secret() {
+        local key=$1
+        sops -d secrets.yaml | yq e "del(.$key)" - | sops -e -i secrets.yaml
+    }
+
+    # Main menu
+    while true; do
+        echo "=== Secrets Management ==="
+        echo "1) List all secrets"
+        echo "2) Update existing secret"
+        echo "3) Add new secret"
+        echo "4) Remove secret"
+        echo "5) Exit"
+        echo "Choose an option (1-5):"
+        read -r choice
+
+        case $choice in
+            1)
+                echo "Current secrets:"
+                get_secrets | yq e '. | keys | .[]' -
+                ;;
+            2)
+                echo "Select secret to update:"
+                get_secrets | yq e '. | keys | .[]' -
+                read -r key
+                update_secret "$key"
+                ;;
+            3)
+                add_secret
+                ;;
+            4)
+                echo "Select secret to remove:"
+                get_secrets | yq e '. | keys | .[]' -
+                read -r key
+                remove_secret "$key"
+                ;;
+            5)
+                exit 0
+                ;;
+            *)
+                echo "Invalid option"
+                ;;
+        esac
+    done
+
+# Decrypt secrets to view them
+secrets-view:
+    @sops -d secrets.yaml
+
+# Encrypt secrets from plain file
+secrets-encrypt:
+    @sops -e -i secrets.yaml
+
+# Decrypt secrets to plain file for editing
+secrets-decrypt:
+    @sops -d secrets.yaml > secrets.plain.yaml
+
+# Edit secrets in your default editor
+secrets-edit:
+    @sops secrets.yaml
+
+# Add a new secret (usage: just secrets-add name)
+secrets-add name:
+    @echo "Enter value for $name (press Ctrl+D when done):"
+    @sops -d secrets.yaml | yq e ".$name = \"$$(cat)\"" - | sops -e -i secrets.yaml
+
+# Remove a secret (usage: just secrets-remove name)
+secrets-remove name:
+    @sops -d secrets.yaml | yq e "del(.$name)" - | sops -e -i secrets.yaml
+
+# Update a secret (usage: just secrets-update name)
+secrets-update name:
+    @echo "Enter new value for $name (press Ctrl+D when done):"
+    @sops -d secrets.yaml | yq e ".$name = \"$$(cat)\"" - | sops -e -i secrets.yaml

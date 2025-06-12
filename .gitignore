@@ -1,1 +1,4 @@
 .idea/
+
+# Ignore unencrypted secrets
+nix/secrets/secrets.plain.yaml
