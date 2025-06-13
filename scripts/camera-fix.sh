@@ -6,15 +6,44 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
+# Debug function
+debug() {
+    if [ "${DEBUG:-0}" = "1" ]; then
+        log "DEBUG: $1"
+    fi
+}
+
 # Check if v4l2-ctl is available
 if ! command -v v4l2-ctl &> /dev/null; then
     log "ERROR: v4l2-ctl not found. Please install v4l-utils."
     exit 1
 fi
 
+# List available video devices
+debug "Available video devices:"
+v4l2-ctl --list-devices
+
+# Try to find the Logitech camera device
+CAMERA_DEVICE="${V4L2_DEVICE:-}"
+if [ -z "$CAMERA_DEVICE" ]; then
+    for dev in /dev/video*; do
+        if v4l2-ctl -d "$dev" --all 2>/dev/null | grep -q "Logitech"; then
+            CAMERA_DEVICE="$dev"
+            debug "Found Logitech camera at $CAMERA_DEVICE"
+            break
+        fi
+    done
+fi
+
+# If no device found, try /dev/video2 as fallback
+if [ -z "$CAMERA_DEVICE" ]; then
+    CAMERA_DEVICE="/dev/video2"
+    debug "Using fallback device $CAMERA_DEVICE"
+fi
+
 # Check if camera device exists
-if [ ! -e "/dev/video2" ]; then
-    log "ERROR: Camera device /dev/video2 not found."
+if [ ! -e "$CAMERA_DEVICE" ]; then
+    log "ERROR: Camera device $CAMERA_DEVICE not found."
     exit 1
 fi
 
@@ -22,7 +51,7 @@ fi
 set_camera_control() {
     local control="$1"
     local value="$2"
-    if ! v4l2-ctl -d /dev/video2 --set-ctrl="$control=$value" 2>/dev/null; then
+    if ! v4l2-ctl -d "$CAMERA_DEVICE" --set-ctrl="$control=$value" 2>/dev/null; then
         log "WARNING: Failed to set $control to $value"
     else
         log "Set $control to $value"
@@ -30,7 +59,11 @@ set_camera_control() {
 }
 
 # Apply camera settings
-log "Applying camera settings..."
+log "Applying camera settings to $CAMERA_DEVICE..."
+
+# List available controls
+debug "Available controls:"
+v4l2-ctl -d "$CAMERA_DEVICE" --list-ctrls
 
 set_camera_control brightness 128
 set_camera_control contrast 128

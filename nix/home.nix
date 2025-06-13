@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   # Home Manager settings
   home.username = "zacbraddy";
@@ -15,6 +15,9 @@
     ./modules/system.nix
     ./modules/camera.nix
   ];
+
+  # Enable systemd user service management
+  systemd.user.startServices = true;
 
   # Enable zsh as the default shell
   programs.zsh.enable = true;
@@ -36,4 +39,17 @@
   };
 
   # Add more configuration as modules are implemented
+
+  home.activation.addCameraGroup = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if ! /usr/bin/getent group camera-admins; then
+      /usr/bin/sudo /usr/sbin/groupadd camera-admins
+    fi
+    /usr/bin/sudo /usr/sbin/usermod -aG camera-admins $USER
+  '';
+
+  home.activation.addUdevRule = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    echo 'KERNEL=="video[0-9]*", GROUP="camera-admins", MODE="0660"' | /usr/bin/sudo /usr/bin/tee /etc/udev/rules.d/99-camera-admins.rules
+    /usr/bin/sudo /usr/bin/udevadm control --reload-rules
+    /usr/bin/sudo /usr/bin/udevadm trigger
+  '';
 }
