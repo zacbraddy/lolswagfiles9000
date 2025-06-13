@@ -58,8 +58,28 @@ in
   home.activation.setupCursorSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     CURSOR_SETTINGS_DIR="$HOME/.config/Cursor/User"
     mkdir -p "$CURSOR_SETTINGS_DIR"
-    cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
-    chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
+
+    # If settings.json exists in Cursor, show diff and ask before overwriting
+    if [ -f "$CURSOR_SETTINGS_DIR/settings.json" ]; then
+      echo "Found existing Cursor settings.json"
+      echo "Diff between current and new settings:"
+      ${pkgs.diffutils}/bin/diff -u "$CURSOR_SETTINGS_DIR/settings.json" ${../../.vscode/settings.json} || true
+      echo
+      read -p "Do you want to overwrite Cursor settings? [y/N] " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
+        chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
+        echo "Settings updated."
+      else
+        echo "Keeping existing settings."
+      fi
+    else
+      # No existing settings, just copy
+      cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
+      chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
+      echo "Initial settings copied to Cursor."
+    fi
   '';
 
   # VSCode and Cursor extensions
@@ -112,34 +132,6 @@ Terminal=false
 EOF
 
     echo "Cursor AppImage installed to $APPIMAGE_PATH and .desktop file updated."
-
-    # Ensure VSCodeVim extension is installed in Cursor
-    CURSOR_EXTENSIONS_DIR="$HOME/.config/Cursor/extensions"
-    VSCODE_EXTENSIONS_DIR="$HOME/.vscode/extensions"
-    VSCODE_VIM_PATTERN="vscodevim.vim-*"
-
-    # Create extensions directory if it doesn't exist
-    mkdir -p "$CURSOR_EXTENSIONS_DIR"
-
-    # Copy all VSCodeVim extensions from VSCode to Cursor
-    for ext in "$VSCODE_EXTENSIONS_DIR"/vscodevim.vim-*; do
-      if [ -d "$ext" ]; then
-        EXT_NAME=$(basename "$ext")
-        if [ ! -d "$CURSOR_EXTENSIONS_DIR/$EXT_NAME" ]; then
-          echo "Copying $EXT_NAME to Cursor extensions..."
-          cp -r "$ext" "$CURSOR_EXTENSIONS_DIR/"
-          chmod -R u+w "$CURSOR_EXTENSIONS_DIR/$EXT_NAME"
-        fi
-      fi
-    done
-
-    # Ensure settings.json exists and has correct permissions
-    CURSOR_SETTINGS_DIR="$HOME/.config/Cursor/User"
-    mkdir -p "$CURSOR_SETTINGS_DIR"
-    if [ -f "$HOME/.vscode/settings.json" ]; then
-      cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
-      chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
-    fi
 
     # Idempotent MIME association function
     default_section='[Default Applications]'
