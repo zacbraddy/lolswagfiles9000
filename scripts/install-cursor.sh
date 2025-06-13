@@ -8,11 +8,19 @@ APPIMAGE_PATH="$CURSOR_DIR/$APPIMAGE_NAME"
 MIMEAPPS="$HOME/.config/mimeapps.list"
 CURSOR_DESKTOP="cursor.desktop"
 CURSOR_DESKTOP_PATH="$DESKTOP_DIR/$CURSOR_DESKTOP"
+CURSOR_SETTINGS_DIR="$HOME/.config/Cursor/User"
+CURSOR_SETTINGS_FILE="$CURSOR_SETTINGS_DIR/settings.json"
+GLOBAL_SETTINGS_FILE="$HOME/.config/Cursor/User/settings.json"
 
-# Get latest release URL from GitHub API
-LATEST_URL=$(curl -s https://api.github.com/repos/getcursor/cursor/releases/latest | grep browser_download_url | grep AppImage | cut -d '"' -f 4 | head -n 1)
+# Get latest release URL from Cursor's official API
+LATEST_URL=$(curl -s 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | grep -oP '"downloadUrl":"\\K[^"]+')
 
-mkdir -p "$CURSOR_DIR" "$DESKTOP_DIR" "$(dirname $MIMEAPPS)"
+if [ -z "$LATEST_URL" ]; then
+  echo "Could not find a download URL for Cursor AppImage. Please check https://www.cursor.com/downloads"
+  exit 1
+fi
+
+mkdir -p "$CURSOR_DIR" "$DESKTOP_DIR" "$(dirname $MIMEAPPS)" "$CURSOR_SETTINGS_DIR"
 
 # Download if not present or if newer
 if [ ! -f "$APPIMAGE_PATH" ]; then
@@ -34,17 +42,24 @@ EOF
 
 echo "Cursor AppImage installed to $APPIMAGE_PATH and .desktop file updated."
 
+# Copy global settings if they exist
+if [ -f "$GLOBAL_SETTINGS_FILE" ]; then
+  echo "Copying global settings to Cursor..."
+  cp "$GLOBAL_SETTINGS_FILE" "$CURSOR_SETTINGS_FILE"
+  chmod 644 "$CURSOR_SETTINGS_FILE"
+else
+  echo "Warning: Global settings file not found at $GLOBAL_SETTINGS_FILE"
+fi
+
 # Idempotent MIME association function
 default_section='[Default Applications]'
 add_mime_default() {
   local mime="$1"
   local desktop="$2"
-  local escaped_mime
-  escaped_mime=$(printf '%s' "$mime" | sed 's/[\/&]/\\&/g')
   # Ensure section exists
   grep -qxF "$default_section" "$MIMEAPPS" || echo "$default_section" >> "$MIMEAPPS"
   # Remove any existing line for this mime type in Default Applications
-  sed -i "/^$escaped_mime=/d" "$MIMEAPPS"
+  sed -i "/^$mime=/d" "$MIMEAPPS"
   # Add the correct line
   awk -v mime="$mime" -v desktop="$desktop" -v section="$default_section" '
     BEGIN {added=0}

@@ -5,6 +5,17 @@
   home.homeDirectory = "/home/zacbraddy";
   home.stateVersion = "24.05"; # Set to the latest stable or your preferred version
 
+  # Import modules
+  imports = [
+    ./modules/shell.nix
+    ./modules/editors.nix
+    ./modules/devops.nix
+    ./modules/languages.nix
+    ./modules/secrets.nix
+    ./modules/system.nix
+    ./modules/camera.nix
+  ];
+
   # Enable zsh as the default shell
   programs.zsh.enable = true;
   # oh-my-zsh is not a direct option; use programs.zsh.plugins for plugins/themes
