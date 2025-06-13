@@ -10,6 +10,7 @@
     "ms-vscode-remote.remote-containers",
     "mhutchie.git-graph",
     "ms-ossdata.vscode-postgresql",
-    "ms-vscode.vscode-typescript-next"
+    "ms-vscode.vscode-typescript-next",
+    "vscodevim.vim" // Vim keybindings
   ]
 }

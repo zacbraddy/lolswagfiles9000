@@ -49,77 +49,22 @@ in
       mhutchie.git-graph
       ms-ossdata.vscode-pgsql
       ms-vscode.vscode-typescript-next
+      vscodevim.vim
     ];
   };
 
-  # VSCode global settings and extensions management
-  home.file.".config/Code/User/settings.json" = {
-    text = ''
-      {
-        // Font and appearance
-        "editor.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
-        "editor.fontLigatures": true,
-        "editor.fontSize": 14,
-        "workbench.colorTheme": "Dracula",
-        // Editor behavior
-        "editor.formatOnSave": true,
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true,
-        "files.autoSave": "onWindowChange",
-        "files.trimTrailingWhitespace": true,
-        "files.insertFinalNewline": true,
-        "editor.minimap.enabled": false,
-        // Terminal
-        "terminal.integrated.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
-        "terminal.integrated.fontSize": 13,
-        // Misc
-        "explorer.confirmDelete": false
-      }
-    '';
-  };
+  # VSCode and Cursor settings
+  home.file.".vscode/settings.json".source = ../../.vscode/settings.json;
+  home.activation.setupCursorSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    CURSOR_SETTINGS_DIR="$HOME/.config/Cursor/User"
+    mkdir -p "$CURSOR_SETTINGS_DIR"
+    cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
+    chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
+  '';
 
-  home.file.".config/Code/User/extensions.json" = {
-    text = ''
-      {
-        "recommendations": [
-          "zhuangtongfa.Material-theme", // One Dark Pro
-          "dracula-theme.theme-dracula", // Dracula Official Theme
-          "ms-python.python",
-          "esbenp.prettier-vscode",
-          "dbaeumer.vscode-eslint",
-          "ms-azuretools.vscode-docker",
-          "eamodio.gitlens",
-          "ms-vscode-remote.remote-containers",
-          "mhutchie.git-graph",
-          "ms-ossdata.vscode-postgresql",
-          "ms-vscode.vscode-typescript-next"
-        ]
-      }
-    '';
-  };
-
-  # Cursor global settings and extensions management (identical to VSCode, but only recommendations)
-  home.file.".config/Cursor/User/settings.json".source = ./cursor-settings.json;
-
-  home.file.".config/Cursor/User/extensions.json" = {
-    text = ''
-      {
-        "recommendations": [
-          "zhuangtongfa.Material-theme", // One Dark Pro
-          "dracula-theme.theme-dracula", // Dracula Official Theme
-          "ms-python.python",
-          "esbenp.prettier-vscode",
-          "dbaeumer.vscode-eslint",
-          "ms-azuretools.vscode-docker",
-          "eamodio.gitlens",
-          "ms-vscode-remote.remote-containers",
-          "mhutchie.git-graph",
-          "ms-ossdata.vscode-postgresql",
-          "ms-vscode.vscode-typescript-next"
-        ]
-      }
-    '';
-  };
+  # VSCode and Cursor extensions
+  home.file.".vscode/extensions.json".source = ../../.vscode/extensions.json;
+  home.file.".config/Cursor/User/extensions.json".source = ../../.vscode/extensions.json;
 
   home.activation.fixCursorPermissions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ -d "$HOME/.config/Cursor" ]; then
@@ -167,6 +112,34 @@ Terminal=false
 EOF
 
     echo "Cursor AppImage installed to $APPIMAGE_PATH and .desktop file updated."
+
+    # Ensure VSCodeVim extension is installed in Cursor
+    CURSOR_EXTENSIONS_DIR="$HOME/.config/Cursor/extensions"
+    VSCODE_EXTENSIONS_DIR="$HOME/.vscode/extensions"
+    VSCODE_VIM_PATTERN="vscodevim.vim-*"
+
+    # Create extensions directory if it doesn't exist
+    mkdir -p "$CURSOR_EXTENSIONS_DIR"
+
+    # Copy all VSCodeVim extensions from VSCode to Cursor
+    for ext in "$VSCODE_EXTENSIONS_DIR"/vscodevim.vim-*; do
+      if [ -d "$ext" ]; then
+        EXT_NAME=$(basename "$ext")
+        if [ ! -d "$CURSOR_EXTENSIONS_DIR/$EXT_NAME" ]; then
+          echo "Copying $EXT_NAME to Cursor extensions..."
+          cp -r "$ext" "$CURSOR_EXTENSIONS_DIR/"
+          chmod -R u+w "$CURSOR_EXTENSIONS_DIR/$EXT_NAME"
+        fi
+      fi
+    done
+
+    # Ensure settings.json exists and has correct permissions
+    CURSOR_SETTINGS_DIR="$HOME/.config/Cursor/User"
+    mkdir -p "$CURSOR_SETTINGS_DIR"
+    if [ -f "$HOME/.vscode/settings.json" ]; then
+      cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
+      chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
+    fi
 
     # Idempotent MIME association function
     default_section='[Default Applications]'

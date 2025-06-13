@@ -141,4 +141,4 @@ hmr:
         echo "  - env_file"; \
         exit 1; \
     fi; \
-    home-manager switch --flake .#zacbraddy
+    home-manager switch --flake .#zacbraddy -b backup

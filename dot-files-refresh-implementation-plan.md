@@ -282,3 +282,42 @@ With the Ansible migration complete, the next focus areas are:
 
 - Debug and rewrite other secrets-related Justfile scripts to ensure they work as expected.
 - Ensure consistency in argument handling, error messages, and interactive features across all secrets management scripts.
+
+## Extension Installation in Cursor
+
+- Note: Extension installation is managed via the recommended extensions feature. Open Cursor, go to the Extensions tab, and install all extensions listed under 'Recommended'. This process should be documented in the user setup guide.
+
+## Implementation Progress Update (as of [today's date])
+
+### Cursor Editor Extension Management
+- **Automated VSIX Download:**
+  - A Justfile task (`download-vsix`) automates downloading the latest VSIX files for all extensions listed in `extensions.json`.
+  - The script uses a user agent to avoid corrupt downloads and stores VSIX files in a git-ignored `extensions-vsix/` directory.
+- **Manual Installation Required:**
+  - Due to Cursor v1.0 limitations, extensions must be installed manually by drag-and-dropping the VSIX files into the Extensions tab.
+  - This step is required for new setups or when extensions are missing.
+  - Copying or symlinking extension folders does **not** work in Cursor.
+- **Documentation Updated:**
+  - All manual steps are clearly documented in the README and implementation plan.
+
+### Secrets Management
+- **sops-nix and age keys** are set up for robust secrets management.
+- Home Manager activation scripts are integrated for seamless secrets handling.
+
+### Other Improvements
+- **Typo Fix:** Corrected `pakages` to `packages` in `languages.nix`.
+- **Documentation:** All changes and manual steps are reflected in the documentation.
+
+### Next Steps
+- Monitor Cursor for updates that may allow automated extension installation.
+- Continue improving automation and reproducibility.
+- Review and extend secrets management and editor tooling as needed.
+- **[PRIORITY] Resolve non-functional Vim keybindings in Cursor.**
+
+---
+
+**Current Status:**
+- VSIX download automation is in place for all extensions in `extensions.json`.
+- Manual drag-and-drop installation is required for Cursor extensions.
+- Documentation and secrets management are up to date.
+- Project is progressing with a focus on reproducibility, automation, and clear documentation.

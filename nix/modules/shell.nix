@@ -35,7 +35,7 @@
       reload = "exec zsh";
       netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
       rm = "trash"; # Use trash instead of rm for safety
-      hmr = "check_secrets && home-manager switch --flake .#zacbraddy"; # Home Manager Reload
+      hmr = "check_secrets && home-manager switch --flake .#zacbraddy -b backup"; # Home Manager Reload
     };
     initContent = ''
       # Auto-remove files from trash older than 6 months (180 days) on shell startup
