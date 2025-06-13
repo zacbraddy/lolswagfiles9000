@@ -35,11 +35,33 @@
       reload = "exec zsh";
       netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
       rm = "trash"; # Use trash instead of rm for safety
-      hmr = "home-manager switch --flake .#zacbraddy"; # Home Manager Reload
+      hmr = "check_secrets && home-manager switch --flake .#zacbraddy"; # Home Manager Reload
     };
     initContent = ''
       # Auto-remove files from trash older than 6 months (180 days) on shell startup
       trash-empty 180
+
+      # Check if secrets are properly configured
+      check_secrets() {
+        if [ ! -f ~/.config/sops/age/keys.txt ]; then
+          echo "⚠️  Warning: Age key file not found at ~/.config/sops/age/keys.txt"
+          echo "Please run 'just secrets-setup-key' to set up your encryption keys"
+          return 1
+        fi
+
+        # Check if secrets.yaml is empty or missing required secrets
+        if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml 2>/dev/null | grep -q '^{}$'; then
+          echo "⚠️  Warning: secrets.yaml is empty"
+          echo "Please run 'just secrets-add' to add required secrets:"
+          echo "  - aws_credentials"
+          echo "  - github_token"
+          echo "  - ssh_private_key"
+          echo "  - ssh_public_key"
+          echo "  - env_file"
+          return 1
+        fi
+        return 0
+      }
 
       # PATH modifications
       export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

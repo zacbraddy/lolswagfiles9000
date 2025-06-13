@@ -6,6 +6,12 @@
     age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
     defaultSopsFile = ../secrets/secrets.yaml;
 
+    # Handle the encrypted data field
+    secrets.data = {
+      path = "${config.home.homeDirectory}/.config/secrets/data";
+      mode = "0600";
+    };
+
     # SSH Keys
     secrets.ssh_private_key = {
       path = "${config.home.homeDirectory}/.ssh/id_ed25519";
@@ -37,6 +43,7 @@
   home.activation = {
     createSecretDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p $VERBOSE_ARG \
+        ${config.home.homeDirectory}/.config/secrets \
         ${config.home.homeDirectory}/.config/github \
         ${config.home.homeDirectory}/.aws \
         ${config.home.homeDirectory}/.config/sops/age

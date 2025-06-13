@@ -1,2 +1,8 @@
 .idea/
 node_modules/
+
+# Temporary secret files
+nix/secrets/secrets.yaml.decrypted
+nix/secrets/secrets.yaml.temp
+nix/secrets/*.decrypted
+nix/secrets/*.temp

@@ -61,6 +61,9 @@ async function main() {
     fs.unlinkSync(tempFile);
 
     console.log(`Secret "${name}" added successfully.`);
+    console.log('Note: If this is a new type of secret, you may need to update nix/modules/secrets.nix manually.');
+    console.log('Running home-manager switch to apply changes...');
+    execSync('just hmr', { stdio: 'inherit' });
   } catch (e) {
     console.error('Error:', e.message);
     process.exit(1);

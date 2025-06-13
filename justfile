@@ -123,3 +123,22 @@ secrets-setup-key:
     echo "Copying public key into .sops.yaml..."; \
     sed -i "s/age:.*/age: $$public_key/" nix/secrets/.sops.yaml; \
     echo "Public key copied into .sops.yaml."
+
+# Home Manager Reload with secret checks
+hmr:
+    @if [ ! -f ~/.config/sops/age/keys.txt ]; then \
+        echo "⚠️  Warning: Age key file not found at ~/.config/sops/age/keys.txt"; \
+        echo "Please run 'just secrets-setup-key' to set up your encryption keys"; \
+        exit 1; \
+    fi; \
+    if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml 2>/dev/null | grep -q '^{}$'; then \
+        echo "⚠️  Warning: secrets.yaml is empty"; \
+        echo "Please run 'just secrets-add' to add required secrets:"; \
+        echo "  - aws_credentials"; \
+        echo "  - github_token"; \
+        echo "  - ssh_private_key"; \
+        echo "  - ssh_public_key"; \
+        echo "  - env_file"; \
+        exit 1; \
+    fi; \
+    home-manager switch --flake .#zacbraddy

@@ -60,6 +60,9 @@ async function main() {
     });
     fs.unlinkSync(tempFile);
     console.log(`Secret "${name}" removed successfully.`);
+    console.log('Note: You may need to update nix/modules/secrets.nix manually to remove the secret configuration.');
+    console.log('Running home-manager switch to apply changes...');
+    execSync('just hmr', { stdio: 'inherit' });
   } catch (e) {
     console.error('Failed to re-encrypt secrets:', e.message);
     fs.unlinkSync(tempFile);

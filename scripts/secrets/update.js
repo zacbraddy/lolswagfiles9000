@@ -70,6 +70,8 @@ async function main() {
     fs.unlinkSync(tempFile);
 
     console.log(`Secret "${name}" updated successfully.`);
+    console.log('Running home-manager switch to apply changes...');
+    execSync('just hmr', { stdio: 'inherit' });
   } catch (e) {
     console.error('Error:', e.message);
     process.exit(1);

@@ -201,6 +201,56 @@ With the Ansible migration complete, the next focus areas are:
 
 # Implementation Plan
 
+## Secrets Management Strategy
+
+### Current Implementation
+- sops-nix integration for encrypted secrets management
+- CRUD operations via Node.js scripts for managing `secrets.yaml`
+- Required secrets defined in `secrets.nix`
+- Basic validation in `hmr` command
+
+### Planned Changes
+1. **Simplify Secrets Management**
+   - Remove automatic Nix configuration updates from secrets CRUD scripts
+   - Keep CRUD operations focused solely on managing encrypted values in `secrets.yaml`
+   - Document manual process for updating `secrets.nix` when new secrets are needed
+
+2. **Documentation Requirements**
+   - Document process for adding new secrets to the system
+   - Include step-by-step guide for updating `secrets.nix`
+   - Provide examples of common secret configurations
+
+## CLI Wizard Implementation Plan
+
+### Core Features
+1. **Initial Setup**
+   - System requirements check
+   - Home Manager installation verification
+   - Directory structure creation
+
+2. **Secrets Management**
+   - Read required secrets from `secrets.nix`
+   - Check for missing secrets in `secrets.yaml`
+   - Guide user through setting up each required secret
+   - Validate secret setup completion
+
+3. **Module Configuration**
+   - Interactive module selection
+   - Module-specific configuration options
+   - Dependency validation
+
+4. **Post-Setup**
+   - System validation
+   - Next steps guidance
+   - Troubleshooting information
+
+### Implementation Details
+- Use Node.js with inquirer for interactive prompts
+- Leverage existing just commands
+- Implement progress tracking
+- Add validation at each step
+- Provide clear error messages and recovery steps
+
 ## Lessons Learned: Creating Justfiles Correctly
 
 1. **Multi-line Recipes:**
