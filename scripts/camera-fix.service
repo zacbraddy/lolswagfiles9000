@@ -1,0 +1,16 @@
+[Unit]
+Description=Logitech Webcam Settings Fix
+After=multi-user.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/zacbraddy/Projects/Personal/lolswagfiles9000/scripts/camera-fix.sh
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
