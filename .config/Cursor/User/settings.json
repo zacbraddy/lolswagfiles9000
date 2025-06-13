@@ -3,7 +3,7 @@
   "editor.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
   "editor.fontLigatures": true,
   "editor.fontSize": 14,
-  "workbench.colorTheme": "Dracula",
+  "workbench.colorTheme": "Dracula Theme Soft",
   // Editor behavior
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
@@ -15,6 +15,7 @@
   // Terminal
   "terminal.integrated.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
   "terminal.integrated.fontSize": 13,
+  "terminal.integrated.minimumContrastRatio": 1,
   // Vim settings
   "vim.leader": "<space>",
   "vim.useSystemClipboard": true,

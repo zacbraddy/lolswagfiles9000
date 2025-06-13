@@ -53,32 +53,22 @@ in
     ];
   };
 
-  # VSCode and Cursor settings
-  home.file.".vscode/settings.json".source = ../../.vscode/settings.json;
-  home.activation.setupCursorSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  # Ensure Cursor directory exists and has correct permissions
+  home.activation.setupCursorDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     CURSOR_SETTINGS_DIR="$HOME/.config/Cursor/User"
     mkdir -p "$CURSOR_SETTINGS_DIR"
+    chmod 755 "$CURSOR_SETTINGS_DIR"
+  '';
 
-    # If settings.json exists in Cursor, show diff and ask before overwriting
-    if [ -f "$CURSOR_SETTINGS_DIR/settings.json" ]; then
-      echo "Found existing Cursor settings.json"
-      echo "Diff between current and new settings:"
-      ${pkgs.diffutils}/bin/diff -u "$CURSOR_SETTINGS_DIR/settings.json" ${../../.vscode/settings.json} || true
-      echo
-      read -p "Do you want to overwrite Cursor settings? [y/N] " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
-        cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
-        chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
-        echo "Settings updated."
-      else
-        echo "Keeping existing settings."
+  # Copy global settings to Cursor
+  home.activation.copyCursorSettings = lib.hm.dag.entryAfter [ "writeBoundary" "setupCursorDir" ] ''
+    GLOBAL_SETTINGS="$HOME/.config/Cursor/User/settings.json"
+    if [ -f "$GLOBAL_SETTINGS" ]; then
+      # Only copy if source and destination are different
+      if ! cmp -s "$GLOBAL_SETTINGS" "$HOME/.config/Cursor/User/settings.json"; then
+        cp "$GLOBAL_SETTINGS" "$HOME/.config/Cursor/User/settings.json"
+        chmod 644 "$HOME/.config/Cursor/User/settings.json"
       fi
-    else
-      # No existing settings, just copy
-      cp -f ${../../.vscode/settings.json} "$CURSOR_SETTINGS_DIR/settings.json"
-      chmod u+w "$CURSOR_SETTINGS_DIR/settings.json"
-      echo "Initial settings copied to Cursor."
     fi
   '';
 

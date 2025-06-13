@@ -6,3 +6,6 @@ nix/secrets/secrets.yaml.decrypted
 nix/secrets/secrets.yaml.temp
 nix/secrets/*.decrypted
 nix/secrets/*.temp
+
+# Nix build artifacts
+result
