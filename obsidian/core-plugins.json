@@ -1,0 +1,7 @@
+{
+  "file-explorer": true,
+  "markdown": true,
+  "vim-keymap": true,
+  "search": true,
+  "tag-pane": true
+}

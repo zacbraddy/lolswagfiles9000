@@ -1,14 +1,7 @@
 install-cursor:
 	#!/usr/bin/env bash
+	# Install Cursor AppImage and set up desktop integration
 	bash ./scripts/install-cursor.sh
-	mkdir -p ~/.config/Cursor/User
-	if [ -f ~/.config/Cursor/User/settings.json ]; then \
-		echo "Found existing Cursor settings.json"; \
-		echo "Settings are managed globally at ~/.config/Cursor/User/settings.json"; \
-		echo "Use 'just sync-cursor-settings' to update settings."; \
-	else \
-		echo "Initial settings will be created on first Cursor launch."; \
-	fi
 
 install-adobe-reader:
 	#!/usr/bin/env bash
@@ -21,18 +14,62 @@ home-manager-update:
 sync-cursor-settings:
 	#!/usr/bin/env bash
 	mkdir -p ~/.config/Cursor/User
-	if [ -f ~/.config/Cursor/User/settings.json ]; then \
-		echo "Found existing Cursor settings.json"; \
-		echo "Settings are managed globally at ~/.config/Cursor/User/settings.json"; \
-		echo "Use your preferred editor to modify the settings file."; \
-	else \
-		echo "Initial settings will be created on first Cursor launch."; \
+	# Check if Cursor is running
+	if pgrep -x "Cursor" > /dev/null; then
+		echo "⚠️  Cursor is currently running. Please close Cursor before syncing settings."
+		echo "This is required to prevent permission issues with the configuration files."
+		exit 1
 	fi
+	# Function to handle file sync
+	sync_file() {
+		local file=$1
+		local source_file=$2
+		if [ -f ~/.config/Cursor/User/$file ]; then \
+			echo "Found existing Cursor $file"; \
+			echo "Do you want to overwrite it? [y/N]"; \
+			read -r overwrite; \
+			if [[ $overwrite =~ ^[Yy]$ ]]; then \
+				echo "Overwriting $file..."; \
+				if cp $source_file ~/.config/Cursor/User/$file; then \
+					echo "✅ $file updated successfully."; \
+					return 0; \
+				else \
+					echo "❌ Failed to update $file."; \
+					echo "   Please ensure Cursor is closed and try again."; \
+					return 1; \
+				fi; \
+			else \
+				echo "Keeping existing $file"; \
+				echo "Use your preferred editor to modify the file."; \
+				return 0; \
+			fi; \
+		else \
+			echo "Creating new $file..."; \
+			if cp $source_file ~/.config/Cursor/User/$file; then \
+				echo "✅ $file created successfully."; \
+				return 0; \
+			else \
+				echo "❌ Failed to create $file."; \
+				echo "   Please ensure Cursor is closed and try again."; \
+				return 1; \
+			fi; \
+		fi
+	}
+	# Sync settings.json
+	sync_file "settings.json" ".config/Cursor/User/settings.json"
+	# Sync extensions.json
+	sync_file "extensions.json" ".config/Cursor/User/extensions.json"
 
 diff-cursor-settings:
 	#!/usr/bin/env bash
-	echo "Settings are managed globally at ~/.config/Cursor/User/settings.json"
-	echo "Use your preferred editor to view and modify the settings file."
+	if [ -f ~/.config/Cursor/User/settings.json ]; then \
+		echo "Diffing current settings with dotfiles settings:"; \
+		echo "----------------------------------------"; \
+		diff -u ~/.config/Cursor/User/settings.json .config/Cursor/User/settings.json || true; \
+	else \
+		echo "No existing settings found at ~/.config/Cursor/User/settings.json"; \
+		echo "Use 'just sync-cursor-settings' to create initial settings."; \
+	fi
 
 bootstrap-home-manager:
 	#!/usr/bin/env bash
@@ -188,10 +225,14 @@ setup-wizard:
 	#!/usr/bin/env bash
 	echo "🚀 Starting Dotfiles Setup Wizard"
 	echo "--------------------------------"
-	echo "Checking system requirements..."
+	echo "🔍 Checking system requirements..."
 	if ! command -v nix >/dev/null; then
-		echo "❌ Nix is not installed. Please install Nix first."
-		exit 1
+		echo "⚠️  Nix not found. Installing Nix..."
+		sh <(curl -L https://nixos.org/nix/install) --daemon
+		# Source nix environment for current shell
+		. "$HOME/.nix-profile/etc/profile.d/nix.sh"
+	else
+		echo "✅ Nix already installed."
 	fi
 	if ! command -v home-manager >/dev/null; then
 		echo "⚠️  Home Manager not found. Installing..."
@@ -221,7 +262,7 @@ setup-wizard:
 	echo
 	echo "🔄 Setting up Git configuration..."
 	if [ -f ~/.gitconfig ]; then
-		echo "Git config already exists. Do you want to reconfigure? [y/N]"
+		echo "📝 Git config already exists. Do you want to reconfigure? [y/N]"
 		read -r reconfig_git
 		if [[ $reconfig_git =~ ^[Yy]$ ]]; then
 			read -p "Enter your Git email: " git_email
@@ -230,7 +271,7 @@ setup-wizard:
 			git config --global user.name "$git_name"
 			echo "✅ Git reconfigured."
 		else
-			echo "Keeping existing Git config."
+			echo "ℹ️  Keeping existing Git config."
 		fi
 	else
 		read -p "Enter your Git email: " git_email
@@ -242,16 +283,16 @@ setup-wizard:
 	echo
 	echo "🔑 Setting up SSH and GitHub..."
 	if [ -f ~/.ssh/id_rsa ]; then
-		echo "SSH key already exists. Do you want to regenerate? [y/N]"
+		echo "🔐 SSH key already exists. Do you want to regenerate? [y/N]"
 		read -r regen_ssh
 		if [[ $regen_ssh =~ ^[Yy]$ ]]; then
 			ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
 			echo "✅ SSH key regenerated."
 		else
-			echo "Keeping existing SSH key."
+			echo "ℹ️  Keeping existing SSH key."
 		fi
 	else
-		echo "Generating SSH key..."
+		echo "🔐 Generating SSH key..."
 		ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
 		echo "✅ SSH key generated."
 	fi
@@ -264,38 +305,48 @@ setup-wizard:
 	echo "✅ SSH configured"
 	echo
 	echo "📦 Installing core applications..."
-	echo "Installing Cursor..."
+	echo "💻 Installing Cursor..."
 	if command -v cursor >/dev/null; then
-		echo "Cursor already installed. Do you want to reinstall? [y/N]"
+		echo "ℹ️  Cursor already installed. Do you want to reinstall? [y/N]"
 		read -r reinstall_cursor
 		if [[ $reinstall_cursor =~ ^[Yy]$ ]]; then
 			just install-cursor
 		else
-			echo "Keeping existing Cursor installation."
+			echo "ℹ️  Keeping existing Cursor installation."
 		fi
 	else
 		just install-cursor
 	fi
-	echo "Installing Adobe Reader..."
+	echo "⚙️  Syncing Cursor settings..."
+	if ! just sync-cursor-settings; then
+		echo "❌ Failed to sync Cursor settings."
+		exit 1
+	fi
+	echo "⚙️  Syncing Obsidian settings..."
+	if ! just sync-obsidian-settings; then
+		echo "❌ Failed to sync Obsidian settings."
+		exit 1
+	fi
+	echo "📄 Installing Adobe Reader..."
 	if command -v acroread >/dev/null; then
-		echo "Adobe Reader already installed. Do you want to reinstall? [y/N]"
+		echo "ℹ️  Adobe Reader already installed. Do you want to reinstall? [y/N]"
 		read -r reinstall_adobe
 		if [[ $reinstall_adobe =~ ^[Yy]$ ]]; then
 			just install-adobe-reader
 		else
-			echo "Keeping existing Adobe Reader installation."
+			echo "ℹ️  Keeping existing Adobe Reader installation."
 		fi
 	else
 		just install-adobe-reader
 	fi
-	echo "Installing JetBrains Toolbox..."
+	echo "🛠️  Installing JetBrains Toolbox..."
 	if [ -f "$HOME/jetbrains-toolbox/jetbrains-toolbox" ]; then
-		echo "JetBrains Toolbox already installed. Do you want to reinstall? [y/N]"
+		echo "ℹ️  JetBrains Toolbox already installed. Do you want to reinstall? [y/N]"
 		read -r reinstall_toolbox
 		if [[ $reinstall_toolbox =~ ^[Yy]$ ]]; then
 			bash ./scripts/install-jetbrains-toolbox.sh
 		else
-			echo "Keeping existing JetBrains Toolbox installation."
+			echo "ℹ️  Keeping existing JetBrains Toolbox installation."
 		fi
 	else
 		bash ./scripts/install-jetbrains-toolbox.sh
@@ -305,9 +356,6 @@ setup-wizard:
 	echo "🔄 Applying Home Manager configuration..."
 	just hmr-with-exit-check
 	echo
-	echo "🔄 Syncing Cursor settings..."
-	just sync-cursor-settings
-	echo
 	echo "🔧 Setting up system tweaks..."
 	if [ -f ./scripts/install-camera-fix-service.sh ]; then
 		./scripts/install-camera-fix-service.sh
@@ -315,15 +363,15 @@ setup-wizard:
 	echo "✅ System tweaks applied"
 	echo
 	echo "🔍 Verifying installation..."
-	echo "Checking core tools..."
-	for cmd in git curl wget vim; do
+	echo "📦 Checking core tools..."
+	for cmd in git curl wget vim nix home-manager; do
 		if ! command -v $cmd >/dev/null; then
 			echo "❌ $cmd not found"
 		else
 			echo "✅ $cmd installed"
 		fi
 	done
-	echo "Checking development tools..."
+	echo "🛠️  Checking development tools..."
 	for cmd in node npm python3 pip3; do
 		if ! command -v $cmd >/dev/null; then
 			echo "❌ $cmd not found"
@@ -331,9 +379,22 @@ setup-wizard:
 			echo "✅ $cmd installed"
 		fi
 	done
+	echo "💻 Checking IDE installations..."
+	for ide in cursor acroread obsidian; do
+		if ! command -v $ide >/dev/null; then
+			echo "❌ $ide not found"
+		else
+			echo "✅ $ide installed"
+		fi
+	done
+	if [ ! -f "$HOME/jetbrains-toolbox/jetbrains-toolbox" ]; then
+		echo "❌ JetBrains Toolbox not found"
+	else
+		echo "✅ JetBrains Toolbox installed"
+	fi
 	echo
 	echo "✨ Setup complete! Your development environment is ready."
-	echo "Next steps:"
+	echo "📋 Next steps:"
 	echo "  1. Review any warnings from the setup process above"
 	echo "  2. Install Cursor extensions:"
 	echo "     - Open Cursor"
@@ -349,3 +410,53 @@ setup-wizard:
 	echo "  - For Cursor issues, run 'just sync-cursor-settings'"
 	echo "  - For secrets issues, run 'just secrets-setup-key'"
 	echo "  - For system tweaks, check ./scripts/ directory"
+
+sync-obsidian-settings:
+	#!/usr/bin/env bash
+	mkdir -p ~/.config/obsidian
+	# Check if Obsidian is running
+	if pgrep -x "Obsidian" > /dev/null; then
+		echo "⚠️  Obsidian is currently running. Please close Obsidian before syncing settings."
+		echo "This is required to prevent permission issues with the configuration files."
+		exit 1
+	fi
+	# Function to handle file sync
+	sync_file() {
+		local file=$1
+		local source_file=$2
+		if [ -f ~/.config/obsidian/$file ]; then \
+			echo "Found existing Obsidian $file"; \
+			echo "Do you want to overwrite it? [y/N]"; \
+			read -r overwrite; \
+			if [[ $overwrite =~ ^[Yy]$ ]]; then \
+				echo "Overwriting $file..."; \
+				if cp $source_file ~/.config/obsidian/$file; then \
+					echo "✅ $file updated successfully."; \
+					return 0; \
+				else \
+					echo "❌ Failed to update $file."; \
+					echo "   Please ensure Obsidian is closed and try again."; \
+					return 1; \
+				fi; \
+			else \
+				echo "Keeping existing $file"; \
+				echo "Use your preferred editor to modify the file."; \
+				return 0; \
+			fi; \
+		else \
+			echo "Creating new $file..."; \
+			if cp $source_file ~/.config/obsidian/$file; then \
+				echo "✅ $file created successfully."; \
+				return 0; \
+			else \
+				echo "❌ Failed to create $file."; \
+				echo "   Please ensure Obsidian is closed and try again."; \
+				return 1; \
+			fi; \
+		fi
+	}
+	# Sync settings files
+	sync_file "appearance.json" "obsidian/appearance.json"
+	sync_file "community-plugins.json" "obsidian/community-plugins.json"
+	sync_file "core-plugins.json" "obsidian/core-plugins.json"
+	sync_file "workspace.json" "obsidian/workspace.json"

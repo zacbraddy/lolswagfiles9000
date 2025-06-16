@@ -28,12 +28,6 @@
        - [x] Next steps guidance
        - [ ] Troubleshooting information
 
-- [ ] Test full rebuild and rollback process
-  - [ ] Document step-by-step process
-  - [ ] Test on fresh system
-  - [ ] Verify all components work
-  - [ ] Document rollback procedures
-
 - [ ] Design and implement persistent file sync/backup solution
   - [ ] Research options (Google Drive, cloud sync)
   - [ ] Implement automated sync for important files
@@ -42,6 +36,10 @@
 - [x] Migrate camera-fix service management to script-based approach (install-camera-fix-service.sh) and remove Nix/Home Manager systemd integration for this service
 - [x] Remove redundant Cursor settings file from nix/modules; settings are now managed only in .config/Cursor/User/settings.json
 - [x] Ensure all scripts in scripts/ are executable and tracked in git for reproducibility
+- [ ] Test full rebuild process
+  - [ ] Document step-by-step process
+  - [ ] Test on fresh system
+  - [ ] Verify all components work
 
 ## Implementation Notes
 
@@ -71,19 +69,27 @@
 - Settings are copied (not symlinked) with diff/merge capability
 - Manual drag-and-drop installation required for extensions
 - Document all manual steps in setup guide
+- **Status:** All Cursor installation and sync issues are now resolved. No further troubleshooting required for Cursor.
 
 ## Current Status
 
 **Phase**: Implementation - In Progress 🚀
-**Next**: Address Cursor installation issues and complete troubleshooting information
+**Next**: Vim keybindings refinement and troubleshooting documentation
 
 ## Recent Progress
 
 - **2025-06-13:**
   - Completed CLI wizard implementation with proper error handling
   - Fixed Home Manager exit code handling in setup wizard
-  - Identified Cursor installation issues to resolve
+  - Cursor installation and sync issues are now fully resolved
   - Camera-fix service is now managed by a shell script (install-camera-fix-service.sh) called from the Justfile/setup-wizard. Nix/Home Manager no longer manages this systemd service due to persistent issues with user unit generation. All system tweaks are now handled by scripts, not Nix modules. Redundant Cursor settings file in nix/modules was removed; settings are now managed only in .config/Cursor/User/settings.json. All scripts in scripts/ are now executable and tracked in git for reproducibility.
+  - **Obsidian is now managed via Nix and dotfiles:**
+    - Obsidian is installed via Nix and included in home.packages.
+    - All key config files (appearance.json, community-plugins.json, core-plugins.json, workspace.json, vimrc) are managed in an obsidian/ directory at the repo root and symlinked into ~/.config/obsidian/.
+    - Vim keybindings and plugins (obsidian-vimrc-support, surround, commentary, easymotion, highlightedyank, which-key) are enabled and managed.
+    - advanced-tables and other useful plugins (quick-switcher-plus-plus, tag-wrangler, paste-url-into-selection) are included in community-plugins.json.
+    - A just sync-obsidian-settings recipe was added, mirroring the Cursor workflow, and integrated into setup-wizard.
+    - Only .vscode/extensions.json is now managed as the source of truth for extensions; .config/Cursor/User/extensions.json is no longer tracked in dotfiles.
 - **2025-06-12:** Completed Ansible migration
 - **2025-06-03:** Automated Cursor and Adobe Reader installation
 - **2025-06-02:** Completed zsh configuration migration
@@ -91,10 +97,10 @@
 
 ## Next Session Goals
 
-1. Fix Cursor installation issues:
-   - Investigate `home-manager-update` failure
-   - Debug `sync-cursor-settings` error
-   - Implement proper error handling for Cursor-related commands
+1. Vim Keybindings Refinement:
+   - Review existing keybindings in `.ideavimrc` and Cursor settings
+   - Identify areas for improvement or optimization
+   - Consider consistency across different editors (Cursor, JetBrains IDEs)
 
 2. Complete troubleshooting information:
    - Document common issues and solutions

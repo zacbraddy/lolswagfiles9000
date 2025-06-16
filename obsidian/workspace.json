@@ -1,0 +1,23 @@
+{
+  "mainLayout": {
+    "type": "split",
+    "direction": "horizontal",
+    "children": [
+      {
+        "type": "leaf",
+        "active": true,
+        "state": {
+          "type": "file-explorer"
+        }
+      },
+      {
+        "type": "leaf",
+        "active": false,
+        "state": {
+          "type": "markdown",
+          "file": "Welcome.md"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "theme": "obsidian-dark",
+  "fontFamily": "JetBrains Mono, monospace",
+  "baseFontSize": 16,
+  "accentColor": "#7e57c2",
+  "translucency": false,
+  "showLineNumbers": true,
+  "showStatusBar": true,
+  "showTabs": true,
+  "showRibbon": true
+}

@@ -20,6 +20,26 @@
   "vim.leader": "<space>",
   "vim.useSystemClipboard": true,
   "vim.hlsearch": true,
+  // Vim plugin equivalents
+  "vim.easymotion": true,
+  "vim.surround": true,
+  "vim.commentary": true,
+  "vim.highlightedyank": true,
+  "vim.incsearch": true,
+  // fzf settings
+  "fzf.enable": true,
+  "fzf.preview": true,
+  "fzf.includeHidden": true,
+  "fzf.ignoreFiles": [
+    ".git",
+    "node_modules",
+    "dist",
+    "build"
+  ],
+  // File Utils settings
+  "fileutils.autoRefresh": true,
+  "fileutils.confirmDelete": true,
+  "fileutils.confirmMove": true,
   "vim.insertModeKeyBindings": [
     {
       "before": ["j", "k"],
@@ -58,6 +78,29 @@
     {
       "before": ["<leader>", "f", "S"],
       "commands": [":wa"]
+    },
+    // fzf keybindings
+    {
+      "before": ["<leader>", "f"],
+      "commands": [":FZF"]
+    },
+    {
+      "before": ["<leader>", "b"],
+      "commands": [":Buffers"]
+    },
+    {
+      "before": ["<leader>", "h"],
+      "commands": [":History"]
+    },
+    // Terminal focus (like IdeaVim's <Leader>ot)
+    {
+      "before": ["<leader>", "o", "t"],
+      "commands": ["workbench.action.terminal.focus"]
+    },
+    // Recent files (like IdeaVim's <Leader>.)
+    {
+      "before": ["<leader>", "."],
+      "commands": ["workbench.action.quickOpenRecent"]
     }
   ],
   "vim.visualModeKeyBindings": [
@@ -71,6 +114,16 @@
     "<C-u>": true,
     "<C-f>": true,
     "<C-b>": true
+  },
+  // Alternative approach using which-key style
+  "vim.whichKey": true,
+  "vim.whichKey.bindings": {
+    "<leader>": {
+      "o": {
+        "t": "workbench.action.terminal.focus"
+      },
+      ".": "workbench.action.quickOpenRecent"
+    }
   },
   // Misc
   "explorer.confirmDelete": false

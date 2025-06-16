@@ -20,7 +20,7 @@ if [ -z "$LATEST_URL" ]; then
   exit 1
 fi
 
-mkdir -p "$CURSOR_DIR" "$DESKTOP_DIR" "$(dirname $MIMEAPPS)" "$CURSOR_SETTINGS_DIR"
+mkdir -p "$CURSOR_DIR" "$DESKTOP_DIR" "$(dirname $MIMEAPPS)"
 
 # Download if not present or if newer
 if [ ! -f "$APPIMAGE_PATH" ]; then
@@ -41,15 +41,6 @@ Terminal=false
 EOF
 
 echo "Cursor AppImage installed to $APPIMAGE_PATH and .desktop file updated."
-
-# Copy global settings if they exist
-if [ -f "$GLOBAL_SETTINGS_FILE" ]; then
-  echo "Copying global settings to Cursor..."
-  cp "$GLOBAL_SETTINGS_FILE" "$CURSOR_SETTINGS_FILE"
-  chmod 644 "$CURSOR_SETTINGS_FILE"
-else
-  echo "Warning: Global settings file not found at $GLOBAL_SETTINGS_FILE"
-fi
 
 # Idempotent MIME association function
 default_section='[Default Applications]'

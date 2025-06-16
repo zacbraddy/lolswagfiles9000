@@ -167,5 +167,13 @@ EOF
     gimp
     libreoffice
     file-roller
+    obsidian
   ];
+
+  # Obsidian dotfile management
+  home.file.".config/obsidian/appearance.json".source = ../../obsidian/appearance.json;
+  home.file.".config/obsidian/community-plugins.json".source = ../../obsidian/community-plugins.json;
+  home.file.".config/obsidian/core-plugins.json".source = ../../obsidian/core-plugins.json;
+  home.file.".config/obsidian/workspace.json".source = ../../obsidian/workspace.json;
+  home.file.".config/obsidian/vimrc".source = ../../obsidian/vimrc;
 }

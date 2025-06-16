@@ -11,6 +11,8 @@
     "mhutchie.git-graph",
     "ms-ossdata.vscode-postgresql",
     "ms-vscode.vscode-typescript-next",
-    "vscodevim.vim" // Vim keybindings
+    "vscodevim.vim", // Vim keybindings
+    "junegunn.fzf", // Fuzzy finder
+    "stevejpurves.cursor-file-utils" // Enhanced file operations
   ]
 }
