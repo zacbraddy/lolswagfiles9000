@@ -1,0 +1,9 @@
+{
+  "vaults": [
+    {
+      "path": "/home/zacbraddy/Projects/Fireflai/Vaults/FireFlai",
+      "name": "FireFlai",
+      "enabled": true
+    }
+  ]
+}

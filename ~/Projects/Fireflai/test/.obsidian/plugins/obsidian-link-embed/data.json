@@ -1,0 +1,20 @@
+{
+  "popup": true,
+  "rmDismiss": false,
+  "autoEmbedWhenEmpty": true,
+  "primary": "local",
+  "backup": "microlink",
+  "inPlace": false,
+  "debug": false,
+  "delay": 0,
+  "linkpreviewApiKey": "",
+  "jsonlinkApiKey": "",
+  "metadataTemplate": "parser: \"{{parser}}\"\ndate: \"{{date}}\"\ncustom_date: \"{{#formatDate}}YYYY-MM-DD HH:mm:ss{{/formatDate}}\"",
+  "useMetadataTemplate": false,
+  "saveImagesToVault": false,
+  "imageFolderPath": "link-embed-images",
+  "respectImageAspectRatio": true,
+  "useCache": true,
+  "enableFavicon": true,
+  "maxConcurrentLocalParsers": 1
+}

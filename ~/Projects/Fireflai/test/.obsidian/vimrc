@@ -1,0 +1,45 @@
+" Vim settings for Obsidian (inspired by Cursor and .ideavimrc)
+set number
+set relativenumber
+set ignorecase
+set smartcase
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set clipboard=unnamedplus
+
+" Remap leader key to space
+let mapleader = " "
+nnoremap <SPACE> <Nop>
+
+" Exit insert/visual mode with jk
+inoremap jk <Esc>
+vnoremap jk <Esc>
+
+" Yank, paste, delete, and change to system clipboard
+nnoremap <Leader>y "+y
+nnoremap <Leader>Y "+Y
+nnoremap <Leader>c "+c
+nnoremap <Leader>C "+C
+nnoremap <Leader>d "+d
+nnoremap <Leader>D "+D
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+
+" Quicksave
+nnoremap <Leader>fs :w<CR>
+nnoremap <Leader>fS :wa<CR>
+
+" Quick re-source (not supported in Obsidian, but left for reference)
+" nnoremap <Leader>sv :source ~/.obsidian.vimrc<CR>
+
+" Navigation: 10 lines up/down
+nnoremap <C-j> 10j
+nnoremap <C-k> 10k
+
+" Clear search highlight
+nnoremap <C-h> :nohlsearch<CR>
+
+" Insert mode: toggle case on word (not natively supported in Obsidian, but included for reference)
+inoremap <C-u> <Esc>viw~<Esc>ea
+nnoremap <C-u> viw~<Esc>

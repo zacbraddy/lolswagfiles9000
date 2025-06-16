@@ -460,3 +460,30 @@ sync-obsidian-settings:
 	sync_file "community-plugins.json" "obsidian/community-plugins.json"
 	sync_file "core-plugins.json" "obsidian/core-plugins.json"
 	sync_file "workspace.json" "obsidian/workspace.json"
+
+# Obsidian Vault Management Recipes
+
+# List all configured vaults
+obsidian-vaults-list:
+	#!/usr/bin/env bash
+	node scripts/obsidian/manage-vaults.js list
+
+# Add a new vault
+obsidian-vaults-add:
+	#!/usr/bin/env bash
+	node scripts/obsidian/manage-vaults.js add
+
+# Remove a vault
+obsidian-vaults-remove:
+	#!/usr/bin/env bash
+	node scripts/obsidian/manage-vaults.js remove
+
+# Edit an existing vault
+obsidian-vaults-edit:
+	#!/usr/bin/env bash
+	node scripts/obsidian/manage-vaults.js edit
+
+# Sync Obsidian configuration to all vaults
+obsidian-sync:
+	#!/usr/bin/env bash
+	node scripts/obsidian/sync.js

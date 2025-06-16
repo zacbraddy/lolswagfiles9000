@@ -71,10 +71,28 @@
 - Document all manual steps in setup guide
 - **Status:** All Cursor installation and sync issues are now resolved. No further troubleshooting required for Cursor.
 
+### Obsidian Configuration Management
+- Obsidian is installed via Nix and included in home.packages
+- Configuration files are managed in obsidian/ directory at repo root:
+  - app.json (theme and appearance settings)
+  - appearance.json (UI customization)
+  - community-plugins.json (plugin list)
+  - core-plugins.json (core plugin settings)
+  - workspace.json (layout and state)
+  - vimrc (vim keybindings)
+- Plugin management:
+  - Vim plugins (obsidian-vimrc-support, surround, commentary, easymotion, highlightedyank, which-key)
+  - Utility plugins (advanced-tables, quick-switcher-plus-plus, tag-wrangler, paste-url-into-selection)
+- Sync process:
+  - Two-way sync between dotfiles and vaults
+  - Automatic plugin installation and configuration
+  - Workspace state preservation
+  - Theme and appearance synchronization
+
 ## Current Status
 
 **Phase**: Implementation - In Progress 🚀
-**Next**: Vim keybindings refinement and troubleshooting documentation
+**Next**: Smart Connections Integration and Vault Organization
 
 ## Recent Progress
 
@@ -97,15 +115,18 @@
 
 ## Next Session Goals
 
-1. Vim Keybindings Refinement:
-   - Review existing keybindings in `.ideavimrc` and Cursor settings
-   - Identify areas for improvement or optimization
-   - Consider consistency across different editors (Cursor, JetBrains IDEs)
+1. Smart Connections Integration:
+   - Research plugin capabilities
+   - Design note linking strategy
+   - Implement automated note linking
+   - Configure for optimal performance
 
-2. Complete troubleshooting information:
-   - Document common issues and solutions
-   - Create recovery procedures
-   - Add verbose logging options
+2. Vault Organization:
+   - Design folder structure
+   - Implement tagging system
+   - Set up templates
+   - Configure search and navigation
+   - Implement backup strategy
 
 ## ✅ Completed Tasks
 
@@ -121,32 +142,30 @@
    - Verified `default.pa` is actively used for PulseAudio configuration
    - Both files are properly linked through Nix configuration
 
-## 📋 Next Session: Vim Keybindings Refinement
+3. **Obsidian Configuration Management**
+   - Created scripts for managing multiple vaults
+   - Implemented configuration sync between vaults
+   - Set up plugin management
+   - Configured theme and appearance settings
+   - Added vim keybindings support
+   - Implemented workspace synchronization
 
-1. **Current Vim Configuration Review**
-   - Review existing keybindings in `.ideavimrc` and Cursor settings
-   - Identify areas for improvement or optimization
-   - Consider consistency across different editors (Cursor, JetBrains IDEs)
+## 📋 Next Session: Smart Connections Integration
 
-2. **Keybinding Categories to Review**
-   - Navigation and movement
-   - Text manipulation and editing
-   - Window/tab management
-   - Search and replace
-   - Leader key mappings
-   - Custom commands and macros
+1. **Plugin Research**
+   - Review Smart Connections documentation
+   - Understand API capabilities
+   - Identify integration points
 
-3. **Potential Improvements**
-   - Streamline common operations
-   - Add missing functionality
-   - Ensure ergonomic key combinations
-   - Consider adding new leader key mappings
-   - Review and optimize existing mappings
+2. **Integration Planning**
+   - Design note linking strategy
+   - Plan automated linking implementation
+   - Consider performance implications
 
-4. **Documentation**
-   - Document new/changed keybindings
-   - Create a quick reference guide
-   - Add comments in configuration files
+3. **Implementation Steps**
+   - Set up Smart Connections configuration
+   - Implement automated note linking
+   - Test and optimize performance
 
 ### Troubleshooting Note
 - Systemd user services managed by Home Manager may not always be reliably generated or enabled, especially in complex or flake-based setups. If a service is not appearing or being enabled, prefer a script-based approach for critical system tweaks. This is now the default for camera-fix and similar services in this repo.
