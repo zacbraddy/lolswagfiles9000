@@ -113,22 +113,6 @@
 - **2025-06-02:** Completed zsh configuration migration
 - **2025-06-01:** Implemented Home Manager activation scripts
 
-## Next Session Goals
-
-1. Smart Connections Integration:
-   - Research plugin capabilities
-   - Design note linking strategy
-   - Implement automated note linking
-   - Configure for optimal performance
-
-2. Vault Organization:
-   - Design folder structure
-   - Implement tagging system
-   - Set up templates
-   - Configure search and navigation
-   - Implement backup strategy
-
-## ✅ Completed Tasks
 
 1. **Cursor Settings Management**
    - Moved from project-level to global settings
@@ -150,22 +134,6 @@
    - Added vim keybindings support
    - Implemented workspace synchronization
 
-## 📋 Next Session: Smart Connections Integration
-
-1. **Plugin Research**
-   - Review Smart Connections documentation
-   - Understand API capabilities
-   - Identify integration points
-
-2. **Integration Planning**
-   - Design note linking strategy
-   - Plan automated linking implementation
-   - Consider performance implications
-
-3. **Implementation Steps**
-   - Set up Smart Connections configuration
-   - Implement automated note linking
-   - Test and optimize performance
 
 ### Troubleshooting Note
 - Systemd user services managed by Home Manager may not always be reliably generated or enabled, especially in complex or flake-based setups. If a service is not appearing or being enabled, prefer a script-based approach for critical system tweaks. This is now the default for camera-fix and similar services in this repo.
