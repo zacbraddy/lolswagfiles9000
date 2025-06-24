@@ -151,7 +151,7 @@
               "$HOME/.aider"
           )
           
-          for loc in "${locations[@]}"; do
+          for loc in "''${locations[@]}"; do
               if [ -d "$loc" ] && [ -f "$loc/pyproject.toml" ]; then
                   echo "$loc"
                   return 0
