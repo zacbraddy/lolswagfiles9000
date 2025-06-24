@@ -35,7 +35,28 @@
       reload = "exec zsh";
       netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
       rm = "trash"; # Use trash instead of rm for safety
-      hmr = "check_secrets && home-manager switch --flake .#zacbraddy -b backup"; # Home Manager Reload
+      hmr = ''
+        if [ ! -f ~/.config/sops/age/keys.txt ]; then
+          echo "⚠️  Warning: Age key file not found at ~/.config/sops/age/keys.txt"
+          echo "Please run 'just secrets-setup-key' to set up your encryption keys"
+          exit 1
+        fi
+        if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml 2>/dev/null | grep -q '^{}$'; then
+          echo "⚠️  Warning: secrets.yaml is empty"
+          echo "Please run 'just secrets-add' to add required secrets:"
+          echo "  - aws_credentials"
+          echo "  - github_token"
+          echo "  - ssh_private_key"
+          echo "  - ssh_public_key"
+          echo "  - env_file"
+          exit 1
+        fi
+        home-manager switch --flake ~/Projects/Personal/lolswagfiles9000#zacbraddy -b backup && exec zsh
+      '';
+      # --- Aider Integration: Aliases ---
+      ai = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-chat";
+      air1 = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-r1";
+      aider-status = "echo 'Aider Root: $AIDER_ROOT' && cd \"$AIDER_ROOT\" && poetry run aider --version";
     };
     initContent = ''
       # Auto-remove files from trash older than 6 months (180 days) on shell startup
@@ -151,6 +172,29 @@
         source <(nx completion zsh || true)
       fi
       # moonrepo: no official zsh completion, see https://moonrepo.dev/docs/guides/shell-completions for updates
+
+      # --- Aider Integration: Function ---
+      find_aider_root() {
+          local primary_location="$HOME/Projects/Personal/aider-setup"
+          if [ -d "$primary_location" ] && [ -f "$primary_location/pyproject.toml" ]; then
+              echo "$primary_location"
+              return 0
+          fi
+          echo ""
+          return 1
+      }
+
+      # --- Aider Integration: Setup ---
+      AIDER_ROOT=$(find_aider_root)
+      if [ -n "$AIDER_ROOT" ]; then
+          export AIDER_ROOT
+          # Load environment variables
+          if [ -f "$AIDER_ROOT/.env" ]; then
+              export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
+          fi
+      else
+          echo "⚠️  Aider setup not found at ~/Projects/Personal/aider-setup"
+      fi
     '';
   };
   # Enable fzf globally with zsh integration
