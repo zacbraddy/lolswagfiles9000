@@ -8082,5 +8082,3 @@ var VariousComponents = class extends import_obsidian9.Plugin {
     modal.open();
   }
 };
-
-/* nosourcemap */

@@ -5,7 +5,7 @@
   "tabSize": 2,
   "showStatusBar": true,
   "showTabs": true,
-  "showInlineTitle": false,
+  "showInlineTitle": true,
   "showSpace": false,
   "showTab": false,
   "showWhitespace": false,

@@ -1,5 +1,4 @@
 [
-  "obsidian-vimrc-support",
   "auto-note-mover",
   "various-complements",
   "table-editor-obsidian",
@@ -24,7 +23,13 @@
   "nldates-obsidian",
   "obsidian-relative-line-numbers",
   "remember-cursor-position",
-  "obsidian42-strange-new-worlds",
   "obsidian-tracker",
-  "colored-tags-wrangler"
+  "colored-tags-wrangler",
+  "obsidian-vimrc-support",
+  "dataview",
+  "waypoint",
+  "webpage-html-export",
+  "obsidian-local-rest-api",
+  "obsidian-git",
+  "obsidian-vault-statistics-plugin"
 ]

@@ -19,10 +19,6 @@
   # Enable systemd user service management
   systemd.user.startServices = true;
 
-  # Enable zsh as the default shell
-  programs.zsh.enable = true;
-  # oh-my-zsh is not a direct option; use programs.zsh.plugins for plugins/themes
-
   # Essential packages (add more as needed)
   home.packages = with pkgs; [
     git

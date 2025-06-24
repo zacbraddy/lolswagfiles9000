@@ -2,6 +2,22 @@
 {
   programs.zsh = {
     enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    shellAliases = {
+      gs = "git status";
+      ga = "git add .";
+      gc = "git commit";
+      gp = "git push";
+      gd = "git diff";
+      gr = "git reset";
+      reload = "exec zsh";
+      netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
+      rm = "trash";
+      ai = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-chat";
+      air1 = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-r1";
+    };
     oh-my-zsh = {
       enable = true;
       theme = "";
@@ -19,88 +35,23 @@
         "vi-mode"
         # pnpm, turbo, nx, and moonrepo completions handled below
       ];
-      # For best appearance, use a Nerd Font or Powerline-patched font (e.g., JetBrains Mono, MesloLGS NF)
-    };
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    # Enable syntax highlighting
-    syntaxHighlighting.enable = true;
-    shellAliases = {
-      gs = "git status";
-      ga = "git add .";
-      gc = "git commit";
-      gp = "git push";
-      gd = "git diff";
-      gr = "git reset";
-      reload = "exec zsh";
-      netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
-      rm = "trash"; # Use trash instead of rm for safety
-      hmr = ''
-        if [ ! -f ~/.config/sops/age/keys.txt ]; then
-          echo "⚠️  Warning: Age key file not found at ~/.config/sops/age/keys.txt"
-          echo "Please run 'just secrets-setup-key' to set up your encryption keys"
-          exit 1
-        fi
-        if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml 2>/dev/null | grep -q '^{}$'; then
-          echo "⚠️  Warning: secrets.yaml is empty"
-          echo "Please run 'just secrets-add' to add required secrets:"
-          echo "  - aws_credentials"
-          echo "  - github_token"
-          echo "  - ssh_private_key"
-          echo "  - ssh_public_key"
-          echo "  - env_file"
-          exit 1
-        fi
-        home-manager switch --flake ~/Projects/Personal/lolswagfiles9000#zacbraddy -b backup && exec zsh
-      '';
-      # --- Aider Integration: Aliases ---
-      ai = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-chat";
-      air1 = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-r1";
-      aider-status = "echo 'Aider Root: $AIDER_ROOT' && cd \"$AIDER_ROOT\" && poetry run aider --version";
     };
     initContent = ''
       # Auto-remove files from trash older than 6 months (180 days) on shell startup
       trash-empty 180
-
-      # Check if secrets are properly configured
-      check_secrets() {
-        if [ ! -f ~/.config/sops/age/keys.txt ]; then
-          echo "⚠️  Warning: Age key file not found at ~/.config/sops/age/keys.txt"
-          echo "Please run 'just secrets-setup-key' to set up your encryption keys"
-          return 1
-        fi
-
-        # Check if secrets.yaml is empty or missing required secrets
-        if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml 2>/dev/null | grep -q '^{}$'; then
-          echo "⚠️  Warning: secrets.yaml is empty"
-          echo "Please run 'just secrets-add' to add required secrets:"
-          echo "  - aws_credentials"
-          echo "  - github_token"
-          echo "  - ssh_private_key"
-          echo "  - ssh_public_key"
-          echo "  - env_file"
-          return 1
-        fi
-        return 0
-      }
-
       # PATH modifications
       export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
       export PATH="$HOME/.local/bin:$PATH"
       export PATH="$HOME/.poetry/bin:$PATH"
       export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
       export PATH="$PATH:$HOME/.spicetify"
-
       # Bash completion compatibility for pipx and other tools
       autoload -U bashcompinit
       bashcompinit
-
       # Zsh native completion
       autoload -U compinit compdef && compinit
-
       # tabtab completions (Node.js tools)
       [ -f ~/.config/tabtab/__tabtab.bash ] && . ~/.config/tabtab/__tabtab.bash || true
-
       # Docker helper functions
       kadc() {
           docker ps -q | while read -r i; do docker stop $i; docker rm $i; done
@@ -115,7 +66,6 @@
           echo "=================== CONTAINERS ==================="
           docker ps -a
       }
-
       # Project jump function
       pj() {
         local projects=(~/Projects/*)
@@ -124,7 +74,6 @@
           cd "$project"
         fi
       }
-
       # Trash management helpers
       trash-clear-all() {
         trash-empty
@@ -154,7 +103,11 @@
         fi
         trash-empty "$1"
       }
-
+      # hmr function for Home Manager repair and reload
+      hmr() {
+        bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh -b hmbackup
+        echo "Run 'reload' or restart your shell to apply changes."
+      }
       # Source powerlevel10k theme from Nix store if available
       if [ -d "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k" ]; then
         source "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
@@ -172,7 +125,6 @@
         source <(nx completion zsh || true)
       fi
       # moonrepo: no official zsh completion, see https://moonrepo.dev/docs/guides/shell-completions for updates
-
       # --- Aider Integration: Function ---
       find_aider_root() {
           local primary_location="$HOME/Projects/Personal/aider-setup"
@@ -183,7 +135,6 @@
           echo ""
           return 1
       }
-
       # --- Aider Integration: Setup ---
       AIDER_ROOT=$(find_aider_root)
       if [ -n "$AIDER_ROOT" ]; then
@@ -195,6 +146,19 @@
       else
           echo "⚠️  Aider setup not found at ~/Projects/Personal/aider-setup"
       fi
+      # --- Aider Integration: aider-status function ---
+      aider-status() {
+        echo "Aider Root: $AIDER_ROOT"
+        if [ -n "$DEEPSEEK_API_KEY" ]; then
+          echo "API Key: [SET]"
+        else
+          echo "API Key: [NOT SET]"
+        fi
+        echo "Default Model: ''${AIDER_MODEL:-deepseek/deepseek-chat}"
+        pushd "$AIDER_ROOT" >/dev/null
+        poetry run aider --version
+      }
+      # (You can add the rest of your custom code here)
     '';
   };
   # Enable fzf globally with zsh integration

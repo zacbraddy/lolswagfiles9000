@@ -1,6 +1,10 @@
 {
   "id": "various-complements",
   "name": "Various Complements",
-  "description": "Complete words similar to auto-completion in an IDE.",
-  "author": "tadashi-aikawa"
+  "version": "10.5.1",
+  "minAppVersion": "0.16.0",
+  "description": "This plugin enables you to complete words like the auto-completion of IDE",
+  "author": "tadashi-aikawa",
+  "authorUrl": "https://github.com/tadashi-aikawa",
+  "isDesktopOnly": false
 }

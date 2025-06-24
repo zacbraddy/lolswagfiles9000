@@ -137,3 +137,13 @@
 
 ### Troubleshooting Note
 - Systemd user services managed by Home Manager may not always be reliably generated or enabled, especially in complex or flake-based setups. If a service is not appearing or being enabled, prefer a script-based approach for critical system tweaks. This is now the default for camera-fix and similar services in this repo.
+
+## Home Manager Backup Clobbering Issue
+
+If you encounter an error from Home Manager about an existing backup file (e.g., during 'just hmr') that would be clobbered and it references an Obsidian file (such as .zshrc can't be clobbered because of an Obsidian backup file), this usually means your dotfiles and your Obsidian vault are out of sync.
+
+**What to do:**
+- Run `just obsidian-sync` to sync your current vault settings into your dotfiles and propagate them.
+- Then try your Home Manager command again (e.g., `just hmr`).
+
+Document this scenario in user-facing documentation and onboarding guides.

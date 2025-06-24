@@ -2178,5 +2178,3 @@ var AutoNoteMover = class extends import_obsidian6.Plugin {
     });
   }
 };
-
-/* nosourcemap */
