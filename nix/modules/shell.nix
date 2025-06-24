@@ -139,11 +139,11 @@
 
       # --- Aider Integration: Helper Functions ---
       ai() {
-        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat "$@")
+        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat $(pwd) "$@")
       }
 
       air1() {
-        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-r1 "$@")
+        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-r1 $(pwd) "$@")
       }
       # --- Aider Integration: Setup ---
       AIDER_ROOT=$(find_aider_root)
