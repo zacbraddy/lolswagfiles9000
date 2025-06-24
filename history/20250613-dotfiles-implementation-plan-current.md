@@ -147,3 +147,8 @@ If you encounter an error from Home Manager about an existing backup file (e.g.,
 - Then try your Home Manager command again (e.g., `just hmr`).
 
 Document this scenario in user-facing documentation and onboarding guides.
+
+## Home Manager caching issues
+
+If you encounter an issue where you're trying to update the .zshrc then you might find that it refuses to overwrite. To fix this run `just clear-nix-cache` and try again.
+If that doesn't work, I have no idea what is wrong!

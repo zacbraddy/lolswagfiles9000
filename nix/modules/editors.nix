@@ -76,22 +76,25 @@ in
     CURSOR_DESKTOP="cursor.desktop"
     CURSOR_DESKTOP_PATH="$DESKTOP_DIR/$CURSOR_DESKTOP"
 
-    # Fetch the latest Cursor AppImage download URL from the official API
-    LATEST_URL=$(${pkgs.curl}/bin/curl -s 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | grep -oP '"downloadUrl":"\\K[^"]+')
-
-    if [ -z "$LATEST_URL" ]; then
-      echo "Could not find a download URL for Cursor AppImage. Please check https://www.cursor.com/downloads"
-      exit 1
-    fi
-
     mkdir -p "$CURSOR_DIR" "$DESKTOP_DIR" "$(dirname $MIMEAPPS)"
 
-    # Download if not present or if newer
-    if [ ! -f "$APPIMAGE_PATH" ]; then
-      echo "Downloading latest Cursor AppImage..."
-      ${pkgs.curl}/bin/curl -L "$LATEST_URL" -o "$APPIMAGE_PATH"
-      chmod +x "$APPIMAGE_PATH"
+    # Skip download and desktop file creation if AppImage already exists
+    if [ -f "$APPIMAGE_PATH" ]; then
+      echo "Cursor AppImage already exists at $APPIMAGE_PATH, skipping installation"
+      exit 0
     fi
+
+    # Fetch the latest Cursor AppImage download URL from the official API
+    LATEST_URL=$(${pkgs.curl}/bin/curl -s 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | grep -oP '"downloadUrl":"\\K[^"]+' || true)
+
+    if [ -z "$LATEST_URL" ]; then
+      echo "Could not find a download URL for Cursor AppImage. Skipping Cursor installation."
+      exit 0
+    fi
+
+    echo "Downloading latest Cursor AppImage..."
+    ${pkgs.curl}/bin/curl -L "$LATEST_URL" -o "$APPIMAGE_PATH"
+    chmod +x "$APPIMAGE_PATH"
 
     # Create/update .desktop file
     cat > "$CURSOR_DESKTOP_PATH" <<EOF

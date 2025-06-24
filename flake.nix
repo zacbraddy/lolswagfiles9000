@@ -23,6 +23,8 @@
           overlays = [ nix-vscode-extensions.overlays.default ];
         };
         modules = [
+          sops-nix.homeManagerModules.sops
+          ./nix/modules/sops-config.nix
           ./nix/home.nix
           ./nix/modules/shell.nix
           ./nix/modules/editors.nix
@@ -31,7 +33,6 @@
           ./nix/modules/system.nix
           ./nix/modules/secrets.nix
         ];
-        extraSpecialArgs = { inherit sops-nix; };
       };
       pop-os = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
@@ -39,6 +40,8 @@
           overlays = [ nix-vscode-extensions.overlays.default ];
         };
         modules = [
+          sops-nix.homeManagerModules.sops
+          ./nix/modules/sops-config.nix
           ./nix/home.nix
           ./nix/modules/shell.nix
           ./nix/modules/editors.nix

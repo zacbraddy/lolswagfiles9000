@@ -205,6 +205,22 @@ hmr-with-exit-check:
 		exit $HM_EXIT
 	fi
 
+# Clear Nix cache and garbage collect old generations
+clear-nix-cache:
+	#!/usr/bin/env bash
+	echo "🗑️  Clearing Nix cache and removing old generations..."
+	echo "⚠️  This will delete all unused Nix store paths and old profile generations."
+	echo "Do you want to continue? [y/N]"
+	read -r confirm
+	if [[ $confirm =~ ^[Yy]$ ]]; then
+		echo "🧹 Running nix-collect-garbage -d..."
+		nix-collect-garbage -d
+		echo "✅ Nix cache cleared successfully!"
+		echo "💡 Tip: Run 'just hmr' to rebuild your configuration from scratch."
+	else
+		echo "❌ Operation cancelled."
+	fi
+
 setup-wizard:
 	#!/usr/bin/env bash
 	echo "🚀 Starting Dotfiles Setup Wizard"

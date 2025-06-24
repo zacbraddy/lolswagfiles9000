@@ -4,22 +4,20 @@ set -e
 # Accept extra arguments for home-manager switch (e.g., -b backup)
 HM_SWITCH_ARGS="$@"
 
-LATEST_ZSHRC=$(ls -t /nix/store/*-hm_.zshrc 2>/dev/null | head -n1)
-if [ ! -L ~/.zshrc ] || [ "$(readlink ~/.zshrc)" != "$LATEST_ZSHRC" ]; then
-  if [ -f ~/.zshrc ] && [ ! -L ~/.zshrc ]; then
-    mv ~/.zshrc ~/.zshrc.backup
-    echo 'Moved existing ~/.zshrc to ~/.zshrc.backup so Home Manager can manage it.'
-  fi
-  if [ -n "$LATEST_ZSHRC" ]; then
-    ln -sf "$LATEST_ZSHRC" ~/.zshrc
-    echo "Symlinked $LATEST_ZSHRC to ~/.zshrc (repair/check)"
-  else
-    echo "No generated .zshrc found in /nix/store (repair/check)."
-  fi
+# Unlink ~/.zshrc if it exists (file or symlink) to avoid Home Manager backup clobbering bug
+if [ -e "$HOME/.zshrc" ] || [ -L "$HOME/.zshrc" ]; then
+  echo "Unlinking ~/.zshrc (removing file or symlink) to avoid Home Manager backup clobbering bug."
+  rm "$HOME/.zshrc"
 fi
+
+# Remove any pre-Home Manager relinking of .zshrc
 
 LATEST_ZSHENV=$(ls -t /nix/store/*-home-manager-files/.zshenv 2>/dev/null | head -n1)
 if [ ! -L ~/.zshenv ] || [ "$(readlink ~/.zshenv)" != "$LATEST_ZSHENV" ]; then
+  if [ -f ~/.zshenv ] && [ ! -L ~/.zshenv ]; then
+    mv ~/.zshenv ~/.zshenv.backup
+    echo 'Moved existing ~/.zshenv to ~/.zshenv.backup so Home Manager can manage it.'
+  fi
   if [ -n "$LATEST_ZSHENV" ]; then
     ln -sf "$LATEST_ZSHENV" ~/.zshenv
     echo "Symlinked $LATEST_ZSHENV to ~/.zshenv (repair/check)"
@@ -45,25 +43,24 @@ if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.s
   exit 1
 fi
 
-set +e
-home-manager switch --flake /home/zacbraddy/Projects/Personal/lolswagfiles9000#zacbraddy $HM_SWITCH_ARGS
+# Run Home Manager switch with any passed arguments
+home-manager switch $HM_SWITCH_ARGS
 HM_EXIT=$?
-set -e
 
-LATEST_ZSHRC=$(ls -t /nix/store/*-hm_.zshrc 2>/dev/null | head -n1)
-if [ -n "$LATEST_ZSHRC" ]; then
-  ln -sf "$LATEST_ZSHRC" ~/.zshrc
-  echo "Symlinked $LATEST_ZSHRC to ~/.zshrc (post-switch)"
+# Post-switch: re-symlink .zshrc and .zshenv if needed
+LATEST_HM_FILES=$(find /nix/store -maxdepth 1 -name "*-home-manager-files" 2>/dev/null | sort | tail -n1)
+if [ -n "$LATEST_HM_FILES" ]; then
+  echo "Found Home Manager files at: $LATEST_HM_FILES"
+  if [ -f "$LATEST_HM_FILES/.zshrc" ] && [ ! -e ~/.zshrc ]; then
+    ln -sf "$LATEST_HM_FILES/.zshrc" ~/.zshrc
+    echo "✅ Symlinked $LATEST_HM_FILES/.zshrc to ~/.zshrc (post-switch)"
+  fi
+  if [ -f "$LATEST_HM_FILES/.zshenv" ] && [ ! -L ~/.zshenv ]; then
+    ln -sf "$LATEST_HM_FILES/.zshenv" ~/.zshenv
+    echo "✅ Symlinked $LATEST_HM_FILES/.zshenv to ~/.zshenv (post-switch)"
+  fi
 else
-  echo "No generated .zshrc found in /nix/store (post-switch)."
-fi
-
-LATEST_ZSHENV=$(ls -t /nix/store/*-home-manager-files/.zshenv 2>/dev/null | head -n1)
-if [ -n "$LATEST_ZSHENV" ]; then
-  ln -sf "$LATEST_ZSHENV" ~/.zshenv
-  echo "Symlinked $LATEST_ZSHENV to ~/.zshenv (post-switch)"
-else
-  echo "No generated .zshenv found in /nix/store (post-switch)."
+  echo "⚠️  No Home Manager files directory found"
 fi
 
 echo "Done. Please run 'reload' or restart your shell to apply changes."

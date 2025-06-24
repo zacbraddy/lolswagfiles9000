@@ -1,19 +1,6 @@
-{ config, pkgs, sops-nix, lib, ... }:
+{ config, pkgs, lib, ... }:
 {
-  imports = [ sops-nix.homeManagerModules.sops ];
-
-  sops = {
-    age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-    defaultSopsFile = ../secrets/secrets.yaml;
-
-    # Handle the encrypted data field
-    secrets = {
-      data = {
-        path = "${config.home.homeDirectory}/.config/secrets/data";
-        mode = "0600";
-      };
-    };
-  };
+  imports = [ ];
 
   # Create necessary directories
   home.activation = {

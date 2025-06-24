@@ -15,8 +15,7 @@
       reload = "exec zsh";
       netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
       rm = "trash";
-      ai = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-chat";
-      air1 = "cd \"$AIDER_ROOT\" && poetry run aider --model deepseek/deepseek-r1";
+
     };
     oh-my-zsh = {
       enable = true;
@@ -105,6 +104,10 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
+        if [ -e "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
+          echo "Unlinking regular ~/.zshrc to avoid Home Manager backup clobbering bug."
+          rm "$HOME/.zshrc"
+        fi
         bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh -b hmbackup
         echo "Run 'reload' or restart your shell to apply changes."
       }
@@ -134,6 +137,17 @@
           fi
           echo ""
           return 1
+      }
+
+      # --- Aider Integration: Helper Functions ---
+      ai() {
+        cd "$AIDER_ROOT"
+        poetry run aider --model deepseek/deepseek-chat "$@"
+      }
+
+      air1() {
+        cd "$AIDER_ROOT"
+        poetry run aider --model deepseek/deepseek-r1 "$@"
       }
       # --- Aider Integration: Setup ---
       AIDER_ROOT=$(find_aider_root)

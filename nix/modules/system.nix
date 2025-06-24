@@ -58,7 +58,10 @@
   };
 
   # Symlink for user config file
-  home.file.".config/mimeapps.list".source = ../../mimeapps.list;
+  home.file.".config/mimeapps.list" = {
+    source = ../../mimeapps.list;
+    force = true;
+  };
 
   # Symlinks for root-owned config files (requires sudo)
   home.activation.linkPulseAndTuxedo = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
