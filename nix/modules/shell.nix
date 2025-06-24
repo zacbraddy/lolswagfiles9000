@@ -128,7 +128,13 @@
       # moonrepo: no official zsh completion, see https://moonrepo.dev/docs/guides/shell-completions for updates
       # --- Aider Integration: Function ---
       find_aider_root() {
-          # First check current and parent directories for aider setup
+          # First check if AIDER_ROOT is already set
+          if [ -n "$AIDER_ROOT" ] && [ -f "$AIDER_ROOT/pyproject.toml" ]; then
+              echo "$AIDER_ROOT"
+              return 0
+          fi
+
+          # Then check current and parent directories for aider setup
           local current="$PWD"
           while [ "$current" != "/" ]; do
               if [ -f "$current/pyproject.toml" ]; then
@@ -138,29 +144,43 @@
               current="$(dirname "$current")"
           done
           
-          # Fall back to default location if not found in path
-          local primary_location="$HOME/Projects/Personal/aider-setup"
-          if [ -d "$primary_location" ] && [ -f "$primary_location/pyproject.toml" ]; then
-              echo "$primary_location"
-              return 0
-          fi
+          # Fall back to common locations
+          local locations=(
+              "$HOME/Projects/Personal/aider-setup"
+              "$HOME/aider-setup"
+              "$HOME/.aider"
+          )
           
-          echo ""
+          for loc in "${locations[@]}"; do
+              if [ -d "$loc" ] && [ -f "$loc/pyproject.toml" ]; then
+                  echo "$loc"
+                  return 0
+              fi
+          done
+          
+          echo "Could not find aider setup (looking for pyproject.toml in):" >&2
+          echo "- Current directory and parents" >&2
+          echo "- $HOME/Projects/Personal/aider-setup" >&2
+          echo "- $HOME/aider-setup" >&2
+          echo "- $HOME/.aider" >&2
           return 1
       }
 
       # --- Aider Integration: Helper Functions ---
       ai() {
         local target_dir="$(pwd)"
-        if [ -z "$AIDER_ROOT" ]; then
-          echo "Error: AIDER_ROOT is not set. Please set up Aider first."
+        local aider_root="$(find_aider_root)"
+        
+        if [ -z "$aider_root" ]; then
+          echo "Error: Could not find aider setup."
+          echo "Please either:"
+          echo "1. Run this command from inside an aider project directory"
+          echo "2. Set AIDER_ROOT environment variable to point to your aider setup"
+          echo "3. Place your aider setup in one of the standard locations"
           return 1
         fi
-        if [ ! -f "$AIDER_ROOT/pyproject.toml" ]; then
-          echo "Error: No pyproject.toml found in $AIDER_ROOT"
-          return 1
-        fi
-        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat --cwd "$target_dir" "$@")
+        
+        (cd "$aider_root" && poetry run aider --model deepseek/deepseek-chat --cwd "$target_dir" "$@")
       }
 
       air1() {
