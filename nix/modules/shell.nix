@@ -152,7 +152,15 @@
       # --- Aider Integration: Helper Functions ---
       ai() {
         local target_dir="$(pwd)"
-        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat "$target_dir" "$@")
+        if [ -z "$AIDER_ROOT" ]; then
+          echo "Error: AIDER_ROOT is not set. Please set up Aider first."
+          return 1
+        fi
+        if [ ! -f "$AIDER_ROOT/pyproject.toml" ]; then
+          echo "Error: No pyproject.toml found in $AIDER_ROOT"
+          return 1
+        fi
+        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat --cwd "$target_dir" "$@")
       }
 
       air1() {
