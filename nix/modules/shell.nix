@@ -155,6 +155,10 @@
           if [ -f "$AIDER_ROOT/.env" ]; then
               export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
           fi
+          # Source aider environment script if it exists
+          if [ -f "$AIDER_ROOT/.aider_env.sh" ]; then
+              source "$AIDER_ROOT/.aider_env.sh"
+          fi
       else
           echo "⚠️  Aider setup not found at ~/Projects/Personal/aider-setup"
       fi
