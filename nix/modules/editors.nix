@@ -168,6 +168,7 @@ EOF
     libreoffice
     file-roller
     obsidian
+    vscode
   ];
 
   # Obsidian dotfile management
