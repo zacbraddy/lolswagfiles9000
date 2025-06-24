@@ -128,11 +128,23 @@
       # moonrepo: no official zsh completion, see https://moonrepo.dev/docs/guides/shell-completions for updates
       # --- Aider Integration: Function ---
       find_aider_root() {
+          # First check current and parent directories for aider setup
+          local current="$PWD"
+          while [ "$current" != "/" ]; do
+              if [ -f "$current/pyproject.toml" ]; then
+                  echo "$current"
+                  return 0
+              fi
+              current="$(dirname "$current")"
+          done
+          
+          # Fall back to default location if not found in path
           local primary_location="$HOME/Projects/Personal/aider-setup"
           if [ -d "$primary_location" ] && [ -f "$primary_location/pyproject.toml" ]; then
               echo "$primary_location"
               return 0
           fi
+          
           echo ""
           return 1
       }
