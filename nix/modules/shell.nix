@@ -139,11 +139,13 @@
 
       # --- Aider Integration: Helper Functions ---
       ai() {
-        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat $(pwd) "$@")
+        local target_dir="$(pwd)"
+        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-chat "$target_dir" "$@")
       }
 
       air1() {
-        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-r1 $(pwd) "$@")
+        local target_dir="$(pwd)"
+        (cd "$AIDER_ROOT" && poetry run aider --model deepseek/deepseek-r1 "$target_dir" "$@")
       }
       # --- Aider Integration: Setup ---
       AIDER_ROOT=$(find_aider_root)
