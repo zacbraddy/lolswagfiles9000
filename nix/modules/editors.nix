@@ -35,23 +35,6 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # VSCode auto-install extensions (all from VSCode Marketplace for maximum compatibility)
-  programs.vscode = {
-    enable = true;
-    profiles.default.extensions = with pkgs.vscode-marketplace; [
-      dracula-theme.theme-dracula
-      zhuangtongfa.material-theme
-      ms-python.python
-      esbenp.prettier-vscode
-      dbaeumer.vscode-eslint
-      ms-azuretools.vscode-docker
-      eamodio.gitlens
-      ms-vscode-remote.remote-containers
-      mhutchie.git-graph
-      ms-ossdata.vscode-pgsql
-      ms-vscode.vscode-typescript-next
-      vscodevim.vim
-    ];
-  };
 
   # Ensure Cursor directory exists and has correct permissions
   home.activation.setupCursorDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -72,7 +55,7 @@ in
     fi
   '';
 
-  # VSCode and Cursor extensions
+  # Manage extensions.json for both VSCode Insiders and Cursor
   home.file.".vscode/extensions.json".source = ../../.vscode/extensions.json;
   home.file.".config/Cursor/User/extensions.json".source = ../../.vscode/extensions.json;
 
@@ -168,7 +151,14 @@ EOF
     libreoffice
     file-roller
     obsidian
-    vscode-insiders
+    ( (vscode.override { isInsiders = true; }).overrideAttrs (oldAttrs: rec {
+      src = (builtins.fetchTarball {
+        url = "https://code.visualstudio.com/sha/download?build=insider&os=linux-x64";
+        sha256 = "1p740lqnlyv4xl8dmv022f3dk7q8ga5vvx3cmamsk3dyp4rhjgrv";
+      });
+      version = "latest";
+      buildInputs = oldAttrs.buildInputs ++ [ pkgs.krb5 ];
+    }) )
   ];
 
   # Obsidian dotfile management
