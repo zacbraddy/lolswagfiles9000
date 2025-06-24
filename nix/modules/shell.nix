@@ -36,8 +36,6 @@
       ];
     };
     initContent = ''
-      # Auto-remove files from trash older than 6 months (180 days) on shell startup
-      trash-empty 180
       # PATH modifications
       export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
       export PATH="$HOME/.local/bin:$PATH"
@@ -119,10 +117,10 @@
       if type pnpm &>/dev/null; then
         source <(pnpm completion zsh)
       fi
-      # turbo completion (if installed via npm or globally)
-      if type turbo &>/dev/null; then
-        source <(turbo completion zsh || true)
-      fi
+      # turbo completion (disabled to avoid startup warnings)
+      # if type turbo &>/dev/null; then
+      #   source <(turbo completion zsh &>/dev/null || true)
+      # fi
       # nx completion (if installed via npm or globally)
       if type nx &>/dev/null; then
         source <(nx completion zsh || true)
