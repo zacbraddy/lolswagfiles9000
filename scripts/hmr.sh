@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
+# Set up directories
+log_dir="$HOME/.aider/logs"
+backup_dir="$HOME/.aider/backups"
+config_dir="$HOME/.aider/config"
+
+# Create all required directories if they don't exist
+mkdir -p "$log_dir" "$backup_dir" "$config_dir" \
+         "$HOME/.local/bin" \
+         "$HOME/.local/state/home-manager/gcroots"
+
 # Accept extra arguments for home-manager switch (e.g., -b backup)
 HM_SWITCH_ARGS="$@"
 
@@ -43,8 +53,14 @@ if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.s
   exit 1
 fi
 
-# Run Home Manager switch with any passed arguments
-home-manager switch $HM_SWITCH_ARGS
+# Run Home Manager switch with consistent arguments
+home-manager switch \
+  --show-trace \
+  --backup \
+  --backup-suffix ".backup-$(date +%Y%m%d-%H%M%S)" \
+  --backup-dir "$backup_dir" \
+  --extra-experimental-features "nix-command flakes" \
+  $HM_SWITCH_ARGS
 HM_EXIT=$?
 
 # Post-switch: re-symlink .zshrc and .zshenv if needed
