@@ -100,9 +100,9 @@
         IFS=: read -ra CURRENT_PATHS <<< "$PATH"
         for p in "''${CURRENT_PATHS[@]}"; do
           if [[ -n "$p" && -d "$p" && ":$EXPECTED_PATH:" != *":$p:"* ]]; then
-            echo "   - ''${pkgs.writeShellScriptBin "path-$(basename "$p")" ''"
+            echo "   - ''${pkgs.writeShellScriptBin "path-$(basename \"$p\")" ''"
               # This would be the package that provides this path
-              echo "Warning: Adding unmanaged path to PATH: $p" >&2
+              echo "Warning: Adding unmanaged path to PATH: ''$p" >&2
               if [[ -d "''$p" ]]; then
                 export PATH="''$PATH:''$p"
               else
