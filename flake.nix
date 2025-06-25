@@ -52,6 +52,5 @@
         ];
       };
     };
-    home-manager.backupFileExtension = "backup";
   };
 }

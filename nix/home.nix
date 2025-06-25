@@ -31,7 +31,7 @@
   programs.git = {
     enable = true;
     userName = "Zac Braddy";
-    userEmail = "your-email@example.com";
+    userEmail = "zacharybraddy@gmail.com";
   };
 
   # Add more configuration as modules are implemented

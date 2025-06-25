@@ -85,7 +85,7 @@ in
     fi
 
     # Fetch the latest Cursor AppImage download URL from the official API
-    LATEST_URL=$(${pkgs.curl}/bin/curl -s 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | grep -oP '"downloadUrl":"\\K[^"]+' || true)
+    LATEST_URL=$(${pkgs.curl}/bin/curl -s 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | grep -oP '"downloadUrl":"[^"]+' | cut -d'"' -f3 || true)
 
     if [ -z "$LATEST_URL" ]; then
       echo "Could not find a download URL for Cursor AppImage. Skipping Cursor installation."
@@ -100,7 +100,7 @@ in
     cat > "$CURSOR_DESKTOP_PATH" <<EOF
 [Desktop Entry]
 Name=Cursor
-Exec=$APPIMAGE_PATH %U
+Exec=$APPIMAGE_PATH --no-sandbox %U
 Icon=cursor
 Type=Application
 Categories=Development;IDE;
@@ -116,8 +116,8 @@ EOF
       local desktop="$2"
       # Ensure section exists
       grep -qxF "$default_section" "$MIMEAPPS" || echo "$default_section" >> "$MIMEAPPS"
-      # Remove any existing line for this mime type in Default Applications
-      sed -i "/^$mime=/d" "$MIMEAPPS"
+      # Remove any existing line for this mime type in Default Applications (use | as delimiter to avoid issues with /)
+      sed -i "\|^$mime=|d" "$MIMEAPPS"
       # Add the correct line
       awk -v mime="$mime" -v desktop="$desktop" -v section="$default_section" '
         BEGIN {added=0}

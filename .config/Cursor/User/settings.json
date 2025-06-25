@@ -46,6 +46,11 @@
       "after": ["<Esc>"]
     }
   ],
+  // Fix AppImage environment pollution in integrated terminal
+  "terminal.integrated.env.linux": {
+    "PYTHONHOME": "",
+    "PYTHONPATH": ""
+  },
   "vim.normalModeKeyBindings": [
     {
       "before": ["<leader>", "y"],

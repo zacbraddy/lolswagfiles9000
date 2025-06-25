@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Configuration
-LOG_DIR="$HOME/.hmr/logs"
-BACKUP_DIR="$HOME/.hmr/backups"
-mkdir -p "$LOG_DIR" "$BACKUP_DIR" || {
-    echo "Failed to create log/backup directories" >&2
-    exit 1
-}
 SECRETS_FILE="nix/secrets/secrets.yaml"
 SOPS_CONFIG="nix/secrets/.sops.yaml"
 AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
@@ -16,9 +9,6 @@ AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 mkdir -p "$HOME/.local/bin" \
          "$HOME/.local/state/home-manager/gcroots"
 
-# Ensure home-manager is in PATH
-export PATH="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
-
 # Verify nix commands are available
 if ! command -v nix-build >/dev/null; then
     echo "❌ Nix commands not found in PATH" >&2
@@ -26,146 +16,77 @@ if ! command -v nix-build >/dev/null; then
     exit 1
 fi
 
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-LOG_FILE="$LOG_DIR/hmr-$TIMESTAMP.log"
-BACKUP_SUFFIX=".backup-$TIMESTAMP"
+echo "===== HMR STARTED ====="
 
-# Logging functions
-log() {
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
-}
+# Cleanup existing files
+echo "===== CLEANING EXISTING FILES ====="
+echo "Removing ~/.zshrc symlink..."
+if [ -f "$HOME/.zshrc" ] && ! [ -L "$HOME/.zshrc" ]; then
+    echo "❌ .zshrc exists as a regular file - this should never happen!"
+    echo "Please manually remove $HOME/.zshrc and run hmr again"
+    exit 1
+fi
+[ -L "$HOME/.zshrc" ] && rm "$HOME/.zshrc"
 
-log_section() {
-    log "===== $1 ====="
-}
+echo "Removing ~/.p10k.zsh symlink..."
+if [ -f "$HOME/.p10k.zsh" ] && ! [ -L "$HOME/.p10k.zsh" ]; then
+    echo "❌ .p10k.zsh exists as a regular file - this should never happen!"
+    echo "Please manually remove $HOME/.p10k.zsh and run hmr again"
+    exit 1
+fi
+[ -L "$HOME/.p10k.zsh" ] && rm "$HOME/.p10k.zsh"
 
-# Main execution
-{
-    log_section "HMR STARTED"
-
-    BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-    CURRENT_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
-    mkdir -p "$CURRENT_BACKUP_DIR" || {
-        log "❌ Failed to create backup directory: $CURRENT_BACKUP_DIR"
-        exit 1
-    }
-    # Backup current PATH state
-    echo "$PATH" > "$CURRENT_BACKUP_DIR/path.original.$TIMESTAMP.txt" || {
-        log "❌ Failed to write PATH backup"
-        exit 1
-    }
-
-
-    # Cleanup existing files
-    log_section "CLEANING EXISTING FILES"
-    log "Removing ~/.zshrc symlink..."
-    if [ -f "$HOME/.zshrc" ] && ! [ -L "$HOME/.zshrc" ]; then
-        log "❌ .zshrc exists as a regular file - this should never happen!"
-        log "Please manually remove $HOME/.zshrc and run hmr again"
-        exit 1
-    fi
-    [ -L "$HOME/.zshrc" ] && rm "$HOME/.zshrc"
-
-    log "Clearing gcroots..."
-    rm -rf "$HOME/.local/state/home-manager/gcroots"/* || true
-
-    # Secrets verification
-    log_section "VERIFYING SECRETS"
-    if [ ! -f "$AGE_KEY_FILE" ]; then
-        log "❌ Age key file not found at $AGE_KEY_FILE"
-        log "Run 'just secrets-setup-key' to set up encryption keys"
-        exit 1
-    fi
-
-    if SOPS_AGE_KEY_FILE="$AGE_KEY_FILE" sops -d --config "$SOPS_CONFIG" "$SECRETS_FILE" 2>/dev/null | grep -q '^{}$'; then
-        log "❌ secrets.yaml is empty"
-        log "Run 'just secrets-add' to add required secrets"
-        exit 1
-    fi
-
-    # Run Home Manager with proper backup handling
-    log_section "RUNNING HOME MANAGER"
-    mkdir -p "$CURRENT_BACKUP_DIR"
-
-    # Create manifest file
-    MANIFEST_FILE="$CURRENT_BACKUP_DIR/manifest.json"
-    echo '{"timestamp":"'"$(date -Is)"'","backups":[]}' > "$MANIFEST_FILE"
-
-    log "Executing: home-manager switch --show-trace -b .backup-$BACKUP_TIMESTAMP --extra-experimental-features 'nix-command flakes' $@"
-    home-manager switch \
-        --show-trace \
-        -b ".backup-$BACKUP_TIMESTAMP" \
-        --extra-experimental-features "nix-command flakes" \
-        "$@" 2>&1 | while read -r line; do
-            # Capture backup files and add to manifest
-            if [[ "$line" == *"Moving existing file"* ]]; then
-                original_file=$(echo "$line" | awk '{print ''$4}')
-                backup_file=$(echo "$line" | awk '{print ''$6}')
-                checksum=$(sha256sum "$backup_file" | awk '{print ''$1}')
-                size=$(stat -c%s "$backup_file")
-
-                # Move to our backup directory
-                mv "$backup_file" "$CURRENT_BACKUP_DIR/"
-                backup_file_name=$(basename "$backup_file")
-
-                # Update manifest
-                jq --arg op "$original_file" \
-                   --arg bp "$backup_file_name" \
-                   --arg cs "$checksum" \
-                   --argjson sz "$size" \
-                   '.backups += [{"original_path":$op,"backup_path":$bp,"checksum":$cs,"size":$sz}]' \
-                   "$MANIFEST_FILE" > "$MANIFEST_FILE.tmp" && mv "$MANIFEST_FILE.tmp" "$MANIFEST_FILE"
-            fi
-            echo "$line"
-        done | tee -a "$LOG_FILE"
-
-    # Calculate config hash
-    CONFIG_HASH_FILE="$BACKUP_DIR/last_config_hash"
-    CURRENT_HASH=$(sha256sum "$HOME/Projects/Personal/lolswagfiles9000/nix/modules/shell.nix" 2>/dev/null | awk '{print $1}' || echo "")
-    if [ -z "$CURRENT_HASH" ]; then
-        log "⚠️  Could not find shell.nix for hash calculation"
-        CURRENT_HASH="missing"
-    fi
-
-    log_section "CLEANING OLD BACKUPS"
-    if [ -f "$CONFIG_HASH_FILE" ]; then
-        LAST_HASH=$(cat "$CONFIG_HASH_FILE")
-        if [ "$CURRENT_HASH" != "$LAST_HASH" ]; then
-            log "Configuration changed - removing all old backups"
-            rm -rf "$BACKUP_DIR"/*/
-        else
-            log "No changes to shell.nix - keeping existing backups"
-        fi
-        # Always save current hash
-        echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
-    else
-        log "First run - saving config hash"
-        echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
-    fi
-
-    # Verify results
-    log_section "VERIFYING RESULTS"
-    HM_ZSH_PATH=$(find /nix/store -name ".zshrc" -path "*home-manager-files*" | head -n 1)
-    if [ -n "$HM_ZSH_PATH" ]; then
-        ln -sf "$HM_ZSH_PATH" "$HOME/.zshrc"
-        log "✅ Created .zshrc symlink to: $HM_ZSH_PATH"
-    else
-        log "❌ Could not find generated .zshrc in Nix store"
-        exit 1
-    fi
-
-    log_section "HMR COMPLETED"
-    log "Run 'reload' or restart your shell to apply changes"
-} | tee -a "$LOG_FILE"
-
-# Show log location
-echo "Log saved to: $LOG_FILE"
-
-# Check for errors
-if grep -q "❌" "$LOG_FILE"; then
-    echo "Errors detected:"
-    grep "❌" "$LOG_FILE"
+# Secrets verification
+echo "===== VERIFYING SECRETS ====="
+if [ ! -f "$AGE_KEY_FILE" ]; then
+    echo "❌ Age key file not found at $AGE_KEY_FILE"
+    echo "Run 'just secrets-setup-key' to set up encryption keys"
     exit 1
 fi
 
-exit 0
+if SOPS_AGE_KEY_FILE="$AGE_KEY_FILE" sops -d --config "$SOPS_CONFIG" "$SECRETS_FILE" 2>/dev/null | grep -q '^{}$'; then
+    echo "❌ secrets.yaml is empty"
+    echo "Run 'just secrets-add' to add required secrets"
+    exit 1
+fi
+
+# Run Home Manager - let it handle all the symlinking automatically
+echo "===== RUNNING HOME MANAGER ====="
+BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
+home-manager switch \
+    --flake "/home/zacbraddy/Projects/Personal/lolswagfiles9000#zacbraddy" \
+    --show-trace \
+    -b ".backup-$BACKUP_TIMESTAMP" \
+    --extra-experimental-features "nix-command flakes" \
+    "$@"
+
+# Verify and create symlinks
+echo "===== VERIFYING SYMLINKS ====="
+# Get the most recently created home-manager-files directory
+HM_FILES_PATH=$(find /nix/store -name "*home-manager-files*" -type d -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2-)
+
+if [ -n "$HM_FILES_PATH" ]; then
+    # Create .zshrc symlink
+    if [ -f "$HM_FILES_PATH/.zshrc" ]; then
+        ln -sf "$HM_FILES_PATH/.zshrc" "$HOME/.zshrc"
+        echo "✅ Created .zshrc symlink to: $HM_FILES_PATH/.zshrc"
+    else
+        echo "❌ Could not find generated .zshrc in home-manager files"
+        exit 1
+    fi
+
+    # Create .p10k.zsh symlink
+    if [ -f "$HM_FILES_PATH/.p10k.zsh" ]; then
+        ln -sf "$HM_FILES_PATH/.p10k.zsh" "$HOME/.p10k.zsh"
+        echo "✅ Created .p10k.zsh symlink to: $HM_FILES_PATH/.p10k.zsh"
+    else
+        echo "⚠️  No .p10k.zsh found in home-manager files (this may be normal)"
+    fi
+else
+    echo "❌ Could not find home-manager files in Nix store"
+    exit 1
+fi
+
+echo "===== HMR COMPLETED ====="
+echo "Run 'reload' or restart your shell to apply changes"
