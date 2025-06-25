@@ -214,8 +214,8 @@
       fi
       # --- Aider Integration: aider-status function ---
       aider-status() {
-        local current_aider_root="$(find_aider_root)"
-        local target_dir="$(pwd)"
+        local current_aider_root="\$(find_aider_root)"
+        local target_dir="\$(pwd)"
         
         echo "=== Current Configuration ==="
         echo "Aider Root: \${AIDER_ROOT:-[not configured]}"
@@ -227,37 +227,37 @@
         echo "Default Model: \${AIDER_MODEL:-deepseek/deepseek-chat}"
         
         echo "\n=== Directory Analysis ==="
-        echo "Current Directory: $target_dir"
-        if [ -n "$current_aider_root" ]; then
-          echo "Would use Aider Root: $current_aider_root"
-          echo "Poetry path: $(poetry -P="$current_aider_root" --version)"
+        echo "Current Directory: \$target_dir"
+        if [ -n "\$current_aider_root" ]; then
+          echo "Would use Aider Root: \$current_aider_root"
+          echo "Poetry path: \$(poetry -P="\$current_aider_root" --version)"
           
           # Check for .env file
-          if [ -f "$current_aider_root/.env" ]; then
+          if [ -f "\$current_aider_root/.env" ]; then
             echo "\nEnvironment variables that would be loaded:"
-            grep -v '^#' "$current_aider_root/.env" | grep -v '^$'
+            grep -v '^#' "\$current_aider_root/.env" | grep -v '^$'
           else
-            echo "\nNo .env file found in $current_aider_root"
+            echo "\nNo .env file found in \$current_aider_root"
           fi
           
           # Check pyproject.toml for aider config
-          if [ -f "$current_aider_root/pyproject.toml" ]; then
+          if [ -f "\$current_aider_root/pyproject.toml" ]; then
             echo "\npyproject.toml dependencies:"
-            grep -E '^aider|^deepseek' "$current_aider_root/pyproject.toml" || echo "No specific aider/deepseek dependencies found"
+            grep -E '^aider|^deepseek' "\$current_aider_root/pyproject.toml" || echo "No specific aider/deepseek dependencies found"
           fi
         else
           echo "No valid aider setup found for current directory!"
           echo "Searched in:"
           echo "- Current directory and parents"
-          echo "- $HOME/Projects/Personal/aider-setup"
-          echo "- $HOME/aider-setup"
-          echo "- $HOME/.aider"
+          echo "- \$HOME/Projects/Personal/aider-setup"
+          echo "- \$HOME/aider-setup"
+          echo "- \$HOME/.aider"
         fi
         
         # Show version info if available
-        if [ -n "$current_aider_root" ]; then
+        if [ -n "\$current_aider_root" ]; then
           echo "\n=== Version Information ==="
-          pushd "$current_aider_root" >/dev/null
+          pushd "\$current_aider_root" >/dev/null
           poetry run aider --version
           popd >/dev/null
         fi
