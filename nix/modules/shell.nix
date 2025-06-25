@@ -67,7 +67,7 @@
       pj() {
         local projects=(~/Projects/*)
         local project=$(printf "%s\n" $projects | fzf)
-        if [[ -n "$project" ]]; then
+        if [[ -n "''${project}" ]]; then
           cd "$project"
         fi
       }
