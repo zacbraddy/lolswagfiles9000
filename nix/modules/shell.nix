@@ -156,7 +156,7 @@
                   "$HOME/.aider"
               )
 
-              for loc in $locations; do
+              for loc in "''${locations[@]}"; do
                   if [ -d "$loc" ] && [ -f "$loc/pyproject.toml" ]; then
                       found="$loc"
                       break
@@ -179,7 +179,7 @@
               "$HOME/.config/aider/aider.conf.yml"
           )
 
-          for config_file in $config_files; do
+          for config_file in "''${config_files[@]}"; do
               if [ -f "$config_file" ]; then
                   echo "$config_file"
                   return 0
