@@ -42,9 +42,9 @@
     };
     initContent = ''
       # PATH modifications
-      export PATH="\${builtins.getEnv "HOME"}/.yarn/bin:\${builtins.getEnv "HOME"}/.config/yarn/global/node_modules/.bin:\''${PATH}"
-      export PATH="\${builtins.getEnv "HOME"}/.local/bin:\''${PATH}"
-      export PATH="\${builtins.getEnv "HOME"}/.poetry/bin:\''${PATH}"
+      export PATH="\$HOME/.yarn/bin:\$HOME/.config/yarn/global/node_modules/.bin:\''${PATH}"
+      export PATH="\$HOME/.local/bin:\''${PATH}"
+      export PATH="\$HOME/.poetry/bin:\''${PATH}"
       # Linuxbrew paths - only add if they exist
       if [ -d "/home/linuxbrew/.linuxbrew" ]; then
         export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:\''${PATH}"
@@ -84,38 +84,38 @@
         trash-empty
       }
       trash-restore-last() {
-        local last=$(trash-list | tail -n 1 | awk '{print $2}')
-        if [[ -n "''${last}" ]]; then
-          trash-restore "$last"
+        local last=$(trash-list | tail -n 1 | awk '{print \$2}')
+        if [[ -n "\''${last}" ]]; then
+          trash-restore "\$last"
         else
           echo "No files in trash to restore." >&2
         fi
       }
       trash-search() {
-        if [ -z "$1" ]; then
+        if [ -z "\$1" ]; then
           echo "Usage: trash-search <pattern>" >&2
           return 1
         fi
-        trash-list | grep --color=auto "$1"
+        trash-list | grep --color=auto "\$1"
       }
       trash-count() {
         trash-list | wc -l | awk '{print $1 " files in trash."}'
       }
       trash-empty-days() {
-        if [ -z "$1" ]; then
+        if [ -z "\$1" ]; then
           echo "Usage: trash-empty-days <days>" >&2
           return 1
         fi
-        trash-empty "$1"
+        trash-empty "\$1"
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        local log_dir="$HOME/.aider/logs"
-        local backup_dir="$HOME/.aider/backups"
-        local config_dir="$HOME/.aider/config"
-        mkdir -p "$log_dir" "$backup_dir" "$config_dir" \
-                 "$HOME/.local/bin" \
-                 "$HOME/.local/state/home-manager/gcroots"
+        local log_dir="\$HOME/.aider/logs"
+        local backup_dir="\$HOME/.aider/backups"
+        local config_dir="\$HOME/.aider/config"
+        mkdir -p "\$log_dir" "\$backup_dir" "\$config_dir" \
+                 "\$HOME/.local/bin" \
+                 "\$HOME/.local/state/home-manager/gcroots"
         
         local timestamp=$(date +%Y%m%d-%H%M%S)
         local log_file="$log_dir/hmr-$timestamp.log"
