@@ -1,22 +1,27 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+
 {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    shellAliases = {
-      gs = "git status";
-      ga = "git add .";
-      gc = "git commit";
-      gp = "git push";
-      gd = "git diff";
-      gr = "git reset";
-      reload = "exec zsh";
-      netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
-      rm = "trash";
-
-    };
+    shellAliases = lib.attrsets.mergeAttrsList [
+      {
+        gs = "git status";
+        ga = "git add .";
+        gc = "git commit";
+        gp = "git push";
+        gd = "git diff";
+        gr = "git reset";
+        reload = "exec zsh";
+        netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
+        rm = "trash";
+      }
+      (lib.optionalAttrs config.programs.direnv.enable {
+        d = "direnv edit .";
+      })
+    ];
     oh-my-zsh = {
       enable = true;
       theme = "";
@@ -35,16 +40,16 @@
         # pnpm, turbo, nx, and moonrepo completions handled below
       ];
     };
-    initContent = ''
+    initExtra = ''
       # PATH modifications
-      export PATH="\$HOME/.yarn/bin:\$HOME/.config/yarn/global/node_modules/.bin:\''${PATH}"
-      export PATH="\$HOME/.local/bin:\''${PATH}"
-      export PATH="\$HOME/.poetry/bin:\''${PATH}"
+      export PATH="\${builtins.getEnv "HOME"}/.yarn/bin:\${builtins.getEnv "HOME"}/.config/yarn/global/node_modules/.bin:\''${PATH}"
+      export PATH="\${builtins.getEnv "HOME"}/.local/bin:\''${PATH}"
+      export PATH="\${builtins.getEnv "HOME"}/.poetry/bin:\''${PATH}"
       # Linuxbrew paths - only add if they exist
       if [ -d "/home/linuxbrew/.linuxbrew" ]; then
         export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:\''${PATH}"
       fi
-      export PATH="\''${PATH}:\$HOME/.spicetify"
+      export PATH="\''${PATH}:\${builtins.getEnv "HOME"}/.spicetify"
       # Bash completion compatibility for pipx and other tools
       autoload -U bashcompinit
       bashcompinit
