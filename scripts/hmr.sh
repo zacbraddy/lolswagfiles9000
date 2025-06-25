@@ -56,9 +56,6 @@ fi
 # Run Home Manager switch with consistent arguments
 home-manager switch \
   --show-trace \
-  --backup \
-  --backup-suffix ".backup-$(date +%Y%m%d-%H%M%S)" \
-  --backup-dir "$backup_dir" \
   --extra-experimental-features "nix-command flakes" \
   $HM_SWITCH_ARGS
 HM_EXIT=$?
