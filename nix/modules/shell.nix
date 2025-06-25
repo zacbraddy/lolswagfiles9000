@@ -205,8 +205,11 @@
       AIDER_ROOT=$(find_aider_root)
       if [ -n "$AIDER_ROOT" ]; then
           export AIDER_ROOT
-          # Load environment variables
-          if [ -f "$AIDER_ROOT/.env" ]; then
+          # Load environment variables from aider config
+          if [ -f "$AIDER_ROOT/aider.conf.yml" ]; then
+              export DEEPSEEK_API_KEY=$(yq -r .api_key "$AIDER_ROOT/aider.conf.yml")
+              export AIDER_MODEL=$(yq -r .model "$AIDER_ROOT/aider.conf.yml")
+          elif [ -f "$AIDER_ROOT/.env" ]; then
               export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
           fi
       else
@@ -219,7 +222,7 @@
         
         echo "=== Current Configuration ==="
         echo "Aider Root: ${AIDER_ROOT:-[not set]}"
-        if [ -n "$DEEPSEEK_API_KEY" ]; then
+        if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
           echo "API Key: [SET]"
         else
           echo "API Key: [NOT SET]"
@@ -241,10 +244,13 @@
             echo "\nNo .env file found in $current_aider_root"
           fi
           
-          # Check pyproject.toml for aider config
-          if [ -f "$current_aider_root/pyproject.toml" ]; then
-            echo "\npyproject.toml dependencies:"
-            grep -E '^aider|^deepseek' "$current_aider_root/pyproject.toml" || echo "No specific aider/deepseek dependencies found"
+          # Check for aider config files
+          if [ -f "$current_aider_root/aider.conf.yml" ]; then
+            echo "\nAider Config:"
+            yq . "$current_aider_root/aider.conf.yml"
+          elif [ -f "$current_aider_root/.env" ]; then
+            echo "\nEnvironment variables:"
+            grep -v '^#' "$current_aider_root/.env" | grep -v '^$'
           fi
           
           # Show version info if available
@@ -278,6 +284,7 @@
     asdf
     trash-cli
     just
+    yq
   ];
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   home.file.".gitconfig".source = ../../.gitconfig;
