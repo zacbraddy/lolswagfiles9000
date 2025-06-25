@@ -54,12 +54,9 @@ log_section() {
 
     # Run Home Manager
     log_section "RUNNING HOME MANAGER"
-    log "Executing: home-manager switch --show-trace --backup --backup-suffix $BACKUP_SUFFIX --backup-dir $BACKUP_DIR --extra-experimental-features 'nix-command flakes' $@"
+    log "Executing: home-manager switch --show-trace --extra-experimental-features 'nix-command flakes' $@"
     home-manager switch \
         --show-trace \
-        --backup \
-        --backup-suffix "$BACKUP_SUFFIX" \
-        --backup-dir "$BACKUP_DIR" \
         --extra-experimental-features "nix-command flakes" \
         "$@"
 
