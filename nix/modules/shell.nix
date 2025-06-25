@@ -128,10 +128,9 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        local log_dir="\$HOME/.aider/logs"
-        local backup_dir="\$HOME/.aider/backups"
-        local config_dir="\$HOME/.aider/config"
-        mkdir -p "\$log_dir" "\$backup_dir" "\$config_dir" \
+        local log_dir="\$HOME/.hmr/logs"
+        local backup_dir="\$HOME/.hmr/backups"
+        mkdir -p "\$log_dir" "\$backup_dir" \
                  "\$HOME/.local/bin" \
                  "\$HOME/.local/state/home-manager/gcroots"
         
@@ -265,8 +264,6 @@
           # Fall back to common locations if nothing found in parents
           if [ -z "$found" ]; then
               local locations=(
-                  "$HOME/Projects/Personal/aider-setup"
-                  "$HOME/aider-setup"
                   "$HOME/.aider"
               )
 
@@ -348,14 +345,13 @@
           export AIDER_ROOT="''$(find_aider_root)"
           # Load environment variables from aider config with proper precedence
           local global_config="$HOME/.aider/config/aider.conf.yml"
-          local local_config=""
-          if [ -f "$PWD/.aider/aider.conf.yml" ]; then
-              local_config="$PWD/.aider/aider.conf.yml"
-          fi
-
+          local local_config="$PWD/.aider/aider.conf.yml"
+      
           # Use local config if exists, otherwise global
-          local active_config="$local_config"
-          if [ -z "$active_config" ] && [ -f "$global_config" ]; then
+          local active_config=""
+          if [ -f "$local_config" ]; then
+              active_config="$local_config"
+          elif [ -f "$global_config" ]; then
               active_config="$global_config"
           fi
 
@@ -450,8 +446,6 @@
           echo "No valid aider setup found for current directory!"
           echo "Searched in:"
           echo "- Current directory and parents"
-          echo "- $HOME/Projects/Personal/aider-setup"
-          echo "- $HOME/aider-setup"
           echo "- $HOME/.aider"
         fi
       }
