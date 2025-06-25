@@ -40,7 +40,7 @@
         # pnpm, turbo, nx, and moonrepo completions handled below
       ];
     };
-    initExtra = ''
+    initContent = ''
       # PATH modifications
       export PATH="\${builtins.getEnv "HOME"}/.yarn/bin:\${builtins.getEnv "HOME"}/.config/yarn/global/node_modules/.bin:\''${PATH}"
       export PATH="\${builtins.getEnv "HOME"}/.local/bin:\''${PATH}"
