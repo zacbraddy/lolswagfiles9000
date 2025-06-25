@@ -169,6 +169,24 @@
           return 1
       }
 
+      find_aider_config() {
+          # Check for config files in order of precedence
+          local config_files=(
+              "$PWD/aider.conf.yml"
+              "$PWD/.aider/aider.conf.yml"
+              "$HOME/.config/aider/aider.conf.yml"
+          )
+
+          for config_file in "${config_files[@]}"; do
+              if [ -f "$config_file" ]; then
+                  echo "$config_file"
+                  return 0
+              fi
+          done
+
+          return 1
+      }
+
       # --- Aider Integration: Helper Functions ---
       ai() {
         local target_dir="$(pwd)"
@@ -205,10 +223,13 @@
       if [ -n "$(find_aider_root)" ]; then
           export AIDER_ROOT="$(find_aider_root)"
           # Load environment variables from aider config
-          if [ -f "$AIDER_ROOT/aider.conf.yml" ]; then
-              export DEEPSEEK_API_KEY="$(yq -r .api_key "$AIDER_ROOT/aider.conf.yml")"
-              export AIDER_MODEL="$(yq -r .model "$AIDER_ROOT/aider.conf.yml")"
-          elif [ -f "$AIDER_ROOT/.env" ]; then
+          local config_file="$(find_aider_config)"
+          if [ -n "$config_file" ]; then
+              export DEEPSEEK_API_KEY="$(yq -r .api_key "$config_file" 2>/dev/null || echo "")"
+              export AIDER_MODEL="$(yq -r .model "$config_file" 2>/dev/null || echo "deepseek/deepseek-chat")"
+          fi
+          # Still check for .env in AIDER_ROOT as fallback
+          if [ -f "$AIDER_ROOT/.env" ]; then
               export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
           fi
       else
@@ -218,6 +239,7 @@
       ai-status() {
         local current_aider_root="$(find_aider_root)"
         local target_dir="$(pwd)"
+        local config_file="$(find_aider_config)"
         
         echo "=== Current Configuration ==="
         echo "Aider Root: ''${AIDER_ROOT:-[not set]}"
@@ -235,20 +257,21 @@
           echo -n "Poetry path: "
           poetry -P="$current_aider_root" --version || echo "Could not determine poetry version"
           
-          # Check for .env file
-          if [ -f "$current_aider_root/.env" ]; then
-            echo "\nEnvironment variables that would be loaded:"
-            grep -v '^#' "$current_aider_root/.env" | grep -v '^$'
+          # Show active config file if found
+          if [ -n "$config_file" ]; then
+            echo "\nActive Configuration File: $config_file"
+            echo "\nAider Config:"
+            yq . "$config_file"
           else
-            echo "\nNo .env file found in $current_aider_root"
+            echo "\nNo aider config file found in:"
+            echo "- $PWD/aider.conf.yml"
+            echo "- $PWD/.aider/aider.conf.yml"
+            echo "- $HOME/.config/aider/aider.conf.yml"
           fi
           
-          # Check for aider config files
-          if [ -f "$current_aider_root/aider.conf.yml" ]; then
-            echo "\nAider Config:"
-            yq . "$current_aider_root/aider.conf.yml"
-          elif [ -f "$current_aider_root/.env" ]; then
-            echo "\nEnvironment variables:"
+          # Still check for .env in AIDER_ROOT as fallback
+          if [ -f "$current_aider_root/.env" ]; then
+            echo "\nEnvironment variables that would be loaded:"
             grep -v '^#' "$current_aider_root/.env" | grep -v '^$'
           fi
           
