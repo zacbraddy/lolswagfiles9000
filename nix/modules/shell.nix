@@ -284,7 +284,7 @@
           if [ -f "$PWD/.aider/aider.conf.yml" ]; then
               echo "- Local: $PWD/.aider/aider.conf.yml"
               echo "\nLocal Configuration:"
-              yq ''del(.aider_ignore) | to_entries | .[] | "\(.key): \(.value)"'' "$PWD/.aider/aider.conf.yml" 2>/dev/null || echo "Could not parse local config file"
+              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key): \(.value)"' "$PWD/.aider/aider.conf.yml" 2>/dev/null || echo "Could not parse local config file"
           else
               echo "- No local config found at $PWD/.aider/aider.conf.yml"
           fi
@@ -292,7 +292,7 @@
           if [ -f "$HOME/.config/aider/aider.conf.yml" ]; then
               echo "\n- Global: $HOME/.config/aider/aider.conf.yml"
               echo "\nGlobal Configuration:"
-              yq ''del(.aider_ignore) | to_entries | .[] | "\(.key): \(.value)"'' "$HOME/.config/aider/aider.conf.yml" 2>/dev/null || echo "Could not parse global config file"
+              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key): \(.value)"' "$HOME/.config/aider/aider.conf.yml" 2>/dev/null || echo "Could not parse global config file"
           else
               echo "\n- No global config found at $HOME/.config/aider/aider.conf.yml"
           fi
