@@ -85,7 +85,7 @@ log_section() {
     echo '{"timestamp":"'"$(date -Is)"'","backups":[]}' > "$MANIFEST_FILE"
 
     log "Executing: home-manager switch --show-trace -b .backup-$BACKUP_TIMESTAMP --extra-experimental-features 'nix-command flakes' $@"
-    "$(which home-manager)" switch \
+    home-manager switch \
         --show-trace \
         -b ".backup-$BACKUP_TIMESTAMP" \
         --extra-experimental-features "nix-command flakes" \
@@ -114,7 +114,7 @@ log_section() {
 
     # Calculate config hash
     CONFIG_HASH_FILE="$BACKUP_DIR/last_config_hash"
-    CURRENT_HASH=$(sha256sum "$(pwd)/nix/modules/shell.nix" | awk '{print $1}')
+    CURRENT_HASH=$(sha256sum "~/Projects/Personal/lolswagfiles9000/nix/modules/shell.nix" | awk '{print $1}')
 
     log_section "CLEANING OLD BACKUPS"
     if [ -f "$CONFIG_HASH_FILE" ]; then
@@ -144,7 +144,7 @@ log_section() {
     fi
 
     log_section "HMR COMPLETED"
-    log "Run 'exec zsh' or restart your shell to apply changes"
+    log "Run 'reload' or restart your shell to apply changes"
 } | tee -a "$LOG_FILE"
 
 # Show log location
