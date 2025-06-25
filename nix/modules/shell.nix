@@ -221,8 +221,8 @@
         local target_dir="$(pwd)"
         
         echo "=== Current Configuration ==="
-        echo "Aider Root: ${AIDER_ROOT:-[not set]}"
-        if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+        echo "Aider Root: ''${AIDER_ROOT:-[not set]}"
+        if [ -n "''${DEEPSEEK_API_KEY:-}" ]; then
           echo "API Key: [SET]"
         else
           echo "API Key: [NOT SET]"
