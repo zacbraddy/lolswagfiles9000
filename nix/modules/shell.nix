@@ -348,8 +348,8 @@
           if [ -f "$current_aider_root/.env" ]; then
             echo "\nEnvironment variables that would be loaded:"
             grep -v '^#' "$current_aider_root/.env" | grep -v '^$' | while read -r line; do
-              local var_name="$(echo "$line" | cut -d= -f1)"
-              local var_value="$(echo "$line" | cut -d= -f2-)"
+              local var_name="''$(echo "$line" | cut -d= -f1)"
+              local var_value="''$(echo "$line" | cut -d= -f2-)"
               if [[ "$var_name" == *API_KEY* || "$var_name" == *SECRET* || "$var_name" == *PASSWORD* ]]; then
                 if [ -n "$var_value" ]; then
                   echo "$var_name=[SET]"
