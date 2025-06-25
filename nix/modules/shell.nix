@@ -220,13 +220,13 @@
         local target_dir="$(pwd)"
         
         echo "=== Current Configuration ==="
-        echo "Aider Root: ''${AIDER_ROOT:-[not set]}"
-        if [ -n "''${DEEPSEEK_API_KEY:-}" ]; then
+        echo "Aider Root: \${AIDER_ROOT:-[not set]}"
+        if [ -n "\${DEEPSEEK_API_KEY:-}" ]; then
           echo "API Key: [SET]"
         else
           echo "API Key: [NOT SET]"
         fi
-        echo "Default Model: ${AIDER_MODEL:-deepseek/deepseek-chat}"
+        echo "Default Model: \${AIDER_MODEL:-deepseek/deepseek-chat}"
         
         echo "\n=== Directory Analysis ==="
         echo "Current Directory: $target_dir"
