@@ -189,8 +189,8 @@
 
       # --- Aider Integration: Helper Functions ---
       ai() {
-        local target_dir="$(pwd)"
-        local aider_root="$(find_aider_root)"
+        local target_dir="''$(pwd)"
+        local aider_root="''$(find_aider_root)"
 
         if [ -z "$aider_root" ]; then
           echo "Error: Could not find aider setup."
@@ -201,7 +201,7 @@
           return 1
         fi
 
-        poetry -P="$aider_root" run aider --model deepseek/deepseek-chat "$target_dir" "$@"
+        poetry -P="''${aider_root}" run aider --model deepseek/deepseek-chat "''${target_dir}" "$@"
       }
 
       air1() {
@@ -220,13 +220,13 @@
         poetry -P="$aider_root" run aider --model deepseek/deepseek-r1 "$target_dir" "$@"
       }
       # --- Aider Integration: Setup ---
-      if [ -n "$(find_aider_root)" ]; then
-          export AIDER_ROOT="$(find_aider_root)"
+      if [ -n "''$(find_aider_root)" ]; then
+          export AIDER_ROOT="''$(find_aider_root)"
           # Load environment variables from aider config
-          local config_file="$(find_aider_config)"
+          local config_file="''$(find_aider_config)"
           if [ -n "$config_file" ]; then
-              export DEEPSEEK_API_KEY="$(yq -r .api_key "$config_file" 2>/dev/null || echo "")"
-              export AIDER_MODEL="$(yq -r .model "$config_file" 2>/dev/null || echo "deepseek/deepseek-chat")"
+              export DEEPSEEK_API_KEY="''$(yq -r .api_key "''${config_file}" 2>/dev/null || echo "")"
+              export AIDER_MODEL="''$(yq -r .model "''${config_file}" 2>/dev/null || echo "deepseek/deepseek-chat")"
           fi
           # Still check for .env in AIDER_ROOT as fallback
           if [ -f "$AIDER_ROOT/.env" ]; then
