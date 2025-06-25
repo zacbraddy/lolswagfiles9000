@@ -97,19 +97,14 @@ log_section() {
     log_section "CLEANING OLD BACKUPS"
     if [ -f "$CONFIG_HASH_FILE" ]; then
         LAST_HASH=$(cat "$CONFIG_HASH_FILE")
-        if [ "$CURRENT_HASH" = "$LAST_HASH" ]; then
-            log "No changes to shell.nix - removing all backups"
+        if [ "$CURRENT_HASH" != "$LAST_HASH" ]; then
+            log "Configuration changed - removing all old backups"
             rm -rf "$BACKUP_DIR"/*/
         else
-            log "Configuration changed - keeping latest backup"
-            # Keep only the most recent backup
-            find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d | sort -r | tail -n +2 | while read -r dir; do
-                log "Removing old backup set: $(basename "$dir")"
-                rm -rf "$dir"
-            done
-            # Save new hash
-            echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
+            log "No changes to shell.nix - keeping existing backups"
         fi
+        # Always save current hash
+        echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
     else
         log "First run - saving config hash"
         echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
