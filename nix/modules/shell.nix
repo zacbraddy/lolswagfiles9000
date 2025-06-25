@@ -37,11 +37,11 @@
     };
     initContent = ''
       # PATH modifications
-      export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-      export PATH="$HOME/.local/bin:$PATH"
-      export PATH="$HOME/.poetry/bin:$PATH"
-      export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-      export PATH="$PATH:$HOME/.spicetify"
+      export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:''${PATH}"
+      export PATH="$HOME/.local/bin:''${PATH}"
+      export PATH="$HOME/.poetry/bin:''${PATH}"
+      export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:''${PATH}"
+      export PATH="''${PATH}:$HOME/.spicetify"
       # Bash completion compatibility for pipx and other tools
       autoload -U bashcompinit
       bashcompinit
@@ -77,7 +77,7 @@
       }
       trash-restore-last() {
         local last=$(trash-list | tail -n 1 | awk '{print $2}')
-        if [[ -n "$last" ]]; then
+        if [[ -n "''${last}" ]]; then
           trash-restore "$last"
         else
           echo "No files in trash to restore." >&2
