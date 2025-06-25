@@ -202,13 +202,12 @@
         poetry -P="$aider_root" run aider --model deepseek/deepseek-r1 "$target_dir" "$@"
       }
       # --- Aider Integration: Setup ---
-      AIDER_ROOT=$(find_aider_root)
-      if [ -n "$AIDER_ROOT" ]; then
-          export AIDER_ROOT
+      if [ -n "$(find_aider_root)" ]; then
+          export AIDER_ROOT="$(find_aider_root)"
           # Load environment variables from aider config
           if [ -f "$AIDER_ROOT/aider.conf.yml" ]; then
-              export DEEPSEEK_API_KEY=$(yq -r .api_key "$AIDER_ROOT/aider.conf.yml")
-              export AIDER_MODEL=$(yq -r .model "$AIDER_ROOT/aider.conf.yml")
+              export DEEPSEEK_API_KEY="$(yq -r .api_key "$AIDER_ROOT/aider.conf.yml")"
+              export AIDER_MODEL="$(yq -r .model "$AIDER_ROOT/aider.conf.yml")"
           elif [ -f "$AIDER_ROOT/.env" ]; then
               export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
           fi
