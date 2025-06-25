@@ -111,6 +111,8 @@
         # Create logs directory if it doesn't exist
         mkdir -p "$log_dir"
         
+        # Use unbuffered output and append mode to prevent truncation
+        exec 3>&1  # Save original stdout
         {
           echo "=== HMR Log $(date) ==="
           echo "Starting Home Manager repair..."
@@ -127,11 +129,15 @@
           
           # Force a fresh build with verbose output
           echo "Building fresh Home Manager configuration..."
-          home-manager switch --show-trace
+          home-manager switch --show-trace 2>&1
           
           # Verify the new .zshrc
           if [ ! -e "$HOME/.zshrc" ]; then
             echo "Error: Failed to generate new .zshrc!"
+            echo "Debug info:"
+            echo "Home Manager path: $(which home-manager)"
+            echo "Nix store path: $(readlink -f $(which home-manager))"
+            echo "Current generation: $(readlink -f $HOME/.local/state/home-manager/profile)"
             return 1
           elif [ ! -L "$HOME/.zshrc" ]; then
             echo "Warning: .zshrc is not a symlink after rebuild!"
@@ -142,8 +148,17 @@
           fi
           
           echo "Run 'reload' or restart your shell to apply changes."
-        } 2>&1 | tee "$log_file"
-        echo "Log saved to $log_file"
+        } | tee -a "$log_file" >&3
+        exec 3>&-  # Close fd 3
+        
+        echo "Full log saved to $log_file"
+        
+        # Check for errors in the log
+        if grep -q "Error:" "$log_file"; then
+          echo "Errors detected in HMR process. Last 10 lines:"
+          tail -n 10 "$log_file"
+          return 1
+        fi
       }
       # Source powerlevel10k theme from Nix store if available
       if [ -d "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k" ]; then
