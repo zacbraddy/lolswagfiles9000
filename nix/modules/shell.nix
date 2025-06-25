@@ -119,28 +119,28 @@
         export PATH="$EXPECTED_PATH"
       fi
 
-      # Bash completion compatibility
-      autoload -U bashcompinit
+      # Initialize completions safely
+      autoload -Uz compinit bashcompinit
+      if [[ -n "$ZSH_COMPDUMP" ]] && [[ -w "$(dirname "$ZSH_COMPDUMP")" ]]; then
+        compinit -d "$ZSH_COMPDUMP"
+      else
+        compinit -C
+      fi
       bashcompinit
-
-      # Zsh native completion
-      autoload -U compinit compdef
-      # Only run compinit if we can write to the completion dump file
-      compinit -d "$ZSH_COMPDUMP" || compinit -C -d "$ZSH_COMPDUMP"
       # tabtab completions (Node.js tools)
       [ -f ~/.config/tabtab/__tabtab.bash ] && . ~/.config/tabtab/__tabtab.bash || true
       # Docker helper functions
       kadc() {
-          docker ps -q | while read -r i; do docker stop \$i; docker rm \$i; done
+          docker ps -q | while read -r i; do docker stop ''$i; docker rm ''$i; done
       }
       explode_local_docker() {
-          echo "=================== CURRENT CONTAINERS ==================="
+          echo "=================== CONTAINERS ==================="
           docker ps -a
-          echo "=============== REMOVING ALL CONTAINERS =============="
-          docker rm -f \$(docker ps -aq 2>/dev/null || true)
-          echo "================ PRUNING VOLUMES ================"
+          echo "=============== CLEANING CONTAINERS =============="
+          docker rm -f ''$(docker ps -aq 2>/dev/null || true)
+          echo "================ CLEANING VOLUMES ================"
           docker volume prune -f
-          echo "=================== FINAL STATE ==================="
+          echo "=================== CONTAINERS ==================="
           docker ps -a
       }
       # Project jump function
@@ -156,9 +156,9 @@
         trash-empty
       }
       trash-restore-last() {
-        local last=$(trash-list | tail -n 1 | awk '{print \$2}')
+        local last=$(trash-list | tail -n 1 | awk '{print ''$2}')
         if [[ -n "''${last}" ]]; then
-          trash-restore "\$last"
+          trash-restore "''$last"
         else
           echo "No files in trash to restore." >&2
         fi
@@ -168,7 +168,7 @@
           echo "Usage: trash-search <pattern>" >&2
           return 1
         fi
-        trash-list | grep --color=auto "''${1}"
+        trash-list | grep --color=auto "''$1"
       }
       trash-count() {
         trash-list | wc -l | awk '{print $1 " files in trash."}'
@@ -178,7 +178,7 @@
           echo "Usage: trash-empty-days <days>" >&2
           return 1
         fi
-        trash-empty "''${1}"
+        trash-empty "''$1"
       }
       # hmr function for Home Manager repair and reload
       hmr() {
@@ -305,7 +305,7 @@
           # Load environment variables from aider config with proper precedence
           local global_config="$HOME/.aider/config/aider.conf.yml"
           local local_config="$PWD/.aider/aider.conf.yml"
-      
+
           # Use local config if exists, otherwise global
           local active_config=""
           if [ -f "$local_config" ]; then
@@ -318,7 +318,7 @@
               export DEEPSEEK_API_KEY="''$(yq -r .api_key "''${active_config}" 2>/dev/null || echo "")"
               export AIDER_MODEL="''$(yq -r .model "''${active_config}" 2>/dev/null || echo "deepseek/deepseek-chat")"
           fi
-          
+
           # Still check for .env in AIDER_ROOT as fallback
           if [ -f "$AIDER_ROOT/.env" ]; then
               export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
@@ -331,7 +331,7 @@
         local current_aider_root="''$(find_aider_root)"
         local target_dir="''$(pwd)"
         local config_file="''$(find_aider_config)"
-        
+
         echo "=== Current Configuration ==="
         echo "Aider Root: ''${AIDER_ROOT:-[not set]}"
         if [ -n "''${DEEPSEEK_API_KEY:-}" ]; then
@@ -340,14 +340,14 @@
           echo "API Key: [NOT SET]"
         fi
         echo "Default Model: ''${AIDER_MODEL:-deepseek/deepseek-chat}"
-        
+
         echo "\n=== Directory Analysis ==="
         echo "Current Directory: $target_dir"
         if [ -n "$current_aider_root" ]; then
           echo "Would use Aider Root: $current_aider_root"
           echo -n "Poetry path: "
           poetry -P="$current_aider_root" --version || echo "Could not determine poetry version"
-          
+
           # Show config file status
           echo "\nConfiguration Files:"
           # Function to print variables in consistent format
@@ -371,7 +371,7 @@
           else
               echo "- No local config found at $PWD/.aider/aider.conf.yml"
           fi
-          
+
           if [ -f "$HOME/.aider/config/aider.conf.yml" ]; then
               echo "\n- Global: $HOME/.aider/config/aider.conf.yml"
               echo "\nGlobal Configuration:"
@@ -379,7 +379,7 @@
           else
               echo "\n- No global config found at $HOME/.aider/config/aider.conf.yml"
           fi
-          
+
           # Still check for .env in AIDER_ROOT as fallback
           if [ -f "$current_aider_root/.env" ]; then
             echo "\nEnvironment variables that would be loaded:"
@@ -397,7 +397,7 @@
               fi
             done | print_vars
           fi
-          
+
           # Show version info if available
           echo "\n=== Version Information ==="
           (cd "$current_aider_root" && poetry run aider --version 2>/dev/null || echo "Could not get aider version")
@@ -440,6 +440,7 @@
     gawk
     findutils
     gnugrep
+    home-manager
     # Pop!_OS specific paths
     pop-launcher
     pop-shell

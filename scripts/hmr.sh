@@ -16,6 +16,9 @@ AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 mkdir -p "$HOME/.local/bin" \
          "$HOME/.local/state/home-manager/gcroots"
 
+# Ensure home-manager is in PATH
+export PATH="$HOME/.nix-profile/bin:$PATH"
+
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 LOG_FILE="$LOG_DIR/hmr-$TIMESTAMP.log"
 BACKUP_SUFFIX=".backup-$TIMESTAMP"
@@ -82,16 +85,16 @@ log_section() {
     echo '{"timestamp":"'"$(date -Is)"'","backups":[]}' > "$MANIFEST_FILE"
 
     log "Executing: home-manager switch --show-trace -b .backup-$BACKUP_TIMESTAMP --extra-experimental-features 'nix-command flakes' $@"
-    home-manager switch \
+    "$(which home-manager)" switch \
         --show-trace \
         -b ".backup-$BACKUP_TIMESTAMP" \
         --extra-experimental-features "nix-command flakes" \
         "$@" 2>&1 | while read -r line; do
             # Capture backup files and add to manifest
             if [[ "$line" == *"Moving existing file"* ]]; then
-                original_file=$(echo "$line" | awk '{print $4}')
-                backup_file=$(echo "$line" | awk '{print $6}')
-                checksum=$(sha256sum "$backup_file" | awk '{print $1}')
+                original_file=$(echo "$line" | awk '{print ''$4}')
+                backup_file=$(echo "$line" | awk '{print ''$6}')
+                checksum=$(sha256sum "$backup_file" | awk '{print ''$1}')
                 size=$(stat -c%s "$backup_file")
 
                 # Move to our backup directory
@@ -111,7 +114,7 @@ log_section() {
 
     # Calculate config hash
     CONFIG_HASH_FILE="$BACKUP_DIR/last_config_hash"
-    CURRENT_HASH=$(sha256sum nix/modules/shell.nix | awk '{print $1}')
+    CURRENT_HASH=$(sha256sum "$(pwd)/nix/modules/shell.nix" | awk '{print $1}')
 
     log_section "CLEANING OLD BACKUPS"
     if [ -f "$CONFIG_HASH_FILE" ]; then
@@ -141,7 +144,7 @@ log_section() {
     fi
 
     log_section "HMR COMPLETED"
-    log "Run 'reload' or restart your shell to apply changes"
+    log "Run 'exec zsh' or restart your shell to apply changes"
 } | tee -a "$LOG_FILE"
 
 # Show log location
