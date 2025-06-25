@@ -224,18 +224,18 @@
         else
           echo "API Key: [NOT SET]"
         fi
-        echo "Default Model: \${AIDER_MODEL:-deepseek/deepseek-chat}"
+        echo "Default Model: ''${AIDER_MODEL:-deepseek/deepseek-chat}"
         
         echo "\n=== Directory Analysis ==="
         echo "Current Directory: \$target_dir"
         if [ -n "\$current_aider_root" ]; then
           echo "Would use Aider Root: \$current_aider_root"
-          echo "Poetry path: \$(poetry -P="\$current_aider_root" --version)"
+          echo "Poetry path: \$(poetry -P=\"''${current_aider_root}\" --version)"
           
           # Check for .env file
           if [ -f "\$current_aider_root/.env" ]; then
             echo "\nEnvironment variables that would be loaded:"
-            grep -v '^#' "\$current_aider_root/.env" | grep -v '^$'
+            grep -v '^#' "''${current_aider_root}/.env" | grep -v '^$'
           else
             echo "\nNo .env file found in \$current_aider_root"
           fi
@@ -243,7 +243,7 @@
           # Check pyproject.toml for aider config
           if [ -f "\$current_aider_root/pyproject.toml" ]; then
             echo "\npyproject.toml dependencies:"
-            grep -E '^aider|^deepseek' "\$current_aider_root/pyproject.toml" || echo "No specific aider/deepseek dependencies found"
+            grep -E '^aider|^deepseek' "''${current_aider_root}/pyproject.toml" || echo "No specific aider/deepseek dependencies found"
           fi
         else
           echo "No valid aider setup found for current directory!"
