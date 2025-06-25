@@ -105,11 +105,25 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        if [ -e "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
-          echo "Unlinking regular ~/.zshrc to avoid Home Manager backup clobbering bug."
-          rm "$HOME/.zshrc"
+        # Remove any existing .zshrc (file or symlink)
+        [ -e "$HOME/.zshrc" ] && rm -f "$HOME/.zshrc"
+        
+        # Clear Home Manager's generation backups
+        if [ -d "$HOME/.local/state/home-manager/gcroots" ]; then
+          echo "Clearing Home Manager generation backups..."
+          rm -rf "$HOME/.local/state/home-manager/gcroots"/*
         fi
-        bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh -b hmbackup
+        
+        # Force a fresh build
+        echo "Building fresh Home Manager configuration..."
+        home-manager switch
+        
+        # Ensure the new .zshrc is properly linked
+        if [ ! -L "$HOME/.zshrc" ]; then
+          echo "Warning: .zshrc is not a symlink after rebuild!"
+          ls -la "$HOME/.zshrc"
+        fi
+        
         echo "Run 'reload' or restart your shell to apply changes."
       }
       # Source powerlevel10k theme from Nix store if available
