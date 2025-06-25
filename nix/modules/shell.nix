@@ -136,33 +136,36 @@
 
           # Then check current and parent directories for aider setup
           local current="$PWD"
+          local found=""
           while [ "$current" != "/" ]; do
               if [ -f "$current/pyproject.toml" ]; then
-                  echo "$current"
-                  return 0
+                  found="$current"
+                  break
               fi
               current="$(dirname "$current")"
           done
 
-          # Fall back to common locations
-          local locations=(
-              "$HOME/Projects/Personal/aider-setup"
-              "$HOME/aider-setup"
-              "$HOME/.aider"
-          )
+          # Fall back to common locations if nothing found in parents
+          if [ -z "$found" ]; then
+              local locations=(
+                  "$HOME/Projects/Personal/aider-setup"
+                  "$HOME/aider-setup"
+                  "$HOME/.aider"
+              )
 
-          for loc in "''${locations[@]}"; do
-              if [ -d "$loc" ] && [ -f "$loc/pyproject.toml" ]; then
-                  echo "$loc"
-                  return 0
-              fi
-          done
+              for loc in "${locations[@]}"; do
+                  if [ -d "$loc" ] && [ -f "$loc/pyproject.toml" ]; then
+                      found="$loc"
+                      break
+                  fi
+              done
+          fi
 
-          echo "Could not find aider setup (looking for pyproject.toml in):" >&2
-          echo "- Current directory and parents" >&2
-          echo "- $HOME/Projects/Personal/aider-setup" >&2
-          echo "- $HOME/aider-setup" >&2
-          echo "- $HOME/.aider" >&2
+          if [ -n "$found" ]; then
+              echo "$found"
+              return 0
+          fi
+
           return 1
       }
 
@@ -211,15 +214,53 @@
       fi
       # --- Aider Integration: aider-status function ---
       aider-status() {
-        echo "Aider Root: $AIDER_ROOT"
+        local current_aider_root="$(find_aider_root)"
+        local target_dir="$(pwd)"
+        
+        echo "=== Current Configuration ==="
+        echo "Aider Root: ${AIDER_ROOT:-[not set]}"
         if [ -n "$DEEPSEEK_API_KEY" ]; then
           echo "API Key: [SET]"
         else
           echo "API Key: [NOT SET]"
         fi
-        echo "Default Model: ''${AIDER_MODEL:-deepseek/deepseek-chat}"
-        pushd "$AIDER_ROOT" >/dev/null
-        poetry run aider --version
+        echo "Default Model: ${AIDER_MODEL:-deepseek/deepseek-chat}"
+        
+        echo "\n=== Directory Analysis ==="
+        echo "Current Directory: $target_dir"
+        if [ -n "$current_aider_root" ]; then
+          echo "Would use Aider Root: $current_aider_root"
+          echo "Poetry path: $(poetry -P="$current_aider_root" --version)"
+          
+          # Check for .env file
+          if [ -f "$current_aider_root/.env" ]; then
+            echo "\nEnvironment variables that would be loaded:"
+            grep -v '^#' "$current_aider_root/.env" | grep -v '^$'
+          else
+            echo "\nNo .env file found in $current_aider_root"
+          fi
+          
+          # Check pyproject.toml for aider config
+          if [ -f "$current_aider_root/pyproject.toml" ]; then
+            echo "\npyproject.toml dependencies:"
+            grep -E '^aider|^deepseek' "$current_aider_root/pyproject.toml" || echo "No specific aider/deepseek dependencies found"
+          fi
+        else
+          echo "No valid aider setup found for current directory!"
+          echo "Searched in:"
+          echo "- Current directory and parents"
+          echo "- $HOME/Projects/Personal/aider-setup"
+          echo "- $HOME/aider-setup"
+          echo "- $HOME/.aider"
+        fi
+        
+        # Show version info if available
+        if [ -n "$current_aider_root" ]; then
+          echo "\n=== Version Information ==="
+          pushd "$current_aider_root" >/dev/null
+          poetry run aider --version
+          popd >/dev/null
+        fi
       }
       # (You can add the rest of your custom code here)
     '';
