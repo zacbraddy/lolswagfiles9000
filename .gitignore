@@ -10,3 +10,6 @@ nix/secrets/*.temp
 # Nix build artifacts
 result
 .aider*
+
+# Local logs directory
+logs/
