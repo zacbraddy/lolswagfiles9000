@@ -105,11 +105,12 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        local log_dir="$HOME/.logs/hmr-logs"
+        local log_dir="$HOME/.aider/logs"
+        local backup_dir="$HOME/.aider/backups"
         local log_file="$log_dir/hmr-$(date +%Y%m%d-%H%M%S).log"
         
-        # Create logs directory if it doesn't exist
-        mkdir -p "$log_dir"
+        # Create directories if they don't exist
+        mkdir -p "$log_dir" "$backup_dir"
         
         # Use unbuffered output and append mode to prevent truncation
         exec 3>&1  # Save original stdout
@@ -130,11 +131,11 @@
           # Force a fresh build with verbose output and timestamped backup
           local backup_suffix=".backup-$(date +%Y%m%d-%H%M%S)"
           echo "Building fresh Home Manager configuration with backup suffix: $backup_suffix..."
-          home-manager switch --show-trace --backup --backup-suffix "$backup_suffix" --extra-experimental-features "nix-command flakes" 2>&1
+          home-manager switch --show-trace --backup --backup-suffix "$backup_suffix" --backup-dir "$backup_dir" --extra-experimental-features "nix-command flakes" 2>&1
           
           # Clean up old backups (keep last 3)
           echo "Cleaning up old backups..."
-          find "$HOME/.local/state/home-manager" -name '*.backup-*' | sort -r | tail -n +4 | xargs -r rm -f
+          find "$backup_dir" -name '*.backup-*' | sort -r | tail -n +4 | xargs -r rm -f
           
           # Verify the new .zshrc
           if [ ! -e "$HOME/.zshrc" ]; then
@@ -286,7 +287,7 @@
       if [ -n "''$(find_aider_root)" ]; then
           export AIDER_ROOT="''$(find_aider_root)"
           # Load environment variables from aider config with proper precedence
-          local global_config="$HOME/.config/aider/aider.conf.yml"
+          local global_config="$HOME/.aider/config/aider.conf.yml"
           local local_config=""
           if [ -f "$PWD/.aider/aider.conf.yml" ]; then
               local_config="$PWD/.aider/aider.conf.yml"
@@ -356,12 +357,12 @@
               echo "- No local config found at $PWD/.aider/aider.conf.yml"
           fi
           
-          if [ -f "$HOME/.config/aider/aider.conf.yml" ]; then
-              echo "\n- Global: $HOME/.config/aider/aider.conf.yml"
+          if [ -f "$HOME/.aider/config/aider.conf.yml" ]; then
+              echo "\n- Global: $HOME/.aider/config/aider.conf.yml"
               echo "\nGlobal Configuration:"
-              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key)=\(.value)"' "$HOME/.config/aider/aider.conf.yml" 2>/dev/null | print_vars || echo "Could not parse global config file"
+              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key)=\(.value)"' "$HOME/.aider/config/aider.conf.yml" 2>/dev/null | print_vars || echo "Could not parse global config file"
           else
-              echo "\n- No global config found at $HOME/.config/aider/aider.conf.yml"
+              echo "\n- No global config found at $HOME/.aider/config/aider.conf.yml"
           fi
           
           # Still check for .env in AIDER_ROOT as fallback
