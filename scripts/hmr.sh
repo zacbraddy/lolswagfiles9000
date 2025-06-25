@@ -90,13 +90,30 @@ log_section() {
             echo "$line"
         done | tee -a "$LOG_FILE"
 
-    # Cleanup old backups (keep last 3)
+    # Calculate config hash
+    CONFIG_HASH_FILE="$BACKUP_DIR/last_config_hash"
+    CURRENT_HASH=$(sha256sum nix/modules/shell.nix | awk '{print $1}')
+    
     log_section "CLEANING OLD BACKUPS"
-    log "Keeping last 3 backup sets..."
-    find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d | sort -r | tail -n +4 | while read -r dir; do
-        log "Removing old backup set: $(basename "$dir")"
-        rm -rf "$dir"
-    done
+    if [ -f "$CONFIG_HASH_FILE" ]; then
+        LAST_HASH=$(cat "$CONFIG_HASH_FILE")
+        if [ "$CURRENT_HASH" = "$LAST_HASH" ]; then
+            log "No changes to shell.nix - removing all backups"
+            rm -rf "$BACKUP_DIR"/*/
+        else
+            log "Configuration changed - keeping latest backup"
+            # Keep only the most recent backup
+            find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d | sort -r | tail -n +2 | while read -r dir; do
+                log "Removing old backup set: $(basename "$dir")"
+                rm -rf "$dir"
+            done
+            # Save new hash
+            echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
+        fi
+    else
+        log "First run - saving config hash"
+        echo "$CURRENT_HASH" > "$CONFIG_HASH_FILE"
+    fi
 
     # Verify results
     log_section "VERIFYING RESULTS"
