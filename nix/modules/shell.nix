@@ -38,41 +38,95 @@
         "node"
         "vi-mode"
         # pnpm, turbo, nx, and moonrepo completions handled below
+        # Temporarily disable all plugins to isolate the error
+        # Re-enable one by one after confirmation
       ];
     };
     initContent = ''
-      # PATH modifications - safely append to existing PATH
-      path_prepend() {
-        if [ -d "$1" ] && [[ ":\$PATH:" != *":\$1:"* ]]; then
-          export PATH="\$1:\$PATH"
-        fi
-      }
-
-      path_append() {
-        if [ -d "$1" ] && [[ ":\$PATH:" != *":\$1:"* ]]; then
-          export PATH="\$PATH:\$1"
-        fi
-      }
-
-      # Prepend user-local paths
-      path_prepend "\$HOME/.yarn/bin"
-      path_prepend "\$HOME/.config/yarn/global/node_modules/.bin"
-      path_prepend "\$HOME/.local/bin"
-      path_prepend "\$HOME/.poetry/bin"
-
-      # Linuxbrew paths - only add if they exist
-      if [ -d "/home/linuxbrew/.linuxbrew" ]; then
-        path_prepend "/home/linuxbrew/.linuxbrew/bin"
-        path_prepend "/home/linuxbrew/.linuxbrew/sbin"
+      ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump-$HOST-$ZSH_VERSION"
+      mkdir -p "$ZSH_CACHE_DIR"
+      chmod 700 "$ZSH_CACHE_DIR"
+      if [[ ! -f "$ZSH_COMPDUMP" ]]; then
+        touch "$ZSH_COMPDUMP"
+        chmod 600 "$ZSH_COMPDUMP"
       fi
 
-      # Append spicetify path
-      path_append "\$HOME/.spicetify"
-      # Bash completion compatibility for pipx and other tools
+      # Build our expected PATH
+      EXPECTED_PATHS=(
+        "/usr/local/sbin"
+        "/usr/local/bin"
+        "/usr/sbin"
+        "/usr/bin"
+        "/sbin"
+        "/bin"
+        "/usr/games"
+        "/usr/local/games"
+        "$HOME/.local/bin"
+        "$HOME/.cargo/bin"
+        "$HOME/.local/share/nvim/mason/bin"
+        "$HOME/.npm-global/bin"
+        "$HOME/.yarn/bin"
+        "$HOME/.config/yarn/global/node_modules/.bin"
+        "$HOME/.poetry/bin"
+        "$HOME/.asdf/shims"
+        "$HOME/.asdf/bin"
+        "$HOME/.spicetify"
+        "$HOME/.linuxbrew/bin"
+        "/home/linuxbrew/.linuxbrew/bin"
+      )
+
+      # Add Nix paths if they exist
+      [ -d "$HOME/.nix-profile/bin" ] && EXPECTED_PATHS+=("$HOME/.nix-profile/bin")
+      [ -d "/nix/var/nix/profiles/default/bin" ] && EXPECTED_PATHS+=("/nix/var/nix/profiles/default/bin")
+      [ -d "/run/current-system/sw/bin" ] && EXPECTED_PATHS+=("/run/current-system/sw/bin")
+
+      # Build expected PATH string
+      EXPECTED_PATH=""
+      for p in "''${EXPECTED_PATHS[@]}"; do
+        if [ -d "$p" ]; then
+          EXPECTED_PATH="$EXPECTED_PATH:$p"
+        fi
+      done
+      EXPECTED_PATH="''${EXPECTED_PATH#:}"
+
+      # Compare with current PATH
+      if [[ ":$PATH:" != *":$EXPECTED_PATH:"* ]]; then
+        echo "⚠️  Warning: Your PATH differs from the Nix-managed configuration"
+        echo "   Current PATH contains entries not managed by Nix"
+        echo "   To fix this, add the following to your shell.nix home.packages:"
+        echo
+
+        # Find unmanaged paths
+        IFS=: read -ra CURRENT_PATHS <<< "$PATH"
+        for p in "''${CURRENT_PATHS[@]}"; do
+          if [[ -n "$p" && -d "$p" && ":$EXPECTED_PATH:" != *":$p:"* ]]; then
+            echo "   - ''${pkgs.writeShellScriptBin "path-$(basename "$p")" ''"
+              # This would be the package that provides this path
+              echo "Warning: Adding unmanaged path to PATH: ''$p" >&2
+              if [[ -d "''$p" ]]; then
+                export PATH="''$PATH:''$p"
+              else
+                echo "Error: Path does not exist: ''$p" >&2
+                return 1
+              fi
+            "''}"
+          fi
+        done
+
+        echo
+        echo "   Using current PATH to avoid losing functionality"
+      else
+        export PATH="$EXPECTED_PATH"
+      fi
+
+      # Bash completion compatibility
       autoload -U bashcompinit
       bashcompinit
+
       # Zsh native completion
-      autoload -U compinit compdef && compinit
+      autoload -U compinit compdef
+      # Only run compinit if we can write to the completion dump file
+      compinit -d "$ZSH_COMPDUMP" || compinit -C -d "$ZSH_COMPDUMP"
       # tabtab completions (Node.js tools)
       [ -f ~/.config/tabtab/__tabtab.bash ] && . ~/.config/tabtab/__tabtab.bash || true
       # Docker helper functions
@@ -80,20 +134,20 @@
           docker ps -q | while read -r i; do docker stop \$i; docker rm \$i; done
       }
       explode_local_docker() {
-          echo "=================== CONTAINERS ==================="
+          echo "=================== CURRENT CONTAINERS ==================="
           docker ps -a
-          echo "=============== CLEANING CONTAINERS =============="
+          echo "=============== REMOVING ALL CONTAINERS =============="
           docker rm -f \$(docker ps -aq 2>/dev/null || true)
-          echo "================ CLEANING VOLUMES ================"
+          echo "================ PRUNING VOLUMES ================"
           docker volume prune -f
-          echo "=================== CONTAINERS ==================="
+          echo "=================== FINAL STATE ==================="
           docker ps -a
       }
       # Project jump function
       pj() {
         local projects=(\$HOME/Projects/*)
-        local project=\$(printf "%s\\n" "\''${projects[@]}" | fzf)
-        if [[ -n "\''${project}" ]]; then
+        local project=\$(printf "%s\\n" "''${projects[@]}" | fzf --height 40% --reverse)
+        if [[ -n "''${project}" ]]; then
           cd "\$project"
         fi
       }
@@ -103,32 +157,32 @@
       }
       trash-restore-last() {
         local last=$(trash-list | tail -n 1 | awk '{print \$2}')
-        if [[ -n "\''${last}" ]]; then
+        if [[ -n "''${last}" ]]; then
           trash-restore "\$last"
         else
           echo "No files in trash to restore." >&2
         fi
       }
       trash-search() {
-        if [ -z "\$1" ]; then
+        if [ -z "''${1}" ]; then
           echo "Usage: trash-search <pattern>" >&2
           return 1
         fi
-        trash-list | grep --color=auto "\$1"
+        trash-list | grep --color=auto "''${1}"
       }
       trash-count() {
         trash-list | wc -l | awk '{print $1 " files in trash."}'
       }
       trash-empty-days() {
-        if [ -z "\$1" ]; then
+        if [ -z "''${1}" ]; then
           echo "Usage: trash-empty-days <days>" >&2
           return 1
         fi
-        trash-empty "\$1"
+        trash-empty "''${1}"
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh "$@"
+        bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh "''${@}"
       }
       # Source powerlevel10k theme from Nix store if available
       if [ -d "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k" ]; then
@@ -374,6 +428,23 @@
     trash-cli
     just
     yq-go
+    getent
+    which
+    coreutils
+    env
+    yarn
+    poetry
+    spicetify-cli
+    linuxbrew
+    gnused
+    gawk
+    findutils
+    gnugrep
+    # Pop!_OS specific paths
+    pop-launcher
+    pop-shell
+    # User-local binaries
+    (writeShellScriptBin "pj" (builtins.readFile ./scripts/pj.sh))
   ];
   # Managed dotfiles
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;

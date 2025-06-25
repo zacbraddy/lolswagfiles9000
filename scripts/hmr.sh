@@ -29,7 +29,13 @@ log_section() {
 # Main execution
 {
     log_section "HMR STARTED"
-    
+
+    BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    CURRENT_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
+    # Backup current PATH state
+    echo "$PATH" > "$CURRENT_BACKUP_DIR/path.original.$TIMESTAMP.txt"
+
+
     # Cleanup existing files
     log_section "CLEANING EXISTING FILES"
     log "Removing ~/.zshrc symlink..."
@@ -39,7 +45,7 @@ log_section() {
         exit 1
     fi
     [ -L "$HOME/.zshrc" ] && rm "$HOME/.zshrc"
-    
+
     log "Clearing gcroots..."
     rm -rf "$HOME/.local/state/home-manager/gcroots"/* || true
 
@@ -59,14 +65,12 @@ log_section() {
 
     # Run Home Manager with proper backup handling
     log_section "RUNNING HOME MANAGER"
-    BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-    CURRENT_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
     mkdir -p "$CURRENT_BACKUP_DIR"
-    
+
     # Create manifest file
     MANIFEST_FILE="$CURRENT_BACKUP_DIR/manifest.json"
     echo '{"timestamp":"'"$(date -Is)"'","backups":[]}' > "$MANIFEST_FILE"
-    
+
     log "Executing: home-manager switch --show-trace -b .backup-$BACKUP_TIMESTAMP --extra-experimental-features 'nix-command flakes' $@"
     home-manager switch \
         --show-trace \
@@ -79,11 +83,11 @@ log_section() {
                 backup_file=$(echo "$line" | awk '{print $6}')
                 checksum=$(sha256sum "$backup_file" | awk '{print $1}')
                 size=$(stat -c%s "$backup_file")
-                
+
                 # Move to our backup directory
                 mv "$backup_file" "$CURRENT_BACKUP_DIR/"
                 backup_file_name=$(basename "$backup_file")
-                
+
                 # Update manifest
                 jq --arg op "$original_file" \
                    --arg bp "$backup_file_name" \
@@ -98,7 +102,7 @@ log_section() {
     # Calculate config hash
     CONFIG_HASH_FILE="$BACKUP_DIR/last_config_hash"
     CURRENT_HASH=$(sha256sum nix/modules/shell.nix | awk '{print $1}')
-    
+
     log_section "CLEANING OLD BACKUPS"
     if [ -f "$CONFIG_HASH_FILE" ]; then
         LAST_HASH=$(cat "$CONFIG_HASH_FILE")
