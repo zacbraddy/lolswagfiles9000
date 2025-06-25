@@ -108,18 +108,19 @@
         local log_dir="$HOME/.aider/logs"
         local backup_dir="$HOME/.aider/backups"
         local config_dir="$HOME/.aider/config"
-        local log_file="$log_dir/hmr-$(date +%Y%m%d-%H%M%S).log"
-        
-        # Create all required directories if they don't exist
         mkdir -p "$log_dir" "$backup_dir" "$config_dir" \
                  "$HOME/.local/bin" \
                  "$HOME/.local/state/home-manager/gcroots"
         
+        local timestamp=$(date +%Y%m%d-%H%M%S)
+        local log_file="$log_dir/hmr-$timestamp.log"
+        echo "HMR log will be saved to: $log_file"
+        
         # Use unbuffered output and append mode to prevent truncation
         exec 3>&1  # Save original stdout
         {
-          echo "=== HMR Log $(date) ==="
-          echo "Starting Home Manager repair..."
+          echo "=== HMR Log $(date +'%Y-%m-%d %H:%M:%S') ==="
+          echo "[$(date +'%H:%M:%S')] Starting Home Manager repair..."
           
           # Remove any existing .zshrc (file or symlink)
           echo "Removing existing .zshrc..."
@@ -160,7 +161,9 @@
         } | tee -a "$log_file" >&3
         exec 3>&-  # Close fd 3
         
-        echo "Full log saved to $log_file"
+        echo "[$(date +'%H:%M:%S')] Full log saved to:"
+        echo "$log_file"
+        echo "View it with: cat \"$log_file\""
         
         # Check for errors in the log
         if grep -q "Error:" "$log_file"; then
