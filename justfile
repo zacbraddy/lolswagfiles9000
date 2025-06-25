@@ -189,10 +189,30 @@ secrets-setup-key:
 
 # Home Manager Reload with secret checks
 hmr:
-	bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh -b hmbackup
+	#!/usr/bin/env bash
+	local log_dir="$HOME/.aider/logs"
+	local backup_dir="$HOME/.aider/backups"
+	local config_dir="$HOME/.aider/config"
+	
+	# Create all required directories if they don't exist
+	mkdir -p "$log_dir" "$backup_dir" "$config_dir" \
+	         "$HOME/.local/bin" \
+	         "$HOME/.local/state/home-manager/gcroots"
+	
+	# Run the hmr script with same parameters as shell function
+	bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh \
+	  --show-trace \
+	  --backup \
+	  --backup-suffix ".backup-$(date +%Y%m%d-%H%M%S)" \
+	  --backup-dir "$backup_dir" \
+	  --extra-experimental-features "nix-command flakes"
 
 hmr-with-exit-check:
 	#!/usr/bin/env bash
+	# Create required directories first
+	mkdir -p "$HOME/.aider/logs" "$HOME/.aider/backups" "$HOME/.aider/config"
+	
+	# Run hmr and capture exit code
 	HM_EXIT=$(just hmr > /dev/null 2>&1; echo $?)
 	if [ "$HM_EXIT" -eq 0 ]; then
 		echo "✅ Home Manager configuration applied successfully"

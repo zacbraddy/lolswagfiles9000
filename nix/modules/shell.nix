@@ -107,10 +107,13 @@
       hmr() {
         local log_dir="$HOME/.aider/logs"
         local backup_dir="$HOME/.aider/backups"
+        local config_dir="$HOME/.aider/config"
         local log_file="$log_dir/hmr-$(date +%Y%m%d-%H%M%S).log"
         
-        # Create directories if they don't exist
-        mkdir -p "$log_dir" "$backup_dir"
+        # Create all required directories if they don't exist
+        mkdir -p "$log_dir" "$backup_dir" "$config_dir" \
+                 "$HOME/.local/bin" \
+                 "$HOME/.local/state/home-manager/gcroots"
         
         # Use unbuffered output and append mode to prevent truncation
         exec 3>&1  # Save original stdout
