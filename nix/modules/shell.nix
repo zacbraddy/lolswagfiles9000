@@ -99,7 +99,7 @@
         # Find unmanaged paths
         IFS=: read -ra CURRENT_PATHS <<< "$PATH"
         for p in "''${CURRENT_PATHS[@]}"; do
-          if [[ -n "$p" && -d "$p" && ":$EXPECTED_PATH:" != *":$p:"* ]]; then
+          if [[ -n "''$p" && -d "''$p" && ":''$EXPECTED_PATH:" != *":''$p:"* ]]; then
             echo "   - ''${pkgs.writeShellScriptBin "path-$(basename \"$p\")" ''"
               # This would be the package that provides this path
               echo "Warning: Adding unmanaged path to PATH: ''$p" >&2
@@ -148,7 +148,7 @@
         local projects=(\$HOME/Projects/*)
         local project=\$(printf "%s\\n" "''${projects[@]}" | fzf --height 40% --reverse)
         if [[ -n "''${project}" ]]; then
-          cd "\$project"
+          cd "''$project"
         fi
       }
       # Trash management helpers
