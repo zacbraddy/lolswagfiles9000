@@ -283,7 +283,7 @@
     asdf
     trash-cli
     just
-    yq
+    yq-go
   ];
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   home.file.".gitconfig".source = ../../.gitconfig;
