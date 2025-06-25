@@ -4,13 +4,16 @@ set -e
 # Configuration
 LOG_DIR="$HOME/.hmr/logs"
 BACKUP_DIR="$HOME/.hmr/backups"
+mkdir -p "$LOG_DIR" "$BACKUP_DIR" || {
+    echo "Failed to create log/backup directories" >&2
+    exit 1
+}
 SECRETS_FILE="nix/secrets/secrets.yaml"
 SOPS_CONFIG="nix/secrets/.sops.yaml"
 AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
 # Setup directories
-mkdir -p "$LOG_DIR" "$BACKUP_DIR" \
-         "$HOME/.local/bin" \
+mkdir -p "$HOME/.local/bin" \
          "$HOME/.local/state/home-manager/gcroots"
 
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
@@ -32,8 +35,15 @@ log_section() {
 
     BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
     CURRENT_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
+    mkdir -p "$CURRENT_BACKUP_DIR" || {
+        log "❌ Failed to create backup directory: $CURRENT_BACKUP_DIR"
+        exit 1
+    }
     # Backup current PATH state
-    echo "$PATH" > "$CURRENT_BACKUP_DIR/path.original.$TIMESTAMP.txt"
+    echo "$PATH" > "$CURRENT_BACKUP_DIR/path.original.$TIMESTAMP.txt" || {
+        log "❌ Failed to write PATH backup"
+        exit 1
+    }
 
 
     # Cleanup existing files
