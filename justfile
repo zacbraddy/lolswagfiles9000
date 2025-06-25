@@ -190,12 +190,12 @@ secrets-setup-key:
 # Home Manager Reload with secret checks
 hmr:
 	#!/usr/bin/env bash
-	bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh
+	bash ./scripts/hmr.sh
 
 hmr-with-exit-check:
 	#!/usr/bin/env bash
 	# Run hmr and capture exit code
-	HM_EXIT=$(bash ~/Projects/Personal/lolswagfiles9000/scripts/hmr.sh > /dev/null 2>&1; echo $?)
+	HM_EXIT=$(bash ./scripts/hmr.sh > /dev/null 2>&1; echo $?)
 	if [ "$HM_EXIT" -eq 0 ]; then
 		echo "✅ Home Manager configuration applied successfully"
 	elif [ "$HM_EXIT" -eq 1 ]; then
