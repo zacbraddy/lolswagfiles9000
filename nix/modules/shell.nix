@@ -175,7 +175,6 @@
       find_aider_config() {
           # Check for config files in order of precedence
           local config_files=(
-              "$PWD/aider.conf.yml"
               "$PWD/.aider/aider.conf.yml"
               "$HOME/.config/aider/aider.conf.yml"
           )
@@ -289,7 +288,6 @@
             fi
           else
             echo "\nNo aider config file found in:"
-            echo "- $PWD/aider.conf.yml"
             echo "- $PWD/.aider/aider.conf.yml"
             echo "- $HOME/.config/aider/aider.conf.yml"
           fi
