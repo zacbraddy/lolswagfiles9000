@@ -42,9 +42,9 @@
       export PATH="$HOME/.poetry/bin:''${PATH}"
       # Linuxbrew paths - only add if they exist
       if [ -d "/home/linuxbrew/.linuxbrew" ]; then
-        export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:''${PATH}"
+        export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:\''${PATH}"
       fi
-      export PATH="''${PATH}:$HOME/.spicetify"
+      export PATH="\''${PATH}:\$HOME/.spicetify"
       # Bash completion compatibility for pipx and other tools
       autoload -U bashcompinit
       bashcompinit
@@ -54,13 +54,13 @@
       [ -f ~/.config/tabtab/__tabtab.bash ] && . ~/.config/tabtab/__tabtab.bash || true
       # Docker helper functions
       kadc() {
-          docker ps -q | while read -r i; do docker stop $i; docker rm $i; done
+          docker ps -q | while read -r i; do docker stop \$i; docker rm \$i; done
       }
       explode_local_docker() {
           echo "=================== CONTAINERS ==================="
           docker ps -a
           echo "=============== CLEANING CONTAINERS =============="
-          docker rm -f $(docker ps -aq 2>/dev/null || true)
+          docker rm -f \$(docker ps -aq 2>/dev/null || true)
           echo "================ CLEANING VOLUMES ================"
           docker volume prune -f
           echo "=================== CONTAINERS ==================="
@@ -68,10 +68,10 @@
       }
       # Project jump function
       pj() {
-        local projects=(~/Projects/*)
-        local project=$(printf "%s\n" $projects | fzf)
-        if [[ -n "''${project}" ]]; then
-          cd "$project"
+        local projects=(\$HOME/Projects/*)
+        local project=\$(printf "%s\\n" "\''${projects[@]}" | fzf)
+        if [[ -n "\''${project}" ]]; then
+          cd "\$project"
         fi
       }
       # Trash management helpers
