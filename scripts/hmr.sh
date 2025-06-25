@@ -1,80 +1,93 @@
 #!/usr/bin/env bash
 set -e
 
-# Set up directories
-log_dir="$HOME/.aider/logs"
-backup_dir="$HOME/.aider/backups"
-config_dir="$HOME/.aider/config"
+# Configuration
+LOG_DIR="$HOME/.hmr/logs"
+BACKUP_DIR="$HOME/.hmr/backups"
+SECRETS_FILE="nix/secrets/secrets.yaml"
+SOPS_CONFIG="nix/secrets/.sops.yaml"
+AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
-# Create all required directories if they don't exist
-mkdir -p "$log_dir" "$backup_dir" "$config_dir" \
+# Setup directories
+mkdir -p "$LOG_DIR" "$BACKUP_DIR" \
          "$HOME/.local/bin" \
          "$HOME/.local/state/home-manager/gcroots"
 
-# Accept extra arguments for home-manager switch (e.g., -b backup)
-HM_SWITCH_ARGS="$@"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+LOG_FILE="$LOG_DIR/hmr-$TIMESTAMP.log"
+BACKUP_SUFFIX=".backup-$TIMESTAMP"
 
-# Unlink ~/.zshrc if it exists (file or symlink) to avoid Home Manager backup clobbering bug
-if [ -e "$HOME/.zshrc" ] || [ -L "$HOME/.zshrc" ]; then
-  echo "Unlinking ~/.zshrc (removing file or symlink) to avoid Home Manager backup clobbering bug."
-  rm "$HOME/.zshrc"
+# Logging functions
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+log_section() {
+    log "===== $1 ====="
+}
+
+# Main execution
+{
+    log_section "HMR STARTED"
+    
+    # Cleanup existing files
+    log_section "CLEANING EXISTING FILES"
+    log "Removing ~/.zshrc..."
+    rm -f "$HOME/.zshrc" || true
+    
+    log "Clearing gcroots..."
+    rm -rf "$HOME/.local/state/home-manager/gcroots"/* || true
+
+    # Secrets verification
+    log_section "VERIFYING SECRETS"
+    if [ ! -f "$AGE_KEY_FILE" ]; then
+        log "❌ Age key file not found at $AGE_KEY_FILE"
+        log "Run 'just secrets-setup-key' to set up encryption keys"
+        exit 1
+    fi
+
+    if SOPS_AGE_KEY_FILE="$AGE_KEY_FILE" sops -d --config "$SOPS_CONFIG" "$SECRETS_FILE" 2>/dev/null | grep -q '^{}$'; then
+        log "❌ secrets.yaml is empty"
+        log "Run 'just secrets-add' to add required secrets"
+        exit 1
+    fi
+
+    # Run Home Manager
+    log_section "RUNNING HOME MANAGER"
+    log "Executing: home-manager switch --show-trace --backup --backup-suffix $BACKUP_SUFFIX --backup-dir $BACKUP_DIR --extra-experimental-features 'nix-command flakes' $@"
+    home-manager switch \
+        --show-trace \
+        --backup \
+        --backup-suffix "$BACKUP_SUFFIX" \
+        --backup-dir "$BACKUP_DIR" \
+        --extra-experimental-features "nix-command flakes" \
+        "$@"
+
+    # Cleanup old backups
+    log_section "CLEANING OLD BACKUPS"
+    log "Keeping last 3 backups..."
+    find "$BACKUP_DIR" -name '*.backup-*' | sort -r | tail -n +4 | xargs -r rm -f
+
+    # Verify results
+    log_section "VERIFYING RESULTS"
+    if [ -L "$HOME/.zshrc" ]; then
+        log "✅ .zshrc symlink created successfully"
+    else
+        log "⚠️  .zshrc is not a symlink"
+    fi
+
+    log_section "HMR COMPLETED"
+    log "Run 'reload' or restart your shell to apply changes"
+} | tee -a "$LOG_FILE"
+
+# Show log location
+echo "Log saved to: $LOG_FILE"
+
+# Check for errors
+if grep -q "❌" "$LOG_FILE"; then
+    echo "Errors detected:"
+    grep "❌" "$LOG_FILE"
+    exit 1
 fi
 
-# Remove any pre-Home Manager relinking of .zshrc
-
-LATEST_ZSHENV=$(ls -t /nix/store/*-home-manager-files/.zshenv 2>/dev/null | head -n1)
-if [ ! -L ~/.zshenv ] || [ "$(readlink ~/.zshenv)" != "$LATEST_ZSHENV" ]; then
-  if [ -f ~/.zshenv ] && [ ! -L ~/.zshenv ]; then
-    mv ~/.zshenv ~/.zshenv.backup
-    echo 'Moved existing ~/.zshenv to ~/.zshenv.backup so Home Manager can manage it.'
-  fi
-  if [ -n "$LATEST_ZSHENV" ]; then
-    ln -sf "$LATEST_ZSHENV" ~/.zshenv
-    echo "Symlinked $LATEST_ZSHENV to ~/.zshenv (repair/check)"
-  else
-    echo "No generated .zshenv found in /nix/store (repair/check)."
-  fi
-fi
-
-if [ ! -f ~/.config/sops/age/keys.txt ]; then
-  echo '⚠️  Warning: Age key file not found at ~/.config/sops/age/keys.txt'
-  echo "Please run 'just secrets-setup-key' to set up your encryption keys"
-  exit 1
-fi
-
-if SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -d --config nix/secrets/.sops.yaml nix/secrets/secrets.yaml 2>/dev/null | grep -q '^{}$'; then
-  echo '⚠️  Warning: secrets.yaml is empty'
-  echo "Please run 'just secrets-add' to add required secrets:"
-  echo "  - aws_credentials"
-  echo "  - github_token"
-  echo "  - ssh_private_key"
-  echo "  - ssh_public_key"
-  echo "  - env_file"
-  exit 1
-fi
-
-# Run Home Manager switch with consistent arguments
-home-manager switch \
-  --show-trace \
-  --extra-experimental-features "nix-command flakes" \
-  $HM_SWITCH_ARGS
-HM_EXIT=$?
-
-# Post-switch: re-symlink .zshrc and .zshenv if needed
-LATEST_HM_FILES=$(find /nix/store -maxdepth 1 -name "*-home-manager-files" 2>/dev/null | sort | tail -n1)
-if [ -n "$LATEST_HM_FILES" ]; then
-  echo "Found Home Manager files at: $LATEST_HM_FILES"
-  if [ -f "$LATEST_HM_FILES/.zshrc" ] && [ ! -e ~/.zshrc ]; then
-    ln -sf "$LATEST_HM_FILES/.zshrc" ~/.zshrc
-    echo "✅ Symlinked $LATEST_HM_FILES/.zshrc to ~/.zshrc (post-switch)"
-  fi
-  if [ -f "$LATEST_HM_FILES/.zshenv" ] && [ ! -L ~/.zshenv ]; then
-    ln -sf "$LATEST_HM_FILES/.zshenv" ~/.zshenv
-    echo "✅ Symlinked $LATEST_HM_FILES/.zshenv to ~/.zshenv (post-switch)"
-  fi
-else
-  echo "⚠️  No Home Manager files directory found"
-fi
-
-echo "Done. Please run 'reload' or restart your shell to apply changes."
-exit $HM_EXIT
+exit 0
