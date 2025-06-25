@@ -40,7 +40,10 @@
       export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:''${PATH}"
       export PATH="$HOME/.local/bin:''${PATH}"
       export PATH="$HOME/.poetry/bin:''${PATH}"
-      export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:''${PATH}"
+      # Linuxbrew paths - only add if they exist
+      if [ -d "/home/linuxbrew/.linuxbrew" ]; then
+        export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:''${PATH}"
+      fi
       export PATH="''${PATH}:$HOME/.spicetify"
       # Bash completion compatibility for pipx and other tools
       autoload -U bashcompinit
@@ -57,7 +60,7 @@
           echo "=================== CONTAINERS ==================="
           docker ps -a
           echo "=============== CLEANING CONTAINERS =============="
-          docker rm -f $(docker ps -aq)
+          docker rm -f $(docker ps -aq 2>/dev/null || true)
           echo "================ CLEANING VOLUMES ================"
           docker volume prune -f
           echo "=================== CONTAINERS ==================="
@@ -205,8 +208,8 @@
       }
 
       air1() {
-        local target_dir="$(pwd)"
-        local aider_root="$(find_aider_root)"
+        local target_dir="''$(pwd)"
+        local aider_root="''$(find_aider_root)"
 
         if [ -z "$aider_root" ]; then
           echo "Error: Could not find aider setup."
@@ -217,8 +220,16 @@
           return 1
         fi
 
-        poetry -P="$aider_root" run aider --model deepseek/deepseek-r1 "$target_dir" "$@"
+        poetry -P="''${aider_root}" run aider --model deepseek/deepseek-r1 "''${target_dir}" "$@"
       }
+      # Validate required tools
+      if ! command -v poetry &>/dev/null; then
+        echo "⚠️  Poetry not found - aider integration will not work"
+      fi
+      if ! command -v yq &>/dev/null; then
+        echo "⚠️  yq not found - config file parsing will not work"
+      fi
+
       # --- Aider Integration: Setup ---
       if [ -n "''$(find_aider_root)" ]; then
           export AIDER_ROOT="''$(find_aider_root)"
@@ -237,9 +248,9 @@
       fi
       # --- Aider Integration: ai-status function ---
       ai-status() {
-        local current_aider_root="$(find_aider_root)"
-        local target_dir="$(pwd)"
-        local config_file="$(find_aider_config)"
+        local current_aider_root="''$(find_aider_root)"
+        local target_dir="''$(pwd)"
+        local config_file="''$(find_aider_config)"
         
         echo "=== Current Configuration ==="
         echo "Aider Root: ''${AIDER_ROOT:-[not set]}"
@@ -259,9 +270,9 @@
           
           # Show active config file if found
           if [ -n "$config_file" ]; then
-            echo "\nActive Configuration File: $config_file"
+            echo "\nActive Configuration File: ''${config_file}"
             echo "\nAider Config:"
-            yq . "$config_file"
+            yq . "''${config_file}" 2>/dev/null || echo "Could not parse config file"
           else
             echo "\nNo aider config file found in:"
             echo "- $PWD/aider.conf.yml"
