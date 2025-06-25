@@ -154,20 +154,38 @@
           echo "Cleaning up old backups..."
           find "$backup_dir" -name '*.backup-*' | sort -r | tail -n +4 | xargs -r rm -f
           
-          # Verify the new .zshrc
+          # Verify the new .zshrc with more detailed debugging
           if [ ! -e "$HOME/.zshrc" ]; then
-            echo "Error: Failed to generate new .zshrc!"
-            echo "Debug info:"
-            echo "Home Manager path: $(which home-manager)"
-            echo "Nix store path: $(readlink -f $(which home-manager))"
-            echo "Current generation: $(readlink -f $HOME/.local/state/home-manager/profile)"
+            echo "❌ Error: Failed to generate new .zshrc!"
+            echo "=== Debugging Information ==="
+            echo "1. Home Manager executable:"
+            which home-manager || echo "Not found in PATH"
+            echo "\n2. Nix store path:"
+            readlink -f $(which home-manager) || echo "Could not resolve path"
+            echo "\n3. Current generation:"
+            readlink -f $HOME/.local/state/home-manager/profile || echo "No generation found"
+            echo "\n4. Recent generations:"
+            ls -la $HOME/.local/state/home-manager/gcroots || echo "Could not list generations"
+            echo "\n5. Nix store contents for zshrc:"
+            ls -la /nix/store/*-home-manager-files/.zshrc || echo "Could not find .zshrc in store"
+            echo "\n6. Home Manager build output:"
+            find /nix/store -name "home-manager-generation" -mtime -1 -exec ls -la {} \; || echo "No recent generations found"
+            echo "\n7. Environment variables:"
+            printenv | grep -E 'NIX|HOME|PATH' || echo "Could not get environment"
             return 1
           elif [ ! -L "$HOME/.zshrc" ]; then
-            echo "Warning: .zshrc is not a symlink after rebuild!"
+            echo "⚠️ Warning: .zshrc is not a symlink after rebuild!"
+            echo "File details:"
             ls -la "$HOME/.zshrc"
+            echo "\nFile contents (first 10 lines):"
+            head -n 10 "$HOME/.zshrc" || true
           else
-            echo "Success: New .zshrc symlink created:"
+            echo "✅ Success: New .zshrc symlink created:"
             ls -la "$HOME/.zshrc"
+            echo "\nLinked to:"
+            readlink -f "$HOME/.zshrc"
+            echo "\nFile contents (first 10 lines):"
+            head -n 10 "$(readlink -f "$HOME/.zshrc")" || true
           fi
           
           echo "Run 'reload' or restart your shell to apply changes."
