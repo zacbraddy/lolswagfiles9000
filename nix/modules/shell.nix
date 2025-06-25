@@ -119,23 +119,36 @@
         # Use unbuffered output and append mode to prevent truncation
         exec 3>&1  # Save original stdout
         {
-          echo "=== HMR Log $(date +'%Y-%m-%d %H:%M:%S') ==="
-          echo "[$(date +'%H:%M:%S')] Starting Home Manager repair..."
+          # Create log sections with clear headers
+          log_section() {
+            local section="$1"
+            echo "===== $(date +'%Y-%m-%d %H:%M:%S') - $section =====" | tee -a "$log_file"
+          }
+
+          log_section "HMR STARTED"
           
           # Remove any existing .zshrc (file or symlink)
-          echo "Removing existing .zshrc..."
-          rm -f "$HOME/.zshrc" 2>/dev/null || true
+          log_section "REMOVING EXISTING ZSHRC"
+          echo "Removing $HOME/.zshrc..." | tee -a "$log_file"
+          rm -f "$HOME/.zshrc" 2>&1 | tee -a "$log_file" || true
           
           # Clear Home Manager's generation backups
+          log_section "CLEARING GCROOTS"
           if [ -d "$HOME/.local/state/home-manager/gcroots" ]; then
-            echo "Clearing Home Manager generation backups..."
-            rm -rf "$HOME/.local/state/home-manager/gcroots"/* 2>/dev/null || true
+            echo "Clearing $HOME/.local/state/home-manager/gcroots/*..." | tee -a "$log_file"
+            rm -rf "$HOME/.local/state/home-manager/gcroots"/* 2>&1 | tee -a "$log_file" || true
+          else
+            echo "Directory $HOME/.local/state/home-manager/gcroots does not exist" | tee -a "$log_file"
           fi
           
           # Force a fresh build with verbose output and timestamped backup
+          log_section "RUNNING HOME-MANAGER SWITCH"
           local backup_suffix=".backup-$(date +%Y%m%d-%H%M%S)"
-          echo "Building fresh Home Manager configuration with backup suffix: $backup_suffix..."
-          home-manager switch --show-trace --backup --backup-suffix "$backup_suffix" --backup-dir "$backup_dir" --extra-experimental-features "nix-command flakes" 2>&1
+          echo "Building fresh Home Manager configuration with backup suffix: $backup_suffix..." | tee -a "$log_file"
+          {
+            echo "Command: home-manager switch --show-trace --backup --backup-suffix $backup_suffix --backup-dir $backup_dir --extra-experimental-features 'nix-command flakes'"
+            home-manager switch --show-trace --backup --backup-suffix "$backup_suffix" --backup-dir "$backup_dir" --extra-experimental-features "nix-command flakes" 2>&1
+          } | tee -a "$log_file"
           
           # Clean up old backups (keep last 3)
           echo "Cleaning up old backups..."
