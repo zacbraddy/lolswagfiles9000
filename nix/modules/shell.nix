@@ -375,12 +375,7 @@
     just
     yq-go
   ];
-  # Managed dotfiles - generate .zshrc but don't try to symlink it
-  home.file.".zshrc" = {
-    text = config.programs.zsh.initContent;
-    force = true;
-    # Don't try to manage symlink here - handled by hmr.sh
-  };
+  # Managed dotfiles
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   home.file.".gitconfig".source = ../../.gitconfig;
   home.file.".gitignore_global".source = ../../.gitignore_global;
