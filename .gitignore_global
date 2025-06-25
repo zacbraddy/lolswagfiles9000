@@ -1,4 +1,4 @@
 Session.vim
 .mypy_cache
 .hmr.log
-logs/
+.logs/

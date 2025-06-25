@@ -105,7 +105,7 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        local log_dir="$HOME/logs"
+        local log_dir="$HOME/.logs/hmr-logs"
         local log_file="$log_dir/hmr-$(date +%Y%m%d-%H%M%S).log"
         
         # Create logs directory if it doesn't exist
