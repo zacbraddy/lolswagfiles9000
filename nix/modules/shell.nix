@@ -273,6 +273,20 @@
             echo "\nActive Configuration File: ''${config_file}"
             echo "\nAider Config:"
             yq . "''${config_file}" 2>/dev/null || echo "Could not parse config file"
+            
+            # Show merged config if both local and global exist
+            local global_config="$HOME/.config/aider/aider.conf.yml"
+            local local_config=""
+            if [ -f "$PWD/aider.conf.yml" ]; then
+              local_config="$PWD/aider.conf.yml"
+            elif [ -f "$PWD/.aider/aider.conf.yml" ]; then
+              local_config="$PWD/.aider/aider.conf.yml"
+            fi
+            
+            if [ -n "$local_config" ] && [ -f "$global_config" ]; then
+              echo "\nMerged Configuration (local overrides global):"
+              yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' "$global_config" "$local_config" 2>/dev/null || echo "Could not merge config files"
+            fi
           else
             echo "\nNo aider config file found in:"
             echo "- $PWD/aider.conf.yml"
