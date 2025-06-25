@@ -41,15 +41,33 @@
       ];
     };
     initContent = ''
-      # PATH modifications
-      export PATH="\$HOME/.yarn/bin:\$HOME/.config/yarn/global/node_modules/.bin:\''${PATH}"
-      export PATH="\$HOME/.local/bin:\''${PATH}"
-      export PATH="\$HOME/.poetry/bin:\''${PATH}"
+      # PATH modifications - safely append to existing PATH
+      path_prepend() {
+        if [ -d "$1" ] && [[ ":\$PATH:" != *":\$1:"* ]]; then
+          export PATH="\$1:\$PATH"
+        fi
+      }
+
+      path_append() {
+        if [ -d "$1" ] && [[ ":\$PATH:" != *":\$1:"* ]]; then
+          export PATH="\$PATH:\$1"
+        fi
+      }
+
+      # Prepend user-local paths
+      path_prepend "\$HOME/.yarn/bin"
+      path_prepend "\$HOME/.config/yarn/global/node_modules/.bin"
+      path_prepend "\$HOME/.local/bin"
+      path_prepend "\$HOME/.poetry/bin"
+
       # Linuxbrew paths - only add if they exist
       if [ -d "/home/linuxbrew/.linuxbrew" ]; then
-        export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:\''${PATH}"
+        path_prepend "/home/linuxbrew/.linuxbrew/bin"
+        path_prepend "/home/linuxbrew/.linuxbrew/sbin"
       fi
-      export PATH="\''${PATH}:\${builtins.getEnv "HOME"}/.spicetify"
+
+      # Append spicetify path
+      path_append "\$HOME/.spicetify"
       # Bash completion compatibility for pipx and other tools
       autoload -U bashcompinit
       bashcompinit
