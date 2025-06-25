@@ -102,7 +102,7 @@
           if [[ -n "$p" && -d "$p" && ":$EXPECTED_PATH:" != *":$p:"* ]]; then
             echo "   - ''${pkgs.writeShellScriptBin "path-$(basename "$p")" ''"
               # This would be the package that provides this path
-              echo "Warning: Adding unmanaged path to PATH: ''$p" >&2
+              echo "Warning: Adding unmanaged path to PATH: $p" >&2
               if [[ -d "''$p" ]]; then
                 export PATH="''$PATH:''$p"
               else
