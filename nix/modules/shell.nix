@@ -232,12 +232,24 @@
       # --- Aider Integration: Setup ---
       if [ -n "''$(find_aider_root)" ]; then
           export AIDER_ROOT="''$(find_aider_root)"
-          # Load environment variables from aider config
-          local config_file="''$(find_aider_config)"
-          if [ -n "$config_file" ]; then
-              export DEEPSEEK_API_KEY="''$(yq -r .api_key "''${config_file}" 2>/dev/null || echo "")"
-              export AIDER_MODEL="''$(yq -r .model "''${config_file}" 2>/dev/null || echo "deepseek/deepseek-chat")"
+          # Load environment variables from aider config with proper precedence
+          local global_config="$HOME/.config/aider/aider.conf.yml"
+          local local_config=""
+          if [ -f "$PWD/.aider/aider.conf.yml" ]; then
+              local_config="$PWD/.aider/aider.conf.yml"
           fi
+
+          # Use local config if exists, otherwise global
+          local active_config="$local_config"
+          if [ -z "$active_config" ] && [ -f "$global_config" ]; then
+              active_config="$global_config"
+          fi
+
+          if [ -n "$active_config" ]; then
+              export DEEPSEEK_API_KEY="''$(yq -r .api_key "''${active_config}" 2>/dev/null || echo "")"
+              export AIDER_MODEL="''$(yq -r .model "''${active_config}" 2>/dev/null || echo "deepseek/deepseek-chat")"
+          fi
+          
           # Still check for .env in AIDER_ROOT as fallback
           if [ -f "$AIDER_ROOT/.env" ]; then
               export $(grep -v '^#' "$AIDER_ROOT/.env" | xargs)
@@ -267,29 +279,22 @@
           echo -n "Poetry path: "
           poetry -P="$current_aider_root" --version || echo "Could not determine poetry version"
           
-          # Show active config file if found
-          if [ -n "$config_file" ]; then
-            echo "\nActive Configuration File: ''${config_file}"
-            echo "\nAider Config:"
-            yq . "''${config_file}" 2>/dev/null || echo "Could not parse config file"
-            
-            # Show merged config if both local and global exist
-            local global_config="$HOME/.config/aider/aider.conf.yml"
-            local local_config=""
-            if [ -f "$PWD/aider.conf.yml" ]; then
-              local_config="$PWD/aider.conf.yml"
-            elif [ -f "$PWD/.aider/aider.conf.yml" ]; then
-              local_config="$PWD/.aider/aider.conf.yml"
-            fi
-            
-            if [ -n "$local_config" ] && [ -f "$global_config" ]; then
-              echo "\nMerged Configuration (local overrides global):"
-              yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' "$global_config" "$local_config" 2>/dev/null || echo "Could not merge config files"
-            fi
+          # Show config file status
+          echo "\nConfiguration Files:"
+          if [ -f "$PWD/.aider/aider.conf.yml" ]; then
+              echo "- Local: $PWD/.aider/aider.conf.yml"
+              echo "\nLocal Configuration:"
+              yq . "$PWD/.aider/aider.conf.yml" 2>/dev/null || echo "Could not parse local config file"
           else
-            echo "\nNo aider config file found in:"
-            echo "- $PWD/.aider/aider.conf.yml"
-            echo "- $HOME/.config/aider/aider.conf.yml"
+              echo "- No local config found at $PWD/.aider/aider.conf.yml"
+          fi
+          
+          if [ -f "$HOME/.config/aider/aider.conf.yml" ]; then
+              echo "\n- Global: $HOME/.config/aider/aider.conf.yml"
+              echo "\nGlobal Configuration:"
+              yq . "$HOME/.config/aider/aider.conf.yml" 2>/dev/null || echo "Could not parse global config file"
+          else
+              echo "\n- No global config found at $HOME/.config/aider/aider.conf.yml"
           fi
           
           # Still check for .env in AIDER_ROOT as fallback
