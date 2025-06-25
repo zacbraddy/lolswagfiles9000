@@ -127,9 +127,9 @@
             rm -rf "$HOME/.local/state/home-manager/gcroots"/* 2>/dev/null || true
           fi
           
-          # Force a fresh build with verbose output
+          # Force a fresh build with verbose output and backup profile
           echo "Building fresh Home Manager configuration..."
-          home-manager switch --show-trace 2>&1
+          home-manager switch --show-trace --backup --extra-experimental-features "nix-command flakes" 2>&1
           
           # Verify the new .zshrc
           if [ ! -e "$HOME/.zshrc" ]; then
