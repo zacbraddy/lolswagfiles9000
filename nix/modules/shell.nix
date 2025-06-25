@@ -105,7 +105,16 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
+        local log_dir="$HOME/logs"
+        local log_file="$log_dir/hmr-$(date +%Y%m%d-%H%M%S).log"
+        
+        # Create logs directory if it doesn't exist
+        mkdir -p "$log_dir"
+        
         {
+          echo "=== HMR Log $(date) ==="
+          echo "Starting Home Manager repair..."
+          
           # Remove any existing .zshrc (file or symlink)
           echo "Removing existing .zshrc..."
           rm -f "$HOME/.zshrc" 2>/dev/null || true
@@ -133,8 +142,8 @@
           fi
           
           echo "Run 'reload' or restart your shell to apply changes."
-        } 2>&1 | tee "$HOME/.hmr.log"
-        echo "Log saved to ~/.hmr.log"
+        } 2>&1 | tee "$log_file"
+        echo "Log saved to $log_file"
       }
       # Source powerlevel10k theme from Nix store if available
       if [ -d "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k" ]; then
