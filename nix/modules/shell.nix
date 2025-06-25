@@ -37,9 +37,9 @@
     };
     initContent = ''
       # PATH modifications
-      export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:''${PATH}"
-      export PATH="$HOME/.local/bin:''${PATH}"
-      export PATH="$HOME/.poetry/bin:''${PATH}"
+      export PATH="\$HOME/.yarn/bin:\$HOME/.config/yarn/global/node_modules/.bin:\''${PATH}"
+      export PATH="\$HOME/.local/bin:\''${PATH}"
+      export PATH="\$HOME/.poetry/bin:\''${PATH}"
       # Linuxbrew paths - only add if they exist
       if [ -d "/home/linuxbrew/.linuxbrew" ]; then
         export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:\''${PATH}"
