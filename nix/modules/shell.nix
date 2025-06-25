@@ -300,7 +300,13 @@
           # Still check for .env in AIDER_ROOT as fallback
           if [ -f "$current_aider_root/.env" ]; then
             echo "\nEnvironment variables that would be loaded:"
-            grep -v '^#' "$current_aider_root/.env" | grep -v '^$'
+            grep -v '^#' "$current_aider_root/.env" | grep -v '^$' | while read -r line; do
+              if [[ "$line" == *API_KEY* || "$line" == *SECRET* || "$line" == *PASSWORD* ]]; then
+                echo "$(echo "$line" | cut -d= -f1)=[REDACTED]"
+              else
+                echo "$line"
+              fi
+            done
           fi
           
           # Show version info if available
