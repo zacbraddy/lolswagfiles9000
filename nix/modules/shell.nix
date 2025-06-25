@@ -281,10 +281,24 @@
           
           # Show config file status
           echo "\nConfiguration Files:"
+          # Function to print variables in consistent format
+          print_vars() {
+            local even=1
+            while IFS='=' read -r key value; do
+              if [ $even -eq 1 ]; then
+                printf "\033[48;5;235m%-30s\033[0m\t%s\n" "$key" "$value"
+                even=0
+              else
+                printf "%-30s\t%s\n" "$key" "$value"
+                even=1
+              fi
+            done
+          }
+
           if [ -f "$PWD/.aider/aider.conf.yml" ]; then
               echo "- Local: $PWD/.aider/aider.conf.yml"
               echo "\nLocal Configuration:"
-              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key): \(.value)"' "$PWD/.aider/aider.conf.yml" 2>/dev/null || echo "Could not parse local config file"
+              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key)=\(.value)"' "$PWD/.aider/aider.conf.yml" 2>/dev/null | print_vars || echo "Could not parse local config file"
           else
               echo "- No local config found at $PWD/.aider/aider.conf.yml"
           fi
@@ -292,7 +306,7 @@
           if [ -f "$HOME/.config/aider/aider.conf.yml" ]; then
               echo "\n- Global: $HOME/.config/aider/aider.conf.yml"
               echo "\nGlobal Configuration:"
-              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key): \(.value)"' "$HOME/.config/aider/aider.conf.yml" 2>/dev/null || echo "Could not parse global config file"
+              yq 'del(.aider_ignore) | to_entries | .[] | "\(.key)=\(.value)"' "$HOME/.config/aider/aider.conf.yml" 2>/dev/null | print_vars || echo "Could not parse global config file"
           else
               echo "\n- No global config found at $HOME/.config/aider/aider.conf.yml"
           fi
@@ -306,7 +320,7 @@
               else
                 echo "$line"
               fi
-            done
+            done | print_vars
           fi
           
           # Show version info if available
