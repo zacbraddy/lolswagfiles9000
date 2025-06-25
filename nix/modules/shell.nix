@@ -105,26 +105,36 @@
       }
       # hmr function for Home Manager repair and reload
       hmr() {
-        # Remove any existing .zshrc (file or symlink)
-        [ -e "$HOME/.zshrc" ] && rm -f "$HOME/.zshrc"
-        
-        # Clear Home Manager's generation backups
-        if [ -d "$HOME/.local/state/home-manager/gcroots" ]; then
-          echo "Clearing Home Manager generation backups..."
-          rm -rf "$HOME/.local/state/home-manager/gcroots"/*
-        fi
-        
-        # Force a fresh build
-        echo "Building fresh Home Manager configuration..."
-        home-manager switch
-        
-        # Ensure the new .zshrc is properly linked
-        if [ ! -L "$HOME/.zshrc" ]; then
-          echo "Warning: .zshrc is not a symlink after rebuild!"
-          ls -la "$HOME/.zshrc"
-        fi
-        
-        echo "Run 'reload' or restart your shell to apply changes."
+        {
+          # Remove any existing .zshrc (file or symlink)
+          echo "Removing existing .zshrc..."
+          rm -f "$HOME/.zshrc" 2>/dev/null || true
+          
+          # Clear Home Manager's generation backups
+          if [ -d "$HOME/.local/state/home-manager/gcroots" ]; then
+            echo "Clearing Home Manager generation backups..."
+            rm -rf "$HOME/.local/state/home-manager/gcroots"/* 2>/dev/null || true
+          fi
+          
+          # Force a fresh build with verbose output
+          echo "Building fresh Home Manager configuration..."
+          home-manager switch --show-trace
+          
+          # Verify the new .zshrc
+          if [ ! -e "$HOME/.zshrc" ]; then
+            echo "Error: Failed to generate new .zshrc!"
+            return 1
+          elif [ ! -L "$HOME/.zshrc" ]; then
+            echo "Warning: .zshrc is not a symlink after rebuild!"
+            ls -la "$HOME/.zshrc"
+          else
+            echo "Success: New .zshrc symlink created:"
+            ls -la "$HOME/.zshrc"
+          fi
+          
+          echo "Run 'reload' or restart your shell to apply changes."
+        } 2>&1 | tee "$HOME/.hmr.log"
+        echo "Log saved to ~/.hmr.log"
       }
       # Source powerlevel10k theme from Nix store if available
       if [ -d "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k" ]; then
