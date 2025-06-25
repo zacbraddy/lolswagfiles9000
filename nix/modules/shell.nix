@@ -127,9 +127,14 @@
             rm -rf "$HOME/.local/state/home-manager/gcroots"/* 2>/dev/null || true
           fi
           
-          # Force a fresh build with verbose output and backup profile
-          echo "Building fresh Home Manager configuration..."
-          home-manager switch --show-trace --backup --extra-experimental-features "nix-command flakes" 2>&1
+          # Force a fresh build with verbose output and timestamped backup
+          local backup_suffix=".backup-$(date +%Y%m%d-%H%M%S)"
+          echo "Building fresh Home Manager configuration with backup suffix: $backup_suffix..."
+          home-manager switch --show-trace --backup --backup-suffix "$backup_suffix" --extra-experimental-features "nix-command flakes" 2>&1
+          
+          # Clean up old backups (keep last 3)
+          echo "Cleaning up old backups..."
+          find "$HOME/.local/state/home-manager" -name '*.backup-*' | sort -r | tail -n +4 | xargs -r rm -f
           
           # Verify the new .zshrc
           if [ ! -e "$HOME/.zshrc" ]; then
