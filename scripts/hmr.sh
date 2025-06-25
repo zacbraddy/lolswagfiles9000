@@ -52,20 +52,51 @@ log_section() {
         exit 1
     fi
 
-    # Run Home Manager
+    # Run Home Manager with proper backup handling
     log_section "RUNNING HOME MANAGER"
-    log "Executing: home-manager switch --show-trace -b $BACKUP_SUFFIX --option backup-dir $BACKUP_DIR --extra-experimental-features 'nix-command flakes' $@"
+    BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    CURRENT_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
+    mkdir -p "$CURRENT_BACKUP_DIR"
+    
+    # Create manifest file
+    MANIFEST_FILE="$CURRENT_BACKUP_DIR/manifest.json"
+    echo '{"timestamp":"'"$(date -Is)"'","backups":[]}' > "$MANIFEST_FILE"
+    
+    log "Executing: home-manager switch --show-trace -b .backup-$BACKUP_TIMESTAMP --extra-experimental-features 'nix-command flakes' $@"
     home-manager switch \
         --show-trace \
-        -b "$BACKUP_SUFFIX" \
-        --option backup-dir "$BACKUP_DIR" \
+        -b ".backup-$BACKUP_TIMESTAMP" \
         --extra-experimental-features "nix-command flakes" \
-        "$@"
+        "$@" 2>&1 | while read -r line; do
+            # Capture backup files and add to manifest
+            if [[ "$line" == *"Moving existing file"* ]]; then
+                original_file=$(echo "$line" | awk '{print $4}')
+                backup_file=$(echo "$line" | awk '{print $6}')
+                checksum=$(sha256sum "$backup_file" | awk '{print $1}')
+                size=$(stat -c%s "$backup_file")
+                
+                # Move to our backup directory
+                mv "$backup_file" "$CURRENT_BACKUP_DIR/"
+                backup_file_name=$(basename "$backup_file")
+                
+                # Update manifest
+                jq --arg op "$original_file" \
+                   --arg bp "$backup_file_name" \
+                   --arg cs "$checksum" \
+                   --argjson sz "$size" \
+                   '.backups += [{"original_path":$op,"backup_path":$bp,"checksum":$cs,"size":$sz}]' \
+                   "$MANIFEST_FILE" > "$MANIFEST_FILE.tmp" && mv "$MANIFEST_FILE.tmp" "$MANIFEST_FILE"
+            fi
+            echo "$line"
+        done | tee -a "$LOG_FILE"
 
-    # Cleanup old backups
+    # Cleanup old backups (keep last 3)
     log_section "CLEANING OLD BACKUPS"
-    log "Keeping last 3 backups..."
-    find "$BACKUP_DIR" -name '*.backup-*' | sort -r | tail -n +4 | xargs -r rm -f
+    log "Keeping last 3 backup sets..."
+    find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d | sort -r | tail -n +4 | while read -r dir; do
+        log "Removing old backup set: $(basename "$dir")"
+        rm -rf "$dir"
+    done
 
     # Verify results
     log_section "VERIFYING RESULTS"
