@@ -17,7 +17,14 @@ mkdir -p "$HOME/.local/bin" \
          "$HOME/.local/state/home-manager/gcroots"
 
 # Ensure home-manager is in PATH
-export PATH="$HOME/.nix-profile/bin:$PATH"
+export PATH="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
+
+# Verify nix commands are available
+if ! command -v nix-build >/dev/null; then
+    echo "❌ Nix commands not found in PATH" >&2
+    echo "Please ensure Nix is properly installed and in your PATH" >&2
+    exit 1
+fi
 
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 LOG_FILE="$LOG_DIR/hmr-$TIMESTAMP.log"
@@ -114,7 +121,11 @@ log_section() {
 
     # Calculate config hash
     CONFIG_HASH_FILE="$BACKUP_DIR/last_config_hash"
-    CURRENT_HASH=$(sha256sum "~/Projects/Personal/lolswagfiles9000/nix/modules/shell.nix" | awk '{print $1}')
+    CURRENT_HASH=$(sha256sum "$HOME/Projects/Personal/lolswagfiles9000/nix/modules/shell.nix" 2>/dev/null | awk '{print $1}' || echo "")
+    if [ -z "$CURRENT_HASH" ]; then
+        log "⚠️  Could not find shell.nix for hash calculation"
+        CURRENT_HASH="missing"
+    fi
 
     log_section "CLEANING OLD BACKUPS"
     if [ -f "$CONFIG_HASH_FILE" ]; then
