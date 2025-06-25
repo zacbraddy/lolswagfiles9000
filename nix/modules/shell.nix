@@ -375,14 +375,11 @@
     just
     yq-go
   ];
-  # Managed dotfiles - force symlink creation for .zshrc
+  # Managed dotfiles - generate .zshrc but don't try to symlink it
   home.file.".zshrc" = {
     text = config.programs.zsh.initContent;
     force = true;
-    onChange = ''
-      echo "Reloading zsh configuration..."
-      exec zsh
-    '';
+    # Don't try to manage symlink here - handled by hmr.sh
   };
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   home.file.".gitconfig".source = ../../.gitconfig;

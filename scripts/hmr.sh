@@ -32,9 +32,12 @@ log_section() {
     
     # Cleanup existing files
     log_section "CLEANING EXISTING FILES"
-    log "Backing up ~/.zshrc..."
-    if [ -f "$HOME/.zshrc" ]; then
-        cp "$HOME/.zshrc" "$HOME/.zshrc.backup-$TIMESTAMP"
+    log "Removing ~/.zshrc symlink if it exists..."
+    if [ -L "$HOME/.zshrc" ]; then
+        rm "$HOME/.zshrc"
+    elif [ -f "$HOME/.zshrc" ]; then
+        log "Backing up regular .zshrc file..."
+        mv "$HOME/.zshrc" "$HOME/.zshrc.backup-$TIMESTAMP"
     fi
     
     log "Clearing gcroots..."
@@ -116,10 +119,13 @@ log_section() {
     log_section "VERIFYING RESULTS"
     if [ -f "$HOME/.zshrc" ]; then
         log "✅ .zshrc created successfully"
-        if [ -L "$HOME/.zshrc" ]; then
-            log "   - Is a symlink to: $(readlink -f "$HOME/.zshrc")"
+        log "Creating symlink to generated .zshrc..."
+        HM_ZSH_PATH=$(find /nix/store -name ".zshrc" -path "*home-manager-files*" | head -n 1)
+        if [ -n "$HM_ZSH_PATH" ]; then
+            ln -sf "$HM_ZSH_PATH" "$HOME/.zshrc"
+            log "   - Symlink created to: $HM_ZSH_PATH"
         else
-            log "   - Is a regular file"
+            log "⚠️  Could not find generated .zshrc in Nix store"
         fi
     else
         log "❌ .zshrc was not created - attempting recovery"
