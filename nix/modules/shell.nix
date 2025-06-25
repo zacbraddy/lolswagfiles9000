@@ -375,8 +375,15 @@
     just
     yq-go
   ];
-  # Managed dotfiles
-  home.file.".zshrc".text = config.programs.zsh.initContent;
+  # Managed dotfiles - force symlink creation for .zshrc
+  home.file.".zshrc" = {
+    text = config.programs.zsh.initContent;
+    force = true;
+    onChange = ''
+      echo "Reloading zsh configuration..."
+      exec zsh
+    '';
+  };
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   home.file.".gitconfig".source = ../../.gitconfig;
   home.file.".gitignore_global".source = ../../.gitignore_global;

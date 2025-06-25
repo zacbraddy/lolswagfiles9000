@@ -32,8 +32,10 @@ log_section() {
     
     # Cleanup existing files
     log_section "CLEANING EXISTING FILES"
-    log "Removing ~/.zshrc..."
-    rm -f "$HOME/.zshrc" || true
+    log "Backing up ~/.zshrc..."
+    if [ -f "$HOME/.zshrc" ]; then
+        cp "$HOME/.zshrc" "$HOME/.zshrc.backup-$TIMESTAMP"
+    fi
     
     log "Clearing gcroots..."
     rm -rf "$HOME/.local/state/home-manager/gcroots"/* || true
@@ -112,10 +114,21 @@ log_section() {
 
     # Verify results
     log_section "VERIFYING RESULTS"
-    if [ -L "$HOME/.zshrc" ]; then
-        log "✅ .zshrc symlink created successfully"
+    if [ -f "$HOME/.zshrc" ]; then
+        log "✅ .zshrc created successfully"
+        if [ -L "$HOME/.zshrc" ]; then
+            log "   - Is a symlink to: $(readlink -f "$HOME/.zshrc")"
+        else
+            log "   - Is a regular file"
+        fi
     else
-        log "⚠️  .zshrc is not a symlink"
+        log "❌ .zshrc was not created - attempting recovery"
+        if [ -f "$HOME/.zshrc.backup-$TIMESTAMP" ]; then
+            mv "$HOME/.zshrc.backup-$TIMESTAMP" "$HOME/.zshrc"
+            log "   - Restored from backup"
+        else
+            log "   - No backup available"
+        fi
     fi
 
     log_section "HMR COMPLETED"
