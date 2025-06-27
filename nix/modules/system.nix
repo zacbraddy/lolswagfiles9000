@@ -63,9 +63,9 @@
     force = true;
   };
 
-  # Symlinks for root-owned config files (requires sudo)
   home.activation.linkPulseAndTuxedo = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    sudo ln -sf ${toString ../../default.pa} /etc/pulse/default.pa
-    sudo ln -sf ${toString ../../tuxedo_keyboard.conf} /etc/modprobe.d/tuxedo_keyboard.conf
+    # Use system sudo directly with absolute path
+    /usr/bin/sudo ln -sf ${toString ../../default.pa} /etc/pulse/default.pa
+    /usr/bin/sudo ln -sf ${toString ../../tuxedo_keyboard.conf} /etc/modprobe.d/tuxedo_keyboard.conf
   '';
 }

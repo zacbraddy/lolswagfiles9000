@@ -31,21 +31,14 @@ typeset -g DRACULA_YELLOW='#f1fa8c'
 
 # Left prompt elements - more colorful segments
 typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-  os_icon               # colorful OS icon
   dir                   # current directory
   vcs                   # git status
-  node_version         # node version if in node project
-  python_version       # python version if in python project
-  newline              # line break
 )
 
 # Right prompt elements - vibrant info
 typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
   status                # exit code
   command_execution_time # command duration
-  background_jobs       # background jobs
-  load                  # system load
-  ram                   # memory usage
   time                  # current time
 )
 
@@ -172,6 +165,3 @@ typeset -g POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON='⇡'
 # Clean spacing
 typeset -g POWERLEVEL9K_LEGACY_ICON_SPACING=false
 typeset -g ZLE_RPROMPT_INDENT=0
-
-# Apply configuration
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

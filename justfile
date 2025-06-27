@@ -489,3 +489,12 @@ obsidian-vaults-edit:
 obsidian-sync:
 	#!/usr/bin/env bash
 	node scripts/obsidian/sync.js
+validate-hm:
+	#!/usr/bin/env bash
+	echo "🔍 Validating Home Manager configuration..."
+	if ! home-manager build --show-trace; then
+		echo "❌ Validation failed"
+		exit 1
+	else
+		echo "✅ Configuration validated successfully"
+	fi

@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "uvx",
+      "args": ["mcp-obsidian"],
+      "env": {
+        "OBSIDIAN_HOST": "127.0.0.1",
+        "OBSIDIAN_PORT": "27124",
+        "OBSIDIAN_PROTOCOL": "https",
+        "OBSIDIAN_API_KEY": "${OBSIDIAN_MCP_SECRET}"
+      }
+    },
+    "atlassian": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+    }
+  }
+}

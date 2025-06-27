@@ -2,6 +2,7 @@
 {
   sops = {
     age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+    age.sshKeyPaths = []; # Disable SSH key paths to prevent conflicts
     defaultSopsFile = ../secrets/secrets.yaml;
     secrets = {
       data = {

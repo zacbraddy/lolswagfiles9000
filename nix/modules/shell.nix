@@ -17,12 +17,11 @@
         reload = "exec zsh";
         netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
         rm = "trash";
-        cursor = "cursor-clean";  # Use the clean wrapper by default
       }
       (lib.optionalAttrs config.programs.direnv.enable {
         d = "direnv edit .";
       })
-        ];
+    ];
     oh-my-zsh = {
       enable = true;
       theme = "";
@@ -40,84 +39,15 @@
         "vi-mode"
       ];
     };
-            initContent = ''
+    initContent = ''
       # Set ZSH variable for oh-my-zsh (must be set before oh-my-zsh loads)
       export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
 
       # Set FZF_BASE for oh-my-zsh compatibility
       export FZF_BASE="${pkgs.fzf}"
 
-      # Safe AppImage environment cleanup with backup and user control
-      # Only clean up problematic Python variables, leave PATH alone unless explicitly requested
-
-      # Backup original PATH on first shell startup
-      if [[ -z "$ORIGINAL_PATH_BACKUP" ]]; then
-        export ORIGINAL_PATH_BACKUP="$PATH"
-      fi
-
-      # Detect if we're in a potentially problematic AppImage environment
-      if [[ -n "$APPIMAGE" ]] || [[ -n "$APPDIR" ]]; then
-        # Only clean up Python-related variables that cause the most problems
-        # Leave PATH alone - it's too risky to modify automatically
-        unset PYTHONHOME PYTHONPATH 2>/dev/null || true
-
-        # Provide user-controlled cleanup functions
-        appimage-cleanup() {
-          echo "🧹 AppImage Environment Cleanup"
-          echo "Current problematic variables:"
-          echo "  APPIMAGE: ''${APPIMAGE:-[not set]}"
-          echo "  APPDIR: ''${APPDIR:-[not set]}"
-          echo "  PYTHONHOME: ''${PYTHONHOME:-[not set]}"
-          echo "  PYTHONPATH: ''${PYTHONPATH:-[not set]}"
-          echo
-          echo "PATH backup: ''${ORIGINAL_PATH_BACKUP:-[not available]}"
-          echo
-          read -p "Clean up AppImage environment variables? [y/N] " -n 1 -r
-          echo
-          if [[ $REPLY =~ ^[Yy]$ ]]; then
-            unset PYTHONHOME PYTHONPATH APPIMAGE APPDIR 2>/dev/null || true
-            echo "✅ AppImage environment variables cleaned"
-          else
-            echo "ℹ️  No changes made"
-          fi
-        }
-
-        path-restore() {
-          if [[ -n "$ORIGINAL_PATH_BACKUP" ]]; then
-            echo "🔄 Restoring PATH from backup..."
-            export PATH="$ORIGINAL_PATH_BACKUP"
-            echo "✅ PATH restored"
-          else
-            echo "❌ No PATH backup available"
-          fi
-        }
-
-        path-clean-appimage() {
-          echo "⚠️  WARNING: This will modify your PATH variable"
-          echo "Current PATH: $PATH"
-          echo "Backup available: ''${ORIGINAL_PATH_BACKUP:-[none]}"
-          read -p "Remove AppImage entries from PATH? [y/N] " -n 1 -r
-          echo
-          if [[ $REPLY =~ ^[Yy]$ ]]; then
-            if [[ ":$PATH:" =~ "\.AppImage" ]]; then
-              PATH=$(echo "$PATH" | tr ':' '\n' | grep -v '\.AppImage' | tr '\n' ':' | sed 's/:$//')
-              export PATH
-              echo "✅ AppImage entries removed from PATH"
-              echo "Use 'path-restore' to restore if needed"
-            else
-              echo "ℹ️  No AppImage entries found in PATH"
-            fi
-          else
-            echo "ℹ️  No changes made"
-          fi
-        }
-
-        # Just notify, don't auto-clean
-        if [[ "$SHELL_APPIMAGE_WARNING_SHOWN" != "1" ]]; then
-          echo "⚠️  AppImage environment detected. Use 'appimage-cleanup' if you experience issues."
-          export SHELL_APPIMAGE_WARNING_SHOWN=1
-        fi
-      fi
+      # If anything happens to the path we can restore the last one
+      export ORIGINAL_PATH_BACKUP="$PATH"
 
       # PATH modifications - safely append to existing PATH
       path_prepend() {
@@ -230,6 +160,20 @@
 
       # Load Powerlevel10k configuration
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+      # Create p10k aliases after Powerlevel10k is loaded
+      alias p10k-down="prompt_powerlevel9k_teardown"
+      alias p10k-up="prompt_powerlevel9k_setup"
+
+      # Fix to make it so that cursor integrated terminal runs without p10k so it doesn't hang
+      if [[ -n $CURSOR_TRACE_ID ]]; then
+        p10k-down
+      fi
+
+      # Set automation flag for VS Code/Cursor integrated terminals
+      if [[ -n "$TERM_PROGRAM" ]] && [[ "$TERM_PROGRAM" == "vscode" ]]; then
+        export I_AM_AUTOMATED_CURSOR_TERM=1
+      fi
 
       # pnpm completion
       if type pnpm &>/dev/null; then
@@ -551,10 +495,10 @@
         echo "  Dark mode: ''${AIDER_DARK_MODE:-false}"
         echo "  Stream: ''${AIDER_STREAM:-true}"
 
-        if [ -n "$active_config" ] && command -v yq >/dev/null 2>&1; then
+        if [ -n "$active_config" ] && command -v ${pkgs.yq-go}/bin/yq >/dev/null 2>&1; then
           echo
           echo "🔍 Active YAML config contents:"
-          yq -r 'to_entries | .[] | select(.value != null and .value != "") | "\(.key): \(.value)"' "$active_config" 2>/dev/null | sed 's/^/  /' || echo "  Could not parse YAML config"
+          ${pkgs.yq-go}/bin/yq -r 'to_entries | .[] | select(.value != null and .value != "") | "\(.key): \(.value)"' "$active_config" 2>/dev/null | sed 's/^/  /' || echo "  Could not parse YAML config"
         fi
 
         echo
@@ -576,9 +520,8 @@
         echo -n "Aider: "
         (cd "$current_aider_root" && poetry run aider --version 2>/dev/null) || echo "Could not get aider version"
         echo -n "yq: "
-        yq --version 2>/dev/null || echo "Not available (needed for YAML config parsing)"
+        ${pkgs.yq-go}/bin/yq --version 2>/dev/null || echo "Not available (needed for YAML config parsing)"
       }
-
 
       # --- Aider Integration: Setup ---
       if [ -n "''$(find_aider_root)" ]; then
@@ -586,12 +529,13 @@
       fi
     '';
   };
+
   # Enable fzf globally with zsh integration
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
   };
-  # Ensure required tools are installed for completions
+
   home.packages = with pkgs; [
     # Core tools
     fzf
@@ -622,50 +566,20 @@
 
     # Optional tools
     spicetify-cli
-
-    # Cursor wrapper script to prevent AppImage environment pollution
-    (pkgs.writeShellScriptBin "cursor-clean" ''
-      #!/bin/bash
-      # Clean wrapper for Cursor AppImage to prevent environment hijacking
-
-      # Find the Cursor AppImage
-      CURSOR_APPIMAGE="$HOME/.local/bin/cursor.AppImage"
-
-      if [[ ! -f "$CURSOR_APPIMAGE" ]]; then
-        echo "Error: Cursor AppImage not found at $CURSOR_APPIMAGE"
-        echo "Please run 'just install-cursor' first"
-        exit 1
-      fi
-
-      # Clean environment variables that cause conflicts
-      unset PYTHONHOME PYTHONPATH APPIMAGE APPDIR
-
-      # Clean any AppImage-injected PATH entries
-      if [[ ":$PATH:" =~ "\.AppImage" ]]; then
-        PATH=$(echo "$PATH" | tr ':' '\n' | grep -v '\.AppImage' | tr '\n' ':' | sed 's/:$//')
-        export PATH
-      fi
-
-      # Launch Cursor with clean environment and no-sandbox flag
-      exec "$CURSOR_APPIMAGE" --no-sandbox "$@"
-    '')
   ];
-    # Managed dotfiles
+
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
   home.file.".gitconfig".source = ../../.gitconfig;
   home.file.".gitignore_global".source = ../../.gitignore_global;
   home.file.".ideavimrc".source = ../../.ideavimrc;
-  # Direnv integration
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
   };
-  # Home Manager session variables
+
   home.sessionVariables = {
     EDITOR = "vim";
     BROWSER = "brave";
   };
-  # Powerlevel10k: show exit status of last command in prompt (if not already configured)
-  # If you want a custom symbol, add to your ~/.p10k.zsh:
-  # typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status ...)
 }
