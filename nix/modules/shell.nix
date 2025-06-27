@@ -300,11 +300,11 @@
       ai() {
         local aider_root="''$(find_aider_root)"
         local add_current_dir=true
-        local args=()
+        local cmd_args=""
         local config_file
 
-        if [ -z "$aider_root" ]; then
-          echo "Error: Could not find aider setup."
+        if [ -z "$aider_root" ]; then 
+          echo "Error: Could not find aider setup." 
           echo "Please set up aider in one of these locations:"
           echo "- $HOME/.aider"
           echo "- $HOME/Projects/Personal/aider-setup"
@@ -314,7 +314,7 @@
 
         # Source .env from aider root if it exists
         if [ -f "$aider_root/.env" ]; then
-          set -a
+          set -a 
           source "$aider_root/.env"
           set +a
         fi
@@ -329,21 +329,26 @@
           fi
         done
 
-        # Build arguments array
+        # Build command string
         if [ "$add_current_dir" = true ]; then
-          args+=("''$(pwd)")
+          cmd_args="\"''$(pwd)\""
         fi
 
         # Add config file if found
         if [ -n "$config_file" ]; then
-          args+=("--config" "$config_file")
+          cmd_args="$cmd_args --config \"$config_file\""
         fi
 
-        # Add model specification (can be overridden by config file or user args)
-        args+=("--model" "deepseek/deepseek-chat")
-        args+=("$@")
+        # Add model specification
+        cmd_args="$cmd_args --model deepseek/deepseek-chat"
 
-        poetry -P="''${aider_root}" run aider "''${args[@]}"
+        # Add user arguments (properly quoted)
+        for arg in "$@"; do
+          cmd_args="$cmd_args \"$arg\""
+        done
+
+        # Run command with Poetry -P flag
+        eval "poetry -P=\"''${aider_root}\" run aider $cmd_args"
       }
 
       # Aider function with deepseek-r1 model
