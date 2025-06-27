@@ -248,24 +248,15 @@
 
       # Find aider .env files following aider's documented precedence
       find_aider_envs() {
-          local git_root
-          git_root="$(find_git_root)"
+          local aider_root
+          aider_root="$(find_aider_root)"
 
           local env_files=()
 
-          # Add .env files in aider's documented precedence order (later = higher priority)
-          # 1. Home directory
-          [ -f "$HOME/.env" ] && env_files+=("$HOME/.env")
-
-          # 2. Git repo root
-          if [ -n "$git_root" ] && [ -f "$git_root/.env" ]; then
-              env_files+=("$git_root/.env")
+          if [ -n "$aider_root" ] && [ -f "$aider_root/.env" ]; then
+              env_files+=("$aider_root/.env")
           fi
 
-          # 3. Current directory
-          [ -f "$PWD/.env" ] && env_files+=("$PWD/.env")
-
-          # Return all found .env files (caller can use last one for highest priority)
           printf '%s\n' "''${env_files[@]}"
       }
 
@@ -321,7 +312,13 @@
           return 1
         fi
 
-        # Load aider configuration according to its precedence rules
+        # Source .env from aider root if it exists
+        if [ -f "$aider_root/.env" ]; then
+          set -a
+          source "$aider_root/.env"
+          set +a
+        fi
+
         config_file="$(load_aider_config)"
 
         # Check if user provided --file or directory arguments
@@ -365,7 +362,13 @@
           return 1
         fi
 
-        # Load aider configuration according to its precedence rules
+        # Source .env from aider root if it exists
+        if [ -f "$aider_root/.env" ]; then
+          set -a
+          source "$aider_root/.env"
+          set +a
+        fi
+
         config_file="$(load_aider_config)"
 
         # Check if user provided --file or directory arguments
@@ -398,6 +401,13 @@
         local current_aider_root="''$(find_aider_root)"
         local target_dir="''$(pwd)"
         local git_root="''$(find_git_root)"
+
+        # Source .env from aider root if it exists
+        if [ -n "$current_aider_root" ] && [ -f "$current_aider_root/.env" ]; then
+          set -a
+          source "$current_aider_root/.env"
+          set +a
+        fi
 
         echo "=== Current Configuration ==="
         echo "Current Directory: $target_dir"

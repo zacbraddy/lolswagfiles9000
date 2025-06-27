@@ -25,166 +25,77 @@
   "vim.incsearch": true,
   "vim.insertModeKeyBindings": [
     {
-      "after": [
-        "<Esc>"
-      ],
-      "before": [
-        "j",
-        "k"
-      ]
+      "after": ["<Esc>"],
+      "before": ["j", "k"]
     }
   ],
   "vim.leader": "<space>",
   "vim.normalModeKeyBindings": [
     {
-      "after": [
-        "\"",
-        "+",
-        "y"
-      ],
-      "before": [
-        "<leader>",
-        "y"
-      ]
+      "after": ["\"", "+", "y"],
+      "before": ["<leader>", "y"]
     },
     {
-      "after": [
-        "\"",
-        "+",
-        "Y"
-      ],
-      "before": [
-        "<leader>",
-        "Y"
-      ]
+      "after": ["\"", "+", "Y"],
+      "before": ["<leader>", "Y"]
     },
     {
-      "after": [
-        "\"",
-        "+",
-        "p"
-      ],
-      "before": [
-        "<leader>",
-        "p"
-      ]
+      "after": ["\"", "+", "p"],
+      "before": ["<leader>", "p"]
     },
     {
-      "after": [
-        "\"",
-        "+",
-        "P"
-      ],
-      "before": [
-        "<leader>",
-        "P"
-      ]
+      "after": ["\"", "+", "P"],
+      "before": ["<leader>", "P"]
     },
     {
-      "after": [
-        "\"",
-        "+",
-        "d"
-      ],
-      "before": [
-        "<leader>",
-        "d"
-      ]
+      "after": ["\"", "+", "d"],
+      "before": ["<leader>", "d"]
     },
     {
-      "after": [
-        "\"",
-        "+",
-        "D"
-      ],
-      "before": [
-        "<leader>",
-        "D"
-      ]
+      "after": ["\"", "+", "D"],
+      "before": ["<leader>", "D"]
     },
     {
-      "before": [
-        "<leader>",
-        "f",
-        "s"
-      ],
-      "commands": [
-        ":w"
-      ]
+      "before": ["<leader>", "f", "s"],
+      "commands": [":w"]
     },
     {
-      "before": [
-        "<leader>",
-        "f",
-        "S"
-      ],
-      "commands": [
-        ":wa"
-      ]
+      "before": ["<leader>", "f", "S"],
+      "commands": [":wa"]
     },
     {
-      "before": [
-        "<leader>",
-        "f"
-      ],
-      "commands": [
-        ":FZF"
-      ]
+      "before": ["<leader>", "f"],
+      "commands": [":FZF"]
     },
     {
-      "before": [
-        "<leader>",
-        "b"
-      ],
-      "commands": [
-        ":Buffers"
-      ]
+      "before": ["<leader>", "b"],
+      "commands": [":Buffers"]
     },
     {
-      "before": [
-        "<leader>",
-        "h"
-      ],
-      "commands": [
-        ":History"
-      ]
+      "before": ["<leader>", "h"],
+      "commands": [":History"]
     },
     {
-      "before": [
-        "<leader>",
-        "o",
-        "t"
-      ],
-      "commands": [
-        "workbench.action.terminal.focus"
-      ]
+      "before": ["<leader>", "o", "t"],
+      "commands": ["workbench.action.terminal.focus"]
     },
     {
-      "before": [
-        "<leader>",
-        "."
-      ],
-      "commands": [
-        "workbench.action.quickOpenRecent"
-      ]
+      "before": ["<leader>", "."],
+      "commands": ["workbench.action.quickOpenRecent"]
     }
   ],
   "vim.surround": true,
   "vim.useSystemClipboard": false,
   "vim.visualModeKeyBindings": [
     {
-      "after": [
-        "<Esc>"
-      ],
-      "before": [
-        "j",
-        "k"
-      ]
+      "after": ["<Esc>"],
+      "before": ["j", "k"]
     }
   ],
   "workbench.colorTheme": "Dracula Theme Soft",
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cursor.composer.shouldChimeAfterChatFinishes": true
+  "cursor.composer.shouldChimeAfterChatFinishes": true,
+  "search.useIgnoreFiles": false
 }
