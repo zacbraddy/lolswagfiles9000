@@ -27,6 +27,10 @@
     yq-go
   ];
 
+  home.keyboard = {
+    layout = "gb";
+  };
+
   # GNOME/dconf tweaks
   dconf.settings = {
     "org/gnome/shell/extensions/dash-to-dock" = {

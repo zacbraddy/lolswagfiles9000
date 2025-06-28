@@ -97,5 +97,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cursor.composer.shouldChimeAfterChatFinishes": true,
-  "search.useIgnoreFiles": false
+  "search.useIgnoreFiles": false,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.showTabs": true,
+  "cursor.experimental.tabIsolation": true
 }
