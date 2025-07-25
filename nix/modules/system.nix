@@ -109,11 +109,11 @@
 [Desktop Entry]
 Name=balenaEtcher
 Comment=Flash OS images to SD cards & USB drives, safely and easily.
-Exec=%h/Applications/balenaEtcher.AppImage %U
+Exec=$HOME/Applications/balenaEtcher.AppImage %U
 Icon=etcher-electron
 Terminal=false
 Type=Application
-Categories=System;Utility;
+Categories=Utility;
 StartupWMClass=balenaEtcher
 MimeType=application/x-raw-disk-image;application/x-iso9660-image;
 DESKTOP_EOF
