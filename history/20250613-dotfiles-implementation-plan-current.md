@@ -80,14 +80,22 @@
   - core-plugins.json (core plugin settings)
   - workspace.json (layout and state)
   - vimrc (vim keybindings)
-- Plugin management:
-  - Vim plugins (obsidian-vimrc-support, surround, commentary, easymotion, highlightedyank, which-key)
-  - Utility plugins (advanced-tables, quick-switcher-plus-plus, tag-wrangler, paste-url-into-selection)
-- Sync process:
-  - Two-way sync between dotfiles and vaults
-  - Automatic plugin installation and configuration
-  - Workspace state preservation
-  - Theme and appearance synchronization
+  - plugins/ directory with 34+ community plugins and configurations
+  - themes/ directory with custom themes (Dracula Official)
+  - icons/ directory for icon configurations
+- **New Vault Management System (2025-07-25):**
+  - **No automatic sync**: Removed obsidian sync from hmr process
+  - **Global commands**: Added `ob-create`, `ob-update`, `ob-refresh-dotfiles` available from any directory
+  - **Configuration tracking**: Uses `~/.obsidian/config` to store dotfiles path (no hardcoded paths)
+  - **Managed vaults list**: Tracks all managed vaults in `~/.obsidian/managed-vaults.txt`
+  - **Smart plugin filtering**: Only syncs essential plugin files, excludes runtime data:
+    - ✅ Syncs: `main.js`, `manifest.json`, `styles.css`, `data.json` (configuration)
+    - ❌ Excludes: `histories.json`, `cursor-positions.json`, SSL certificates, cache files, logs
+    - Uses pattern-based filtering for future-proof plugin management
+- Commands:
+  - `ob-create <vault-name>`: Creates new vault with all dotfiles settings
+  - `ob-update`: Updates current vault with fresh dotfiles settings  
+  - `ob-refresh-dotfiles`: Updates dotfiles with current vault settings (smart filtering applied)
 
 ## Current Status
 
@@ -101,13 +109,13 @@
   - Fixed Home Manager exit code handling in setup wizard
   - Cursor installation and sync issues are now fully resolved
   - Camera-fix service is now managed by a shell script (install-camera-fix-service.sh) called from the Justfile/setup-wizard. Nix/Home Manager no longer manages this systemd service due to persistent issues with user unit generation. All system tweaks are now handled by scripts, not Nix modules. Redundant Cursor settings file in nix/modules was removed; settings are now managed only in .config/Cursor/User/settings.json. All scripts in scripts/ are now executable and tracked in git for reproducibility.
-  - **Obsidian is now managed via Nix and dotfiles:**
-    - Obsidian is installed via Nix and included in home.packages.
-    - All key config files (appearance.json, community-plugins.json, core-plugins.json, workspace.json, vimrc) are managed in an obsidian/ directory at the repo root and symlinked into ~/.config/obsidian/.
-    - Vim keybindings and plugins (obsidian-vimrc-support, surround, commentary, easymotion, highlightedyank, which-key) are enabled and managed.
-    - advanced-tables and other useful plugins (quick-switcher-plus-plus, tag-wrangler, paste-url-into-selection) are included in community-plugins.json.
-    - A just sync-obsidian-settings recipe was added, mirroring the Cursor workflow, and integrated into setup-wizard.
-    - Only .vscode/extensions.json is now managed as the source of truth for extensions; .config/Cursor/User/extensions.json is no longer tracked in dotfiles.
+  - **Obsidian vault management system redesigned (2025-07-25):**
+    - Removed automatic obsidian sync from hmr process for better control
+    - Implemented new vault manager (`scripts/obsidian/vault-manager.js`) with smart plugin filtering
+    - Added global zsh commands: `ob-create`, `ob-update`, `ob-refresh-dotfiles`
+    - Configuration now uses `~/.obsidian/config` to track dotfiles path (no hardcoded paths)
+    - Smart filtering excludes runtime data (histories, cursor positions, SSL certs) but keeps configs
+    - Pattern-based exclusion system future-proofs against new plugin runtime data
 - **2025-06-12:** Completed Ansible migration
 - **2025-06-03:** Automated Cursor and Adobe Reader installation
 - **2025-06-02:** Completed zsh configuration migration
@@ -138,15 +146,17 @@
 ### Troubleshooting Note
 - Systemd user services managed by Home Manager may not always be reliably generated or enabled, especially in complex or flake-based setups. If a service is not appearing or being enabled, prefer a script-based approach for critical system tweaks. This is now the default for camera-fix and similar services in this repo.
 
-## Home Manager Backup Clobbering Issue
+## Obsidian Management Notes
 
-If you encounter an error from Home Manager about an existing backup file (e.g., during 'just hmr') that would be clobbered and it references an Obsidian file (such as .zshrc can't be clobbered because of an Obsidian backup file), this usually means your dotfiles and your Obsidian vault are out of sync.
+**Legacy sync commands removed (2025-07-25):**
+- `just obsidian-sync` has been removed from the hmr process
+- Old vault sync commands are deprecated in favour of new global commands
 
-**What to do:**
-- Run `just obsidian-sync` to sync your current vault settings into your dotfiles and propagate them.
-- Then try your Home Manager command again (e.g., `just hmr`).
-
-Document this scenario in user-facing documentation and onboarding guides.
+**New workflow:**
+- Use `ob-create <vault-name>` to create new vaults with dotfiles settings
+- Use `ob-update` from within a vault to refresh it with dotfiles settings
+- Use `ob-refresh-dotfiles` from within a vault to update dotfiles with current vault settings
+- All commands use smart filtering to exclude runtime data and sensitive files
 
 ## Home Manager caching issues
 

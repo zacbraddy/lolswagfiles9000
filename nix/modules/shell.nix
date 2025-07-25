@@ -520,6 +520,72 @@
       if [ -n "''$(find_aider_root)" ]; then
           export AIDER_ROOT="''$(find_aider_root)"
       fi
+
+      # --- Obsidian Vault Management ---
+      _get_dotfiles_vault_manager() {
+        local config_file="$HOME/.obsidian/config"
+        if [ -f "$config_file" ]; then
+          local dotfiles_path=$(grep '^DOTFILES_PATH=' "$config_file" | cut -d'=' -f2)
+          if [ -n "$dotfiles_path" ] && [ -f "$dotfiles_path/scripts/obsidian/vault-manager.js" ]; then
+            echo "$dotfiles_path/scripts/obsidian/vault-manager.js"
+            return 0
+          fi
+        fi
+        echo "❌ Could not find obsidian vault manager. Run 'hmr' to initialise." >&2
+        return 1
+      }
+      
+      ob-create() {
+        if [ -z "$1" ]; then
+          echo "Usage: ob-create <vault-name>"
+          echo "Example: ob-create MyNewVault"
+          return 1
+        fi
+        
+        local vault_name="$1"
+        local vault_path="$PWD/$vault_name"
+        local vault_manager
+        
+        if ! vault_manager=$(_get_dotfiles_vault_manager); then
+          return 1
+        fi
+        
+        node "$vault_manager" create "$vault_path"
+      }
+      
+      ob-update() {
+        local vault_path="$PWD"
+        local vault_manager
+        
+        if [ ! -d "$vault_path/.obsidian" ]; then
+          echo "❌ No .obsidian directory found in current directory: $vault_path"
+          echo "This command must be run from an Obsidian vault directory."
+          return 1
+        fi
+        
+        if ! vault_manager=$(_get_dotfiles_vault_manager); then
+          return 1
+        fi
+        
+        node "$vault_manager" update "$vault_path"
+      }
+      
+      ob-refresh-dotfiles() {
+        local vault_path="$PWD"
+        local vault_manager
+        
+        if [ ! -d "$vault_path/.obsidian" ]; then
+          echo "❌ No .obsidian directory found in current directory: $vault_path"
+          echo "This command must be run from an Obsidian vault directory."
+          return 1
+        fi
+        
+        if ! vault_manager=$(_get_dotfiles_vault_manager); then
+          return 1
+        fi
+        
+        node "$vault_manager" refresh "$vault_path"
+      }
     '';
   };
 

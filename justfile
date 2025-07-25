@@ -324,11 +324,6 @@ setup-wizard:
 		echo "❌ Failed to sync Cursor settings."
 		exit 1
 	fi
-	echo "⚙️  Syncing Obsidian settings..."
-	if ! just sync-obsidian-settings; then
-		echo "❌ Failed to sync Obsidian settings."
-		exit 1
-	fi
 	echo "📄 Installing Adobe Reader..."
 	if command -v acroread >/dev/null; then
 		echo "ℹ️  Adobe Reader already installed. Do you want to reinstall? [y/N]"

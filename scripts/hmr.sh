@@ -91,5 +91,22 @@ else
     echo "⚠️  No Nix applications directory found at $NIX_APPLICATIONS_DIR"
 fi
 
+# Initialise Obsidian configuration
+echo "===== INITIALISING OBSIDIAN CONFIGURATION ====="
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+mkdir -p "$HOME/.obsidian"
+
+# Create or update the obsidian configuration file (idempotent)
+if [ ! -f "$HOME/.obsidian/config" ] || ! grep -q "^DOTFILES_PATH=$DOTFILES_DIR$" "$HOME/.obsidian/config"; then
+    echo "DOTFILES_PATH=$DOTFILES_DIR" > "$HOME/.obsidian/config"
+    echo "📝 Updated obsidian config with dotfiles path"
+else
+    echo "✅ Obsidian config already up to date"
+fi
+
+# Initialise the managed vaults file with dotfiles path
+node "$DOTFILES_DIR/scripts/obsidian/vault-manager.js" init
+echo "✅ Obsidian configuration initialised"
+
 echo "===== HMR COMPLETED ====="
 echo "Run 'reload' or restart your shell to apply changes"
