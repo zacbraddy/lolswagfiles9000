@@ -586,8 +586,67 @@
         
         node "$vault_manager" refresh "$vault_path"
       }
+
+      # --- Filestore Management ---
+      _get_filestore_script() {
+        local script_name="$1"
+        local config_file="$HOME/.obsidian/config"
+        if [ -f "$config_file" ]; then
+          local dotfiles_path=$(grep '^DOTFILES_PATH=' "$config_file" | cut -d'=' -f2)
+          if [ -n "$dotfiles_path" ] && [ -f "$dotfiles_path/scripts/backup/$script_name" ]; then
+            echo "$dotfiles_path/scripts/backup/$script_name"
+            return 0
+          fi
+        fi
+        # Fallback to hardcoded path if config not found
+        local fallback_path="$HOME/Projects/Personal/lolswagfiles9000/scripts/backup/$script_name"
+        if [ -f "$fallback_path" ]; then
+          echo "$fallback_path"
+          return 0
+        fi
+        echo "❌ Could not find filestore script: $script_name. Run 'hmr' to initialize." >&2
+        return 1
+      }
+
+      bk-sync() {
+        local script_path
+        if ! script_path=$(_get_filestore_script "sync-filestore.sh"); then
+          return 1
+        fi
+        bash "$script_path" "''${1:-sync}"
+      }
+
+      bk-status() {
+        local script_path
+        if ! script_path=$(_get_filestore_script "sync-filestore.sh"); then
+          return 1
+        fi
+        bash "$script_path" status
+      }
+
+      bk-pull() {
+        local script_path
+        if ! script_path=$(_get_filestore_script "sync-filestore.sh"); then
+          return 1
+        fi
+        bash "$script_path" pull
+      }
     '';
   };
+
+  # Install and configure Spicetify for Spotify customisation
+  home.activation.setupSpicetify = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Create spicetify directory structure
+    $DRY_RUN_CMD mkdir -p ~/.spicetify/Themes
+    $DRY_RUN_CMD mkdir -p ~/.spicetify/Extensions
+    $DRY_RUN_CMD mkdir -p ~/.spicetify/CustomApps
+    $DRY_RUN_CMD mkdir -p ~/.spicetify/jsHelper
+
+    # Run spicetify backup and apply (only if spotify is installed)
+    if command -v spotify >/dev/null 2>&1 || [ -d ~/.config/spotify ] || flatpak list | grep -q spotify; then
+      $DRY_RUN_CMD spicetify backup apply 2>/dev/null || echo "Spicetify setup will complete when Spotify is first launched"
+    fi
+  '';
 
   # Enable fzf globally with zsh integration
   programs.fzf = {

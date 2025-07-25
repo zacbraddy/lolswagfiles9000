@@ -1,0 +1,2 @@
+# This file ensures the memory directory is tracked by git
+# Claude memories will be symlinked here from ~/.claude/memory

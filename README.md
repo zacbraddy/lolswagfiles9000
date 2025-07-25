@@ -1,206 +1,295 @@
 # :sunglasses: Lol Swag Yolo 9000 files :sunglasses:
 
-## :crown: The last dot files I'm ever gonna need! Bay beeeee! :crown:
+## :crown: The ultimate modern development environment, powered by Nix! :crown:
 
-This represents probably the most effort I've put into getting my dotfiles in a state that I'm really happy with in a while. My goal for the project is to make it such that I can get as close as I can to fully automating my development environment. I also want to try and keep as much of my environment on a virtual machine as well so that I can be consistently tweaking and respinning up the environment to ensure that I don't get myself into the position again where I have done a heap of custom tweaks to my dev environment that I have to remember when I come to spinning up a new environment.
+This is a complete development environment that combines the power of Nix Flakes with Home Manager to create a reproducible, maintainable dotfiles setup. Built for developers who need reliable tooling across machine rebuilds and want maximum automation with minimal faffing about.
 
-## Install
+> **Note**: This setup has been completely modernised from the old Ansible approach to use Nix exclusively, making it more reliable and declarative than ever before.
 
-1. First you need to install httpie using this command:
+## :rocket: Quick Start
 
-```shell
-sudo apt-get update && sudo apt-get install httpie -y
+### Brand New Machine (Pop!_OS/Ubuntu Installation)
+
+If you're starting completely fresh or rebuilding an existing machine:
+
+1. **Install Pop!_OS from scratch**:
+   - Download Pop!_OS ISO from [pop.system76.com](https://pop.system76.com/)
+   - Create a bootable USB drive using Rufus (Windows), Balena Etcher, or `dd` command
+   - Boot from USB and select "Clean Install" (this will wipe the entire drive)
+   - Follow the installation wizard:
+     - Choose your language and keyboard layout
+     - Select "Erase disk and install Pop!_OS" for a fresh start
+     - Create your user account (use the same username as your dotfiles if possible)
+   - Complete the installation and reboot into your fresh Pop!_OS system
+
+2. **Install essential tools**:
+   ```bash
+   sudo apt update && sudo apt install -y curl git httpie
+   ```
+
+3. **Clone this repository**:
+   ```bash
+   git clone https://github.com/zacbraddy/lolswagfiles9000.git ~/Projects/Personal/lolswagfiles9000
+   cd ~/Projects/Personal/lolswagfiles9000
+   ```
+
+4. **Run the setup wizard** (this does everything for you):
+   ```bash
+   just setup-wizard
+   ```
+
+That's it! The wizard will guide you through the entire setup process including:
+- Installing Nix and Home Manager
+- Setting up secrets management
+- Configuring Git and SSH
+- Installing all applications
+- Applying system configurations
+
+### Existing Machine Migration
+
+If you already have some tools installed:
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/zacbraddy/lolswagfiles9000.git ~/Projects/Personal/lolswagfiles9000
+   cd ~/Projects/Personal/lolswagfiles9000
+   ```
+
+2. **Install Nix** (if not already installed):
+   ```bash
+   sh <(curl -L https://nixos.org/nix/install) --daemon
+   ```
+
+3. **Run the setup wizard**:
+   ```bash
+   just setup-wizard
+   ```
+
+The wizard is smart enough to detect existing installations and will offer to skip or reconfigure as needed.
+
+## :package: What's Included
+
+### Core Development Tools
+
+**Languages & Runtimes:**
+- Node.js (with npm, yarn)
+- Python 3 (with pip, pipx modules)
+- Java (OpenJDK)
+- Claude CLI (latest via npm)
+
+**Editors & IDEs:**
+- Cursor (with pre-configured settings and extensions)
+- Obsidian (with 34+ plugins and custom configuration)
+- Vim/Neovim
+- Support for JetBrains Toolbox
+
+**DevOps & Infrastructure:**
+- Docker
+- kubectl + kubectx/kubens
+- AWS CLI + AWS Vault
+- Google Cloud CLI
+- Terraform
+- rclone (for file sync)
+
+**System Tools:**
+- fzf (fuzzy finder)
+- ripgrep + fd (modern grep/find replacements)
+- zsh with Oh My Zsh
+- Git with powerful aliases and configuration
+
+### Applications (via Flatpak)
+
+- **Communication**: Discord, Slack
+- **Media**: VLC, OBS Studio, Spotify
+- **Utilities**: Adobe Reader, Bitwarden, GIMP, Flameshot
+- **Development**: Postman
+
+### System Integrations
+
+**Camera Fix Service** - Automated Logitech webcam configuration that persists across reboots
+
+**Tuxedo Keyboard Support** - Custom keyboard configuration for Tuxedo laptops
+
+**PulseAudio Configuration** - Optimised audio settings
+
+## :gear: Key Features
+
+### 1. **Automated Setup Wizard**
+- One command setup from scratch
+- Intelligent detection of existing tools
+- Interactive prompts for configuration
+- Comprehensive validation and troubleshooting
+
+### 2. **Secrets Management**
+- SOPS with age encryption for secure secrets storage
+- Interactive CLI for managing secrets
+- Secure API keys, tokens, and credentials
+- Commands: `just secrets-add`, `just secrets-edit`, `just secrets-list`
+
+### 3. **Obsidian Vault Management**
+- Global commands available from any directory
+- Smart plugin filtering (excludes runtime data, keeps configs)
+- Multi-vault support with shared configuration
+- Commands: `ob-create <vault>`, `ob-update`, `ob-refresh-dotfiles`
+
+### 4. **File Backup System (Filestore)**
+- Personal file backup to Google Drive
+- Symlinked standard directories (Documents, Pictures, Downloads)
+- Global commands: `bk-sync`, `bk-status`, `bk-pull`
+- Perfect for machine rebuilds - backup before, restore after
+
+### 5. **Claude Configuration Management**
+- Symlinked configuration and memory files for seamless version control
+- Claude configuration (`~/.claude/CLAUDE.md`) and memories (`~/.claude/memory/`) are symlinked to your dotfiles
+- Edit your Claude config directly in the repo - changes are immediately live
+- All your Claude memories and configuration are automatically version controlled
+
+### 6. **Smart Home Manager Integration**
+- Flake-based configuration
+- Modular architecture for easy customisation
+- Automatic activation scripts for system integration
+- Cache management and troubleshooting tools
+
+## :wrench: Available Commands
+
+Run `just --list` to see all available commands. Key ones include:
+
+**Setup & Management:**
+- `just setup-wizard` - Complete setup from scratch
+- `just hmr` - Reload Home Manager configuration
+- `just validate-hm` - Validate configuration before applying
+
+**Application Management:**
+- `just install-cursor` - Install Cursor editor
+- `just sync-cursor-settings` - Sync Cursor configuration
+- `just install-jetbrains-toolbox` - Install JetBrains Toolbox
+
+**Secrets Management:**
+- `just secrets-add` - Add new secret
+- `just secrets-edit` - Edit all secrets
+- `just secrets-list` - List configured secrets
+
+**Obsidian Management:**
+- `just obsidian-vaults-list` - List managed vaults
+- `just obsidian-sync` - Sync configuration to all vaults
+
+**Claude Management:**
+- Configuration and memories are automatically symlinked and version controlled
+- Edit `claude/CLAUDE.md` directly in your dotfiles to modify Claude configuration
+
+**System Maintenance:**
+- `just clear-nix-cache` - Clean up Nix store
+- `just setup-ssh-github` - Configure SSH for GitHub
+
+## :file_folder: Repository Structure
+
+```
+├── nix/                    # Nix configuration modules
+│   ├── home.nix           # Main Home Manager configuration
+│   ├── flake.nix          # Nix Flake definition
+│   ├── modules/           # Modular configurations
+│   │   ├── shell.nix      # ZSH, aliases, Oh My Zsh
+│   │   ├── editors.nix    # Cursor, Vim, extensions
+│   │   ├── languages.nix  # Node, Python, Java
+│   │   ├── devops.nix     # Docker, kubectl, cloud tools
+│   │   ├── system.nix     # System packages and tools
+│   │   ├── secrets.nix    # SOPS configuration
+│   │   └── claude.nix     # Claude CLI configuration
+│   └── secrets/           # Encrypted secrets storage
+├── scripts/               # Automation scripts
+│   ├── backup/           # Filestore backup system
+│   ├── obsidian/         # Obsidian vault management
+│   └── secrets/          # Secrets management CLI
+├── obsidian/             # Obsidian configuration templates
+├── claude/               # Claude configuration and memory (symlinked)
+├── justfile              # Command definitions
+└── README.md             # This file
 ```
 
-2. Next you'll need to pull down the Makefile from this repo so it can do all the heavy lifting for you. You can do that with this command:
+## :zap: ZSH Configuration
 
-```shell
-http https://raw.githubusercontent.com/zacbraddy/lolswagfiles9000/master/Makefile > Makefile
+### Custom Aliases
+- **Git shortcuts**: `gs` (status), `ga` (add), `gc` (commit), `gp` (push)
+- **System**: `reload` (restart zsh), `netinfo` (network status)
+- **Safety**: `rm` mapped to `trash` (recoverable deletion)
+
+### Oh My Zsh Plugins
+- git, z, sudo, fzf, history-substring-search
+- extract, colored-man-pages, alias-finder
+- docker, node, vi-mode
+
+### Global Commands
+- **Obsidian**: `ob-create`, `ob-update`, `ob-refresh-dotfiles`
+- **Backup**: `bk-sync`, `bk-status`, `bk-pull`
+
+## :ambulance: Troubleshooting
+
+### Common Issues
+
+**Home Manager fails to activate:**
+```bash
+just clear-nix-cache
+just hmr
 ```
 
-It needs to be said that the above assumes the machine has Make installed on it but Ubuntu does by default so you should be right there.
-
-3. Next you can run the command `make install`. This is going to install the necessary apps to download and run the ansible dotfile scripts which are going to do a lot of things themselves. Basically you just need to run this command and then fill in the answers to the prompts here and there
-
-## Whats included with the Ansible Build
-
-### Applications
-
-- [Audacity](https://www.audacityteam.org/)
-- [AWS Vault](https://github.com/99designs/aws-vault)
-- [Brave browser](https://brave.com/)
-- [Discord](https://discord.com/)
-- [Docker](https://www.docker.com/)
-- [Entr](http://eradman.com/entrproject/)
-- Git
-- [Google Cloud CLI](https://cloud.google.com/sdk)
-- [Google Chrome](https://www.google.co.uk/chrome/)
-- [Gnome Tweaks](https://wiki.gnome.org/Apps/Tweaks)
-- [httpie](https://httpie.io/)
-- [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
-- [kubectx + kubens](https://github.com/ahmetb/kubectx/)
-- [NVM](https://github.com/nvm-sh/nvm)
-- [OBS](https://obsproject.com/)
-- [pipx](https://github.com/pipxproject/pipx)
-- [Poetry](https://python-poetry.org/)
-- [Postman](https://getpostman.com)
-- [Slack](https://slack.com/intl/en-gb/)
-- [Spotify](https://www.spotify.com/us/)
-- [tmux](https://github.com/tmux/tmux)
-- [Jetbrains Toolbox](https://www.jetbrains.com/toolbox-app) - So I can install all my Jetbrains tools
-- [VirtualBox](https://www.virtualbox.org/)
-- [vlc](https://www.videolan.org/)
-- zsh
-- [Zoom](https://zoom.us/)
-
-### Applications I only have because other things need them
-
-**ansible**
-
-- ansible
-- software-properties-common
-
-**AWS Vault**
-
-- build-essential
-- curl
-- file
-- git
-- Homebrew
-
-**docker**
-
-- apt-transport-https
-- ca-certificates
-- curl
-- gnupg-agent
-- software-properties-common
-
-**Doom Emacs**
-
-- fd-find
-- ripgrep
-
-**gcloud-cli**
-
-- apt-transport-https
-- ca-certificates
-- gnupg
-
-**kubectl**
-
-- gnupg2
-- apt-transport-https
-
-**PlantUML**
-
-- default-jdk
-
-### Things are only installed so I can work with clients that
-
-**postgres**
-- libpq-dev
-- postgres
-
-**heroku-cli**
-- heroku
-
-### Frameworks
-
-- [OhMyZSH!](https://ohmyz.sh/)
-- [Homebrew](https://docs.brew.sh/Homebrew-on-Linux)
-
-### Available Language Editors/Runtimes
-
-- NodeJS LTS
-- Open Flavour of Java
-- Python3
-
-### Pipx modules available at the commandline
-
-- [Black](https://github.com/psf/black)
-- [Flake8](https://flake8.pycqa.org/en/latest/)
-- [Pylint](https://pylint.org/)
-- [mypy](http://mypy-lang.org/)
-
-## ZSH settings
-
-### Env vars
-
-- `EDITOR`, `KUBE_EDITOR`: Setting the standard editor for git and kubernetes to vim
-- `NVM_DIR`: Used by NVM to know where to store all them sweet node versions
-
-### Aliases
-
-Here are the general idea behind my aliases but for all of them you're gonna have to check out `zsh/.aliasrc`
-
-- `amazeballs`: do fun things with terminal commands
-- kubernetes shortenings: `kubectl` lul more like `k`
-- git command shortnening: Tired - `git status`, Wired - `gs`
-- `tmx`: tmuxinator shortneing
-- `plant`: I ain't remembering the whole command when I can just type `plant`
-
-### Functions
-
-- `kadc`: Stands for kill all docker containers. I use this to clean up all the docker containers I always forget to kill when I'm done with them and they're chewing through my precious RAM.
-
-### Path
-
-If I'm honest some of this doesn't really feel like it lives anywhere so I just shoved all the things that I've expecting to have available globally into the path rc
-
-- Yarn: I've added a link so that yarn knows how to install things globally
-- NPM: Getting NPM to install packaged globally and then use them afterwards without having to `sudo` is a bigger pain in the butt than you might think! There's a heap of script in there to make that work
-- Google Cloud SDK: Just took this straight from the google cloud docs to make `gcloud` available in the commandline
-
-### Completions
-
-Nobody likes typing things, come on!
-
-- GCloud
-- KubeCtx
-- NVM
-
-### Startup
-
-The startup runs commands to ensure that the following applications are ready to be interacted with once the console starts up
-
-- NVM
-
-https://docs.github.com/en/free-pro-team@latest/rest/reference/users#create-a-public-ssh-key-for-the-authenticated-user
-
-## TMUX configuration
-
-### Key bindings
-
-I have my prefix keybind rebound from the default `ctrl+b` to be instead `ctrl+s` so all sequences below will obviously need to happen **after** you've smashed that `ctrl+s`:
-
-| Key bind | It does? | |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------- | |
-| `|` | Splits window in what is described in the notes as horizontal but you end up with two vertical windows side by side basically |
-| `-` | A split as well but in the other direction to above | |
-| `r` | should reload the tmux config but I've never actually gotten this to work! | |
-| `hjkl` | Resizes the current pane to the left/down/up/right by a small about, keep hitting the letter you just hit to repeat this command without having to hit the prefix again |
-| `HJKL` | Same as above but does it by a larger amount |
-
-You can also hit Meta-hjkl (Alt is meta) to move between panes without having to hit the prefix sequence first.
-
-### Tmux plugins
-
-I also have a series of tmux plugins installed that are handled by [Tmux plugin manager](https://github.com/tmux-plugins/tpm)
-
-The plugins I'm using are:
-
-- [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect)
-- [tmux-yank](https://github.com/tmux-plugins/tmux-yank)
-- [tmux-continuum](https://github.com/tmux-plugins/tmux-continuum)
-
-## Things I haven't included in the dot files that I need to do
-### Webcam fix
-The logitech webcam I use struggles to work correctly on linux so I have to set some settings for it. I need to automate the camera-fix-script stuff so that it looks alright and doesn't lose it's settings every time I reboot
-
-Below doesn't seem to work right now but it's something like this I want to do
-```shell
-sudo ln -s ~/Projects/Personal/lolswagfiles9000/camera-fix.service /etc/systemd/system/camera-fix.service
-sudo chmod 644 /etc/systemd/system/camera-fix.service
-sudo systemctl enable camera-fix.service
+**Cursor settings won't sync:**
+```bash
+# Make sure Cursor is closed first
+just sync-cursor-settings
 ```
+
+**Secrets not working:**
+```bash
+just secrets-setup-key
+```
+
+**Cache issues:**
+```bash
+just clear-nix-cache
+just validate-hm
+just hmr
+```
+
+### Reset Everything
+If you need to start fresh:
+```bash
+just clear-nix-cache
+rm -rf ~/.cache/nix
+just setup-wizard
+```
+
+## :gear: Customisation
+
+### Adding New Packages
+Edit the relevant module in `nix/modules/`:
+- `system.nix` - System utilities
+- `languages.nix` - Programming languages
+- `devops.nix` - DevOps tools
+- `editors.nix` - Editors and IDEs
+
+### Adding New Secrets
+```bash
+just secrets-add
+# Follow the interactive prompts
+```
+
+### Creating New Obsidian Vaults
+```bash
+ob-create my-new-vault
+# Automatically configured with all dotfiles settings
+```
+
+## :heart: Contributing
+
+This is a personal dotfiles repository, but if you find bugs or have suggestions for improvements, feel free to open an issue or submit a pull request!
+
+## :book: Additional Resources
+
+- [Nix Flakes Documentation](https://nixos.wiki/wiki/Flakes)
+- [Home Manager Manual](https://nix-community.github.io/home-manager/)
+- [SOPS Documentation](https://github.com/Mic92/sops-nix)
+- [Just Command Runner](https://github.com/casey/just)
+
+---
+
+**Built with** :heart: **for developers who value automation, reproducibility, and not having to set up their environment from scratch every bloody time.**

@@ -32,6 +32,7 @@
           ./nix/modules/devops.nix
           ./nix/modules/system.nix
           ./nix/modules/secrets.nix
+          ./nix/modules/claude.nix
         ];
       };
       pop-os = home-manager.lib.homeManagerConfiguration {
@@ -49,6 +50,7 @@
           ./nix/modules/devops.nix
           ./nix/modules/system.nix
           ./nix/modules/secrets.nix
+          ./nix/modules/claude.nix
         ];
       };
     };

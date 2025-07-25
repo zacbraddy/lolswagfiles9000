@@ -25,6 +25,11 @@
     jdk
     just
     yq-go
+    rclone
+    # Browsers
+    brave
+    google-chrome
+    firefox
   ];
 
   home.keyboard = {
@@ -71,5 +76,10 @@
     # Use system sudo directly with absolute path
     /usr/bin/sudo ln -sf ${toString ../../default.pa} /etc/pulse/default.pa
     /usr/bin/sudo ln -sf ${toString ../../tuxedo_keyboard.conf} /etc/modprobe.d/tuxedo_keyboard.conf
+  '';
+
+  # Install Docker via snap
+  home.activation.installDockerSnap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD /usr/bin/sudo snap install docker
   '';
 }

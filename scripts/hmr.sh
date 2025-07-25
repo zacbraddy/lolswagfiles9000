@@ -50,6 +50,17 @@ if SOPS_AGE_KEY_FILE="$AGE_KEY_FILE" sops -d --config "$SOPS_CONFIG" "$SECRETS_F
     exit 1
 fi
 
+# Fix flatpak fusermount3 path for Pop!_OS
+echo "===== FIXING FLATPAK FUSERMOUNT3 PATH ====="
+if [ ! -f "/run/wrappers/bin/fusermount3" ] && [ -f "/usr/bin/fusermount3" ]; then
+    echo "Creating fusermount3 symlink for flatpak compatibility..."
+    sudo mkdir -p /run/wrappers/bin
+    sudo ln -sf /usr/bin/fusermount3 /run/wrappers/bin/fusermount3
+    echo "✅ fusermount3 symlink created"
+else
+    echo "✅ fusermount3 already configured"
+fi
+
 # Run Home Manager - let it handle all the symlinking automatically
 echo "===== RUNNING HOME MANAGER ====="
 BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
@@ -107,6 +118,64 @@ fi
 # Initialise the managed vaults file with dotfiles path
 node "$DOTFILES_DIR/scripts/obsidian/vault-manager.js" init
 echo "✅ Obsidian configuration initialised"
+
+# Initialise Filestore
+echo "===== INITIALISING FILESTORE ====="
+if [ -f "$DOTFILES_DIR/scripts/backup/setup-filestore.sh" ]; then
+    bash "$DOTFILES_DIR/scripts/backup/setup-filestore.sh"
+    echo "✅ Filestore initialised"
+else
+    echo "⚠️  Filestore setup script not found"
+fi
+
+# Check rclone configuration for Google Drive
+echo "===== CHECKING RCLONE CONFIGURATION ====="
+if ! command -v rclone >/dev/null; then
+    echo "⚠️  rclone not found - run Home Manager to install"
+elif ! rclone listremotes | grep -q "gdrive:"; then
+    echo "⚠️  Google Drive not configured in rclone"
+    echo "💡 Run 'rclone config' to set up a remote called 'gdrive' for Google Drive"
+    echo "   Then use 'bk-sync' to backup your filestore to Google Drive"
+else
+    echo "✅ Google Drive configured in rclone"
+    echo "💡 Use 'bk-sync', 'bk-status', 'bk-pull' to manage your filestore"
+fi
+
+# Setup Claude symlinks
+echo "===== SETTING UP CLAUDE SYMLINKS ====="
+CLAUDE_DIR="$HOME/.claude"
+DOTFILES_CLAUDE_DIR="$DOTFILES_DIR/claude"
+
+# Ensure Claude directory exists
+mkdir -p "$CLAUDE_DIR"
+
+# Setup CLAUDE.md symlink
+if [ -L "$CLAUDE_DIR/CLAUDE.md" ]; then
+    echo "✅ CLAUDE.md symlink already exists"
+elif [ -f "$CLAUDE_DIR/CLAUDE.md" ]; then
+    echo "🔄 Backing up existing CLAUDE.md and creating symlink..."
+    mv "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.backup-$(date +%Y%m%d-%H%M%S)"
+    ln -s "$DOTFILES_CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+    echo "✅ CLAUDE.md symlink created"
+else
+    ln -s "$DOTFILES_CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+    echo "✅ CLAUDE.md symlink created"
+fi
+
+# Setup memory directory symlink
+if [ -L "$CLAUDE_DIR/memory" ]; then
+    echo "✅ memory symlink already exists"
+elif [ -d "$CLAUDE_DIR/memory" ]; then
+    echo "🔄 Backing up existing memory directory and creating symlink..."
+    mv "$CLAUDE_DIR/memory" "$CLAUDE_DIR/memory.backup-$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$DOTFILES_CLAUDE_DIR/memory"
+    ln -s "$DOTFILES_CLAUDE_DIR/memory" "$CLAUDE_DIR/memory"
+    echo "✅ memory symlink created"
+else
+    mkdir -p "$DOTFILES_CLAUDE_DIR/memory"
+    ln -s "$DOTFILES_CLAUDE_DIR/memory" "$CLAUDE_DIR/memory"
+    echo "✅ memory symlink created"
+fi
 
 echo "===== HMR COMPLETED ====="
 echo "Run 'reload' or restart your shell to apply changes"

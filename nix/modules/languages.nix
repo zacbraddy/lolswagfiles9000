@@ -11,4 +11,10 @@
       npm install -g c4builder
     fi
   '';
+
+  home.activation.installClaudeCLI = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if command -v npm >/dev/null; then
+      npm install -g @anthropic-ai/claude-code
+    fi
+  '';
 }
