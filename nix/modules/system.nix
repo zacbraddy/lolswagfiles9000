@@ -82,4 +82,53 @@
   home.activation.installDockerSnap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD /usr/bin/sudo snap install docker
   '';
+
+  # Install Balena Etcher AppImage
+  home.activation.installBalenaEtcher = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    echo "Checking Balena Etcher installation..."
+    APPS_DIR="$HOME/Applications"
+    DESKTOP_FILE="$HOME/.local/share/applications/balena-etcher.desktop"
+    
+    # Create Applications directory if it doesn't exist
+    $DRY_RUN_CMD mkdir -p "$APPS_DIR"
+    $DRY_RUN_CMD mkdir -p "$HOME/.local/share/applications"
+    
+    # Check if already installed
+    if [ ! -f "$APPS_DIR/balenaEtcher.AppImage" ]; then
+      echo "Installing Balena Etcher..."
+      
+      # Use a known stable download URL for now (latest stable version)
+      DOWNLOAD_URL="https://github.com/balena-io/etcher/releases/download/v1.19.25/balenaEtcher-1.19.25-x64.AppImage"
+      
+      echo "Downloading from: $DOWNLOAD_URL"
+      if $DRY_RUN_CMD ${pkgs.curl}/bin/curl -L "$DOWNLOAD_URL" -o "$APPS_DIR/balenaEtcher.AppImage"; then
+        $DRY_RUN_CMD chmod +x "$APPS_DIR/balenaEtcher.AppImage"
+        
+        # Create desktop entry
+        $DRY_RUN_CMD cat > "$DESKTOP_FILE" << 'DESKTOP_EOF'
+[Desktop Entry]
+Name=balenaEtcher
+Comment=Flash OS images to SD cards & USB drives, safely and easily.
+Exec=%h/Applications/balenaEtcher.AppImage %U
+Icon=etcher-electron
+Terminal=false
+Type=Application
+Categories=System;Utility;
+StartupWMClass=balenaEtcher
+MimeType=application/x-raw-disk-image;application/x-iso9660-image;
+DESKTOP_EOF
+        
+        # Update desktop database
+        if command -v ${pkgs.desktop-file-utils}/bin/update-desktop-database >/dev/null 2>&1; then
+          $DRY_RUN_CMD ${pkgs.desktop-file-utils}/bin/update-desktop-database "$HOME/.local/share/applications"
+        fi
+        
+        echo "✅ Balena Etcher installed successfully"
+      else
+        echo "❌ Failed to download Balena Etcher"
+      fi
+    else
+      echo "✅ Balena Etcher already installed"
+    fi
+  '';
 }
