@@ -62,6 +62,7 @@ in
     pkgs.libreoffice
     pkgs.file-roller
     pkgs.obsidian
+    pkgs.dbeaver-bin
 
     # VS Code Insiders configuration
     ((pkgs.vscode.override { isInsiders = true; }).overrideAttrs (oldAttrs: rec {

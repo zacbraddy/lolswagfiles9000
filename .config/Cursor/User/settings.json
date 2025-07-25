@@ -98,7 +98,6 @@
   },
   "cursor.composer.shouldChimeAfterChatFinishes": true,
   "search.useIgnoreFiles": false,
-  "workbench.editor.enablePreview": false,
-  "workbench.editor.showTabs": true,
-  "cursor.experimental.tabIsolation": true
+  "window.openFoldersInNewWindow": "on",
+  "cursor.cpp.disabledLanguages": ["plaintext"]
 }

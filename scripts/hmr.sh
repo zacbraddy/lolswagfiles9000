@@ -61,5 +61,35 @@ home-manager switch \
     --extra-experimental-features "nix-command flakes" \
     "$@"
 
+# Fix keyboard layout to British format
+echo "===== FIXING KEYBOARD LAYOUT ====="
+setxkbmap gb
+echo "✅ Keyboard layout set to British (gb)"
+
+# Install desktop entries for Nix applications
+echo "===== INSTALLING DESKTOP ENTRIES ====="
+NIX_APPLICATIONS_DIR="$HOME/.nix-profile/share/applications"
+SYSTEM_APPLICATIONS_DIR="/usr/share/applications"
+
+if [ -d "$NIX_APPLICATIONS_DIR" ]; then
+    # Find all .desktop files in Nix applications directory
+    find "$NIX_APPLICATIONS_DIR" -name "*.desktop" -type f | while read -r desktop_file; do
+        filename=$(basename "$desktop_file")
+        system_file="$SYSTEM_APPLICATIONS_DIR/$filename"
+
+        # Check if file exists in system directory
+        if [ ! -f "$system_file" ] || [ "$desktop_file" -nt "$system_file" ]; then
+            echo "Installing desktop entry: $filename"
+            sudo cp "$desktop_file" "$SYSTEM_APPLICATIONS_DIR/"
+        fi
+    done
+
+    # Update desktop database
+    sudo update-desktop-database
+    echo "✅ Desktop entries updated"
+else
+    echo "⚠️  No Nix applications directory found at $NIX_APPLICATIONS_DIR"
+fi
+
 echo "===== HMR COMPLETED ====="
 echo "Run 'reload' or restart your shell to apply changes"

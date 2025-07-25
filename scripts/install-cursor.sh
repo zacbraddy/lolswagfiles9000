@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+#set -euo pipefail
 
 MIMEAPPS="$HOME/.config/mimeapps.list"
 
@@ -13,7 +13,7 @@ get_latest_version() {
 
     # Get the latest version information
     local VERSION_INFO
-    VERSION_INFO=$(curl -s "https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable")
+    VERSION_INFO=$(curl -sL "https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable")
 
     # Extract download URL and version using grep and cut
     # Note: Using grep/cut instead of jq to avoid additional dependencies
@@ -22,7 +22,7 @@ get_latest_version() {
 
     local VERSION
     VERSION=$(echo "$VERSION_INFO" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
-
+    
     if [ -z "$DOWNLOAD_URL" ] || [ -z "$VERSION" ]; then
         echo "Error: Failed to get latest version information"
         exit 1
@@ -38,10 +38,16 @@ VERSION=$(echo "$VERSION_INFO" | cut -d'|' -f2)
 CURSOR_APPIMAGE="Cursor-${VERSION}-x86_64.AppImage"
 CURSOR_NAME="Cursor"
 
+echo "VERSION_INFO: $VERSION_INFO"
+echo "DOWNLOAD_URL: $DOWNLOAD_URL"
+echo "VERSION: $VERSION"
+echo "CURSOR_APPIMAGE: $CURSOR_APP_IMAGE"
+echo "CURSOR_NAME: $CURSOR_NAME"
+
 echo "Cursor AppImage Installer for Ubuntu Linux"
 echo "==========================================="
 echo "Latest version: $VERSION"
-echo "Downloading $CURSOR_APPIMAGE..."
+echo "Downloading $CURSOR_APPIMAGE from $DOWNLOAD_URL..."
 
 # Download the AppImage
 if ! curl -L "$DOWNLOAD_URL" -o "$CURSOR_APPIMAGE"; then

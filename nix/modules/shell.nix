@@ -41,7 +41,7 @@
     };
     initContent = ''
       # Set ZSH variable for oh-my-zsh (must be set before oh-my-zsh loads)
-      export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
+      #export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
 
       # Set FZF_BASE for oh-my-zsh compatibility
       export FZF_BASE="${pkgs.fzf}"
@@ -300,36 +300,36 @@
       _aider_with_model() {
         local model="$1"
         shift  # Remove first argument (model) from $@
-        
+
         local aider_root="$(find_aider_root)"
         local config_file
-        
-        if [ -z "$aider_root" ]; then 
-          echo "Error: Could not find aider setup." 
+
+        if [ -z "$aider_root" ]; then
+          echo "Error: Could not find aider setup."
           return 1
         fi
-        
+
         # Source .env from aider root if it exists
         if [ -f "$aider_root/.env" ]; then
-          set -a 
+          set -a
           source "$aider_root/.env"
           set +a
         fi
-        
+
         config_file="$(load_aider_config)"
-        
+
         # Filter out --model flags from the arguments
         # We'll rebuild the argument list in $@ by using set --
         local temp_args=""
         local skip_next=false
-        
+
         for arg in "$@"; do
           if [ "$skip_next" = true ]; then
             skip_next=false
             echo "Warning: --model flag ignored. Use 'ai' for deepseek-chat or 'air1' for deepseek-r1"
             continue
           fi
-          
+
           case "$arg" in
             --model)
               skip_next=true
@@ -350,18 +350,18 @@
               ;;
           esac
         done
-        
+
         echo "Starting aider with model: $model"
-        
+
         # Rebuild $@ with filtered arguments
-        set -- 
+        set --
         if [ -n "$temp_args" ]; then
           # Use process substitution to handle arguments with spaces/special chars
           while IFS= read -r line; do
             set -- "$@" "$line"
           done <<< "$temp_args"
         fi
-        
+
         # Execute directly without eval
         if [ -n "$config_file" ]; then
           poetry -P="$aider_root" run aider --model "$model" --config "$config_file" "$@"
@@ -369,16 +369,16 @@
           poetry -P="$aider_root" run aider --model "$model" "$@"
         fi
       }
-      
+
       # Specific model functions
       ai() {
         _aider_with_model "deepseek/deepseek-chat" "$@"
       }
-      
+
       air1() {
         _aider_with_model "deepseek/deepseek-reasoner" "$@"
       }
-      
+
       # Aider status and configuration information
       ai-status() {
         local current_aider_root="''$(find_aider_root)"
@@ -542,6 +542,7 @@
     yarn
     poetry
     docker
+    azure-cli
 
     # Shell enhancements
     zsh-powerlevel10k
@@ -559,6 +560,17 @@
 
     # Optional tools
     spicetify-cli
+    # Native libraries for node-canvas and image processing
+    cairo
+    pango
+    libjpeg
+    gtk3
+    (lib.hiPrio gdk-pixbuf)
+    librsvg
+    gdk-pixbuf
+    giflib
+    libuuid
+    pkg-config
   ];
 
   home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
