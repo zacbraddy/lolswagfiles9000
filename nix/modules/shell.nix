@@ -660,6 +660,7 @@
     trash-cli
     just
     yq-go
+    ranger
 
     # Development tools
     nodejs

@@ -13,14 +13,24 @@ This is a complete development environment that combines the power of Nix Flakes
 If you're starting completely fresh or rebuilding an existing machine:
 
 1. **Install Pop!_OS from scratch**:
-   - Download Pop!_OS ISO from [pop.system76.com](https://pop.system76.com/)
-   - Create a bootable USB drive using Rufus (Windows), Balena Etcher, or `dd` command
-   - Boot from USB and select "Clean Install" (this will wipe the entire drive)
-   - Follow the installation wizard:
-     - Choose your language and keyboard layout
-     - Select "Erase disk and install Pop!_OS" for a fresh start
-     - Create your user account (use the same username as your dotfiles if possible)
-   - Complete the installation and reboot into your fresh Pop!_OS system
+   - **Download the correct Pop!_OS flavour**:
+     - Visit [system76.com/pop/download](https://system76.com/pop/download/)
+     - Choose **Pop!_OS 22.04 LTS with NVIDIA** if you have 16-series NVIDIA graphics or newer
+     - Choose **Pop!_OS 22.04 LTS (Intel/AMD)** for Intel/AMD graphics or 10-series NVIDIA and older
+     - Check your graphics card: `lspci | grep -i vga`
+   - **Prepare for installation**:
+     - Create a bootable USB drive using Rufus (Windows), Balena Etcher, or `dd` command
+     - **Disable Secure Boot** in your BIOS/UEFI settings:
+       - Restart and press F2/Delete during boot to enter BIOS
+       - Navigate to Security → Secure Boot → Disabled
+       - Save and exit (usually F10)
+   - **Install Pop!_OS**:
+     - Boot from USB and select "Clean Install" (this will wipe the entire drive)
+     - Follow the installation wizard:
+       - Choose your language and keyboard layout
+       - Select "Erase disk and install Pop!_OS" for a fresh start
+       - Create your user account (use the same username as your dotfiles if possible)
+     - Complete the installation and reboot into your fresh Pop!_OS system
 
 2. **Install essential tools**:
    ```bash
