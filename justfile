@@ -545,3 +545,8 @@ claude-memory-status:
 claude-clean-projects:
 	#!/usr/bin/env bash
 	node scripts/claude/manage.cjs clean-projects
+
+# Update Nix cache with current Claude configuration and memory
+claude-update-config:
+	#!/usr/bin/env bash
+	node scripts/claude/manage.cjs update-config

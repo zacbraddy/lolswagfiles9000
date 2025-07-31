@@ -26,19 +26,21 @@ Commands:
   status         Show current configuration status
   memory-status  Show memory usage and project data status
   clean-projects Clean old project conversation logs (interactive)
+  update-config  Update dotfiles with current live config and sync to Nix cache
 
 Examples:
   node manage.js edit
   node manage.js backup-all
   node manage.js memory-status
   node manage.js clean-projects
+  node manage.js update-config
   `);
 }
 
 function editClaudeConfig() {
   const editor = process.env.EDITOR || 'nano';
   console.log(`Opening ${CLAUDE_FILE} with ${editor}...`);
-  
+
   try {
     execSync(`${editor} "${CLAUDE_FILE}"`, { stdio: 'inherit' });
     console.log('✅ CLAUDE.md edited successfully');
@@ -54,11 +56,11 @@ function viewClaudeConfig() {
     console.error('❌ CLAUDE.md not found in dotfiles');
     process.exit(1);
   }
-  
+
   console.log('📄 Current CLAUDE.md contents:');
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
   console.log(fs.readFileSync(CLAUDE_FILE, 'utf8'));
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
 }
 
 function backupClaudeConfig() {
@@ -66,14 +68,14 @@ function backupClaudeConfig() {
     console.log('ℹ️  No live CLAUDE.md found to backup');
     return;
   }
-  
+
   if (!fs.existsSync(BACKUP_DIR)) {
     fs.mkdirSync(BACKUP_DIR, { recursive: true });
   }
-  
+
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupFile = path.join(BACKUP_DIR, `CLAUDE-${timestamp}.md`);
-  
+
   try {
     fs.copyFileSync(CLAUDE_TARGET, backupFile);
     console.log(`✅ Backup created: ${backupFile}`);
@@ -88,21 +90,21 @@ function backupAllClaudeData() {
     console.log('ℹ️  No Claude directory found to backup');
     return;
   }
-  
+
   if (!fs.existsSync(BACKUP_DIR)) {
     fs.mkdirSync(BACKUP_DIR, { recursive: true });
   }
-  
+
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupName = `claude-full-${timestamp}`;
   const backupPath = path.join(BACKUP_DIR, backupName);
-  
+
   try {
     console.log('🔄 Creating full Claude backup...');
-    
+
     // Create backup directory
     fs.mkdirSync(backupPath, { recursive: true });
-    
+
     // Backup main files (excluding credentials for security)
     const filesToBackup = ['CLAUDE.md', 'settings.json'];
     filesToBackup.forEach(file => {
@@ -113,12 +115,12 @@ function backupAllClaudeData() {
         console.log(`  ✅ Backed up ${file}`);
       }
     });
-    
+
     // Note about credentials
     if (fs.existsSync(path.join(CLAUDE_DIR, '.credentials.json'))) {
       console.log(`  ⚠️  Skipped .credentials.json for security (not backed up)`);
     }
-    
+
     // Backup directories
     const dirsToBackup = ['memory', 'projects', 'todos', 'commands'];
     dirsToBackup.forEach(dir => {
@@ -129,15 +131,15 @@ function backupAllClaudeData() {
         console.log(`  ✅ Backed up ${dir}/`);
       }
     });
-    
+
     console.log(`✅ Full backup created: ${backupPath}`);
-    
+
     // Clean old full backups (keep last 5)
     const fullBackups = fs.readdirSync(BACKUP_DIR)
       .filter(item => item.startsWith('claude-full-'))
       .sort()
       .reverse();
-    
+
     if (fullBackups.length > 5) {
       const toDelete = fullBackups.slice(5);
       toDelete.forEach(backup => {
@@ -146,7 +148,7 @@ function backupAllClaudeData() {
         console.log(`🗑️  Cleaned old backup: ${backup}`);
       });
     }
-    
+
   } catch (error) {
     console.error('❌ Failed to create full backup:', error.message);
     process.exit(1);
@@ -157,12 +159,12 @@ function copyDirectoryRecursive(src, dest) {
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
   }
-  
+
   const items = fs.readdirSync(src);
   items.forEach(item => {
     const srcPath = path.join(src, item);
     const destPath = path.join(dest, item);
-    
+
     if (fs.statSync(srcPath).isDirectory()) {
       copyDirectoryRecursive(srcPath, destPath);
     } else {
@@ -176,20 +178,20 @@ function restoreClaudeConfig() {
     console.log('❌ No backups directory found');
     process.exit(1);
   }
-  
+
   const backups = fs.readdirSync(BACKUP_DIR)
     .filter(file => file.startsWith('CLAUDE-') && file.endsWith('.md'))
     .sort()
     .reverse();
-  
+
   if (backups.length === 0) {
     console.log('❌ No backups found');
     process.exit(1);
   }
-  
+
   const latestBackup = path.join(BACKUP_DIR, backups[0]);
   console.log(`🔄 Restoring from: ${backups[0]}`);
-  
+
   try {
     fs.copyFileSync(latestBackup, CLAUDE_FILE);
     console.log('✅ Configuration restored from backup');
@@ -205,35 +207,35 @@ function restoreAllClaudeData() {
     console.log('❌ No backups directory found');
     process.exit(1);
   }
-  
+
   const fullBackups = fs.readdirSync(BACKUP_DIR)
     .filter(item => item.startsWith('claude-full-'))
     .sort()
     .reverse();
-  
+
   if (fullBackups.length === 0) {
     console.log('❌ No full backups found');
     process.exit(1);
   }
-  
+
   const latestFullBackup = path.join(BACKUP_DIR, fullBackups[0]);
   console.log(`🔄 Restoring full Claude data from: ${fullBackups[0]}`);
   console.log('⚠️  This will overwrite your current Claude configuration!');
-  
+
   // Simple confirmation (in a real scenario, you might want a more robust prompt)
   const readline = require('readline');
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  
+
   rl.question('Continue? (y/N): ', (answer) => {
     if (answer.toLowerCase() !== 'y') {
       console.log('❌ Restore cancelled');
       rl.close();
       return;
     }
-    
+
     try {
       // Restore files (excluding credentials which are never backed up)
       const filesToRestore = ['CLAUDE.md', 'settings.json'];
@@ -245,10 +247,10 @@ function restoreAllClaudeData() {
           console.log(`  ✅ Restored ${file}`);
         }
       });
-      
+
       console.log(`  ℹ️  Note: .credentials.json not restored (never backed up for security)`);
       console.log(`      You'll need to re-authenticate with Claude CLI after restore`);
-      
+
       // Restore directories
       const dirsToRestore = ['memory', 'projects', 'todos', 'commands'];
       dirsToRestore.forEach(dir => {
@@ -263,15 +265,15 @@ function restoreAllClaudeData() {
           console.log(`  ✅ Restored ${dir}/`);
         }
       });
-      
+
       console.log('✅ Full Claude data restored from backup');
       console.log('💡 Run "just hmr" to apply CLAUDE.md changes');
-      
+
     } catch (error) {
       console.error('❌ Failed to restore backup:', error.message);
       process.exit(1);
     }
-    
+
     rl.close();
   });
 }
@@ -281,14 +283,14 @@ function diffClaudeConfig() {
     console.error('❌ CLAUDE.md not found in dotfiles');
     process.exit(1);
   }
-  
+
   if (!fs.existsSync(CLAUDE_TARGET)) {
     console.log('ℹ️  No live CLAUDE.md found for comparison');
     console.log('📄 Current dotfiles version:');
     viewClaudeConfig();
     return;
   }
-  
+
   try {
     console.log('📊 Comparing dotfiles version with live version...');
     const result = execSync(`diff -u "${CLAUDE_TARGET}" "${CLAUDE_FILE}" || true`, { stdio: 'pipe' });
@@ -304,8 +306,8 @@ function diffClaudeConfig() {
 
 function showStatus() {
   console.log('📋 Claude Configuration Status');
-  console.log('=' .repeat(40));
-  
+  console.log('='.repeat(40));
+
   // Check dotfiles version
   if (fs.existsSync(CLAUDE_FILE)) {
     const stats = fs.statSync(CLAUDE_FILE);
@@ -314,13 +316,13 @@ function showStatus() {
   } else {
     console.log(`❌ Dotfiles: ${CLAUDE_FILE} (not found)`);
   }
-  
+
   // Check live version
   if (fs.existsSync(CLAUDE_TARGET)) {
     const stats = fs.statSync(CLAUDE_TARGET);
     console.log(`✅ Live: ${CLAUDE_TARGET}`);
     console.log(`   Modified: ${stats.mtime.toLocaleString()}`);
-    
+
     // Check if it's a symlink (managed by Home Manager)
     const lstat = fs.lstatSync(CLAUDE_TARGET);
     if (lstat.isSymbolicLink()) {
@@ -333,7 +335,7 @@ function showStatus() {
   } else {
     console.log(`❌ Live: ${CLAUDE_TARGET} (not found)`);
   }
-  
+
   // Check backups
   if (fs.existsSync(BACKUP_DIR)) {
     const backups = fs.readdirSync(BACKUP_DIR)
@@ -348,8 +350,8 @@ function showStatus() {
 
 function showMemoryStatus() {
   console.log('🧠 Claude Memory & Project Status');
-  console.log('=' .repeat(40));
-  
+  console.log('='.repeat(40));
+
   // Check memory directory
   const memoryDir = path.join(CLAUDE_DIR, 'memory');
   if (fs.existsSync(memoryDir)) {
@@ -365,42 +367,42 @@ function showMemoryStatus() {
   } else {
     console.log('📝 Memory directory: Not found');
   }
-  
+
   // Check projects directory
   const projectsDir = path.join(CLAUDE_DIR, 'projects');
   if (fs.existsSync(projectsDir)) {
     const projects = fs.readdirSync(projectsDir);
     console.log(`📁 Project directories: ${projects.length}`);
-    
+
     let totalConversations = 0;
     let totalSize = 0;
-    
+
     projects.forEach(project => {
       const projectPath = path.join(projectsDir, project);
       if (fs.statSync(projectPath).isDirectory()) {
         const conversations = fs.readdirSync(projectPath)
           .filter(file => file.endsWith('.jsonl'));
         totalConversations += conversations.length;
-        
+
         let projectSize = 0;
         conversations.forEach(conv => {
           const convPath = path.join(projectPath, conv);
           projectSize += fs.statSync(convPath).size;
         });
         totalSize += projectSize;
-        
+
         // Decode project path
         const decodedPath = project.replace(/^-/, '').replace(/-/g, '/');
         console.log(`   - ${decodedPath}`);
         console.log(`     Conversations: ${conversations.length}, Size: ${(projectSize / 1024).toFixed(1)}KB`);
       }
     });
-    
+
     console.log(`📊 Total: ${totalConversations} conversations, ${(totalSize / 1024 / 1024).toFixed(2)}MB`);
   } else {
     console.log('📁 Projects directory: Not found');
   }
-  
+
   // Check todos directory
   const todosDir = path.join(CLAUDE_DIR, 'todos');
   if (fs.existsSync(todosDir)) {
@@ -411,38 +413,104 @@ function showMemoryStatus() {
   }
 }
 
+function updateConfig() {
+  console.log('🔄 Updating Claude configuration in Nix cache...');
+
+  // Check if live Claude config exists
+  if (!fs.existsSync(CLAUDE_TARGET)) {
+    console.error('❌ No live Claude configuration found at ~/.claude/CLAUDE.md');
+    console.log('   Please ensure Claude CLI is set up and has generated a configuration');
+    process.exit(1);
+  }
+
+  // Backup current dotfiles version
+  console.log('💾 Creating backup of current dotfiles version...');
+  if (fs.existsSync(CLAUDE_FILE)) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupDir = path.join(__dirname, '../../claude/backups');
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+    const backupFile = path.join(backupDir, `CLAUDE-dotfiles-${timestamp}.md`);
+    fs.copyFileSync(CLAUDE_FILE, backupFile);
+    console.log(`✅ Backup created: ${backupFile}`);
+  }
+
+  // Copy live config to dotfiles
+  console.log('📝 Copying live configuration to dotfiles...');
+  try {
+    fs.copyFileSync(CLAUDE_TARGET, CLAUDE_FILE);
+    console.log('✅ Configuration copied successfully');
+  } catch (error) {
+    console.error('❌ Failed to copy configuration:', error.message);
+    process.exit(1);
+  }
+
+  // Check if memory directory exists and copy it
+  const liveMemoryDir = path.join(CLAUDE_DIR, 'memory');
+  const dotfilesMemoryDir = path.join(__dirname, '../../claude/memory');
+
+  if (fs.existsSync(liveMemoryDir)) {
+    console.log('🧠 Copying memory files...');
+    if (!fs.existsSync(dotfilesMemoryDir)) {
+      fs.mkdirSync(dotfilesMemoryDir, { recursive: true });
+    }
+
+    try {
+      copyDirectoryRecursive(liveMemoryDir, dotfilesMemoryDir);
+      console.log('✅ Memory files copied successfully');
+    } catch (error) {
+      console.log('⚠️  Some memory files may not have copied (this is normal if directory is empty)');
+    }
+  } else {
+    console.log('ℹ️  No memory directory found (this is normal if no memories exist)');
+  }
+
+  // Update Nix cache
+  console.log('🔧 Updating Nix cache...');
+  try {
+    execSync('just hmr-with-exit-check', { stdio: 'inherit' });
+    console.log('✅ Nix cache updated successfully');
+    console.log('💡 Your Claude configuration is now synced and cached');
+  } catch (error) {
+    console.error('❌ Failed to update Nix cache');
+    console.log('   Please check the error messages above and try running \'just hmr\' manually');
+    process.exit(1);
+  }
+}
+
 function cleanProjects() {
   const projectsDir = path.join(CLAUDE_DIR, 'projects');
   if (!fs.existsSync(projectsDir)) {
     console.log('📁 No projects directory found');
     return;
   }
-  
+
   const readline = require('readline');
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  
+
   const projects = fs.readdirSync(projectsDir);
   console.log('🧹 Claude Project Cleanup');
-  console.log('=' .repeat(30));
-  
+  console.log('='.repeat(30));
+
   projects.forEach((project, index) => {
     const projectPath = path.join(projectsDir, project);
     if (fs.statSync(projectPath).isDirectory()) {
       const conversations = fs.readdirSync(projectPath)
         .filter(file => file.endsWith('.jsonl'));
-      
+
       let projectSize = 0;
       let oldestConv = null;
       let newestConv = null;
-      
+
       conversations.forEach(conv => {
         const convPath = path.join(projectPath, conv);
         const stats = fs.statSync(convPath);
         projectSize += stats.size;
-        
+
         if (!oldestConv || stats.mtime < oldestConv.mtime) {
           oldestConv = { name: conv, mtime: stats.mtime };
         }
@@ -450,7 +518,7 @@ function cleanProjects() {
           newestConv = { name: conv, mtime: stats.mtime };
         }
       });
-      
+
       const decodedPath = project.replace(/^-/, '').replace(/-/g, '/');
       console.log(`\n${index + 1}. ${decodedPath}`);
       console.log(`   Conversations: ${conversations.length}`);
@@ -461,16 +529,16 @@ function cleanProjects() {
       }
     }
   });
-  
+
   console.log('\nOptions:');
   console.log('1. Delete conversations older than 30 days');
-  console.log('2. Delete conversations older than 7 days'); 
+  console.log('2. Delete conversations older than 7 days');
   console.log('3. Delete specific project');
   console.log('4. Exit');
-  
+
   rl.question('\nSelect option (1-4): ', (choice) => {
     const now = new Date();
-    
+
     switch (choice) {
       case '1':
         cleanOldConversations(30, now);
@@ -503,22 +571,22 @@ function cleanProjects() {
     }
     rl.close();
   });
-  
+
   function cleanOldConversations(days, now) {
     const cutoffDate = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
     let deletedCount = 0;
     let deletedSize = 0;
-    
+
     projects.forEach(project => {
       const projectPath = path.join(projectsDir, project);
       if (fs.statSync(projectPath).isDirectory()) {
         const conversations = fs.readdirSync(projectPath)
           .filter(file => file.endsWith('.jsonl'));
-        
+
         conversations.forEach(conv => {
           const convPath = path.join(projectPath, conv);
           const stats = fs.statSync(convPath);
-          
+
           if (stats.mtime < cutoffDate) {
             deletedSize += stats.size;
             fs.unlinkSync(convPath);
@@ -527,7 +595,7 @@ function cleanProjects() {
         });
       }
     });
-    
+
     console.log(`✅ Deleted ${deletedCount} conversations older than ${days} days`);
     console.log(`💾 Freed ${(deletedSize / 1024).toFixed(1)}KB of storage`);
   }
@@ -565,6 +633,9 @@ switch (command) {
     break;
   case 'clean-projects':
     cleanProjects();
+    break;
+  case 'update-config':
+    updateConfig();
     break;
   default:
     showHelp();
