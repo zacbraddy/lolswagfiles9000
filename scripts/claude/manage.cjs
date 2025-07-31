@@ -16,40 +16,18 @@ Claude Configuration Manager
 Usage: node manage.js [command]
 
 Commands:
-  edit           Open CLAUDE.md in your default editor
   view           Display current CLAUDE.md contents
-  backup         Create a timestamped backup of current config
-  backup-all     Backup entire Claude directory (including memories, projects, settings)
-  restore        Restore from the most recent backup
-  restore-all    Restore entire Claude directory from backup
-  diff           Show differences between dotfiles and live config
-  status         Show current configuration status
   memory-status  Show memory usage and project data status
   clean-projects Clean old project conversation logs (interactive)
-  update-config  Update dotfiles with current live config and sync to Nix cache
 
 Examples:
-  node manage.js edit
-  node manage.js backup-all
+  node manage.js view
   node manage.js memory-status
   node manage.js clean-projects
-  node manage.js update-config
   `);
 }
 
-function editClaudeConfig() {
-  const editor = process.env.EDITOR || 'nano';
-  console.log(`Opening ${CLAUDE_FILE} with ${editor}...`);
 
-  try {
-    execSync(`${editor} "${CLAUDE_FILE}"`, { stdio: 'inherit' });
-    console.log('✅ CLAUDE.md edited successfully');
-    console.log('💡 Run "just hmr" to apply changes');
-  } catch (error) {
-    console.error('❌ Failed to open editor:', error.message);
-    process.exit(1);
-  }
-}
 
 function viewClaudeConfig() {
   if (!fs.existsSync(CLAUDE_FILE)) {
@@ -63,97 +41,9 @@ function viewClaudeConfig() {
   console.log('='.repeat(50));
 }
 
-function backupClaudeConfig() {
-  if (!fs.existsSync(CLAUDE_TARGET)) {
-    console.log('ℹ️  No live CLAUDE.md found to backup');
-    return;
-  }
 
-  if (!fs.existsSync(BACKUP_DIR)) {
-    fs.mkdirSync(BACKUP_DIR, { recursive: true });
-  }
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupFile = path.join(BACKUP_DIR, `CLAUDE-${timestamp}.md`);
 
-  try {
-    fs.copyFileSync(CLAUDE_TARGET, backupFile);
-    console.log(`✅ Backup created: ${backupFile}`);
-  } catch (error) {
-    console.error('❌ Failed to create backup:', error.message);
-    process.exit(1);
-  }
-}
-
-function backupAllClaudeData() {
-  if (!fs.existsSync(CLAUDE_DIR)) {
-    console.log('ℹ️  No Claude directory found to backup');
-    return;
-  }
-
-  if (!fs.existsSync(BACKUP_DIR)) {
-    fs.mkdirSync(BACKUP_DIR, { recursive: true });
-  }
-
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupName = `claude-full-${timestamp}`;
-  const backupPath = path.join(BACKUP_DIR, backupName);
-
-  try {
-    console.log('🔄 Creating full Claude backup...');
-
-    // Create backup directory
-    fs.mkdirSync(backupPath, { recursive: true });
-
-    // Backup main files (excluding credentials for security)
-    const filesToBackup = ['CLAUDE.md', 'settings.json'];
-    filesToBackup.forEach(file => {
-      const srcPath = path.join(CLAUDE_DIR, file);
-      if (fs.existsSync(srcPath)) {
-        const destPath = path.join(backupPath, file);
-        fs.copyFileSync(srcPath, destPath);
-        console.log(`  ✅ Backed up ${file}`);
-      }
-    });
-
-    // Note about credentials
-    if (fs.existsSync(path.join(CLAUDE_DIR, '.credentials.json'))) {
-      console.log(`  ⚠️  Skipped .credentials.json for security (not backed up)`);
-    }
-
-    // Backup directories
-    const dirsToBackup = ['memory', 'projects', 'todos', 'commands'];
-    dirsToBackup.forEach(dir => {
-      const srcPath = path.join(CLAUDE_DIR, dir);
-      if (fs.existsSync(srcPath)) {
-        const destPath = path.join(backupPath, dir);
-        copyDirectoryRecursive(srcPath, destPath);
-        console.log(`  ✅ Backed up ${dir}/`);
-      }
-    });
-
-    console.log(`✅ Full backup created: ${backupPath}`);
-
-    // Clean old full backups (keep last 5)
-    const fullBackups = fs.readdirSync(BACKUP_DIR)
-      .filter(item => item.startsWith('claude-full-'))
-      .sort()
-      .reverse();
-
-    if (fullBackups.length > 5) {
-      const toDelete = fullBackups.slice(5);
-      toDelete.forEach(backup => {
-        const backupPath = path.join(BACKUP_DIR, backup);
-        fs.rmSync(backupPath, { recursive: true, force: true });
-        console.log(`🗑️  Cleaned old backup: ${backup}`);
-      });
-    }
-
-  } catch (error) {
-    console.error('❌ Failed to create full backup:', error.message);
-    process.exit(1);
-  }
-}
 
 function copyDirectoryRecursive(src, dest) {
   if (!fs.existsSync(dest)) {
@@ -173,180 +63,9 @@ function copyDirectoryRecursive(src, dest) {
   });
 }
 
-function restoreClaudeConfig() {
-  if (!fs.existsSync(BACKUP_DIR)) {
-    console.log('❌ No backups directory found');
-    process.exit(1);
-  }
 
-  const backups = fs.readdirSync(BACKUP_DIR)
-    .filter(file => file.startsWith('CLAUDE-') && file.endsWith('.md'))
-    .sort()
-    .reverse();
 
-  if (backups.length === 0) {
-    console.log('❌ No backups found');
-    process.exit(1);
-  }
 
-  const latestBackup = path.join(BACKUP_DIR, backups[0]);
-  console.log(`🔄 Restoring from: ${backups[0]}`);
-
-  try {
-    fs.copyFileSync(latestBackup, CLAUDE_FILE);
-    console.log('✅ Configuration restored from backup');
-    console.log('💡 Run "just hmr" to apply changes');
-  } catch (error) {
-    console.error('❌ Failed to restore backup:', error.message);
-    process.exit(1);
-  }
-}
-
-function restoreAllClaudeData() {
-  if (!fs.existsSync(BACKUP_DIR)) {
-    console.log('❌ No backups directory found');
-    process.exit(1);
-  }
-
-  const fullBackups = fs.readdirSync(BACKUP_DIR)
-    .filter(item => item.startsWith('claude-full-'))
-    .sort()
-    .reverse();
-
-  if (fullBackups.length === 0) {
-    console.log('❌ No full backups found');
-    process.exit(1);
-  }
-
-  const latestFullBackup = path.join(BACKUP_DIR, fullBackups[0]);
-  console.log(`🔄 Restoring full Claude data from: ${fullBackups[0]}`);
-  console.log('⚠️  This will overwrite your current Claude configuration!');
-
-  // Simple confirmation (in a real scenario, you might want a more robust prompt)
-  const readline = require('readline');
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
-  rl.question('Continue? (y/N): ', (answer) => {
-    if (answer.toLowerCase() !== 'y') {
-      console.log('❌ Restore cancelled');
-      rl.close();
-      return;
-    }
-
-    try {
-      // Restore files (excluding credentials which are never backed up)
-      const filesToRestore = ['CLAUDE.md', 'settings.json'];
-      filesToRestore.forEach(file => {
-        const srcPath = path.join(latestFullBackup, file);
-        const destPath = path.join(CLAUDE_DIR, file);
-        if (fs.existsSync(srcPath)) {
-          fs.copyFileSync(srcPath, destPath);
-          console.log(`  ✅ Restored ${file}`);
-        }
-      });
-
-      console.log(`  ℹ️  Note: .credentials.json not restored (never backed up for security)`);
-      console.log(`      You'll need to re-authenticate with Claude CLI after restore`);
-
-      // Restore directories
-      const dirsToRestore = ['memory', 'projects', 'todos', 'commands'];
-      dirsToRestore.forEach(dir => {
-        const srcPath = path.join(latestFullBackup, dir);
-        const destPath = path.join(CLAUDE_DIR, dir);
-        if (fs.existsSync(srcPath)) {
-          // Remove existing directory
-          if (fs.existsSync(destPath)) {
-            fs.rmSync(destPath, { recursive: true, force: true });
-          }
-          copyDirectoryRecursive(srcPath, destPath);
-          console.log(`  ✅ Restored ${dir}/`);
-        }
-      });
-
-      console.log('✅ Full Claude data restored from backup');
-      console.log('💡 Run "just hmr" to apply CLAUDE.md changes');
-
-    } catch (error) {
-      console.error('❌ Failed to restore backup:', error.message);
-      process.exit(1);
-    }
-
-    rl.close();
-  });
-}
-
-function diffClaudeConfig() {
-  if (!fs.existsSync(CLAUDE_FILE)) {
-    console.error('❌ CLAUDE.md not found in dotfiles');
-    process.exit(1);
-  }
-
-  if (!fs.existsSync(CLAUDE_TARGET)) {
-    console.log('ℹ️  No live CLAUDE.md found for comparison');
-    console.log('📄 Current dotfiles version:');
-    viewClaudeConfig();
-    return;
-  }
-
-  try {
-    console.log('📊 Comparing dotfiles version with live version...');
-    const result = execSync(`diff -u "${CLAUDE_TARGET}" "${CLAUDE_FILE}" || true`, { stdio: 'pipe' });
-    if (result.length === 0) {
-      console.log('✅ Files are identical - no differences found');
-    } else {
-      console.log(result.toString());
-    }
-  } catch (error) {
-    console.error('❌ Failed to compare files:', error.message);
-  }
-}
-
-function showStatus() {
-  console.log('📋 Claude Configuration Status');
-  console.log('='.repeat(40));
-
-  // Check dotfiles version
-  if (fs.existsSync(CLAUDE_FILE)) {
-    const stats = fs.statSync(CLAUDE_FILE);
-    console.log(`✅ Dotfiles: ${CLAUDE_FILE}`);
-    console.log(`   Modified: ${stats.mtime.toLocaleString()}`);
-  } else {
-    console.log(`❌ Dotfiles: ${CLAUDE_FILE} (not found)`);
-  }
-
-  // Check live version
-  if (fs.existsSync(CLAUDE_TARGET)) {
-    const stats = fs.statSync(CLAUDE_TARGET);
-    console.log(`✅ Live: ${CLAUDE_TARGET}`);
-    console.log(`   Modified: ${stats.mtime.toLocaleString()}`);
-
-    // Check if it's a symlink (managed by Home Manager)
-    const lstat = fs.lstatSync(CLAUDE_TARGET);
-    if (lstat.isSymbolicLink()) {
-      const linkTarget = fs.readlinkSync(CLAUDE_TARGET);
-      console.log(`   Symlink: ${linkTarget}`);
-      console.log(`   Status: ✅ Managed by Home Manager`);
-    } else {
-      console.log(`   Status: ⚠️  Not managed by Home Manager`);
-    }
-  } else {
-    console.log(`❌ Live: ${CLAUDE_TARGET} (not found)`);
-  }
-
-  // Check backups
-  if (fs.existsSync(BACKUP_DIR)) {
-    const backups = fs.readdirSync(BACKUP_DIR)
-      .filter(file => file.startsWith('CLAUDE-') && file.endsWith('.md'));
-    const fullBackups = fs.readdirSync(BACKUP_DIR)
-      .filter(item => item.startsWith('claude-full-'));
-    console.log(`💾 Backups: ${backups.length} config backups, ${fullBackups.length} full backups`);
-  } else {
-    console.log(`💾 Backups: 0 found`);
-  }
-}
 
 function showMemoryStatus() {
   console.log('🧠 Claude Memory & Project Status');
@@ -413,71 +132,7 @@ function showMemoryStatus() {
   }
 }
 
-function updateConfig() {
-  console.log('🔄 Updating Claude configuration in Nix cache...');
 
-  // Check if live Claude config exists
-  if (!fs.existsSync(CLAUDE_TARGET)) {
-    console.error('❌ No live Claude configuration found at ~/.claude/CLAUDE.md');
-    console.log('   Please ensure Claude CLI is set up and has generated a configuration');
-    process.exit(1);
-  }
-
-  // Backup current dotfiles version
-  console.log('💾 Creating backup of current dotfiles version...');
-  if (fs.existsSync(CLAUDE_FILE)) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const backupDir = path.join(__dirname, '../../claude/backups');
-    if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir, { recursive: true });
-    }
-    const backupFile = path.join(backupDir, `CLAUDE-dotfiles-${timestamp}.md`);
-    fs.copyFileSync(CLAUDE_FILE, backupFile);
-    console.log(`✅ Backup created: ${backupFile}`);
-  }
-
-  // Copy live config to dotfiles
-  console.log('📝 Copying live configuration to dotfiles...');
-  try {
-    fs.copyFileSync(CLAUDE_TARGET, CLAUDE_FILE);
-    console.log('✅ Configuration copied successfully');
-  } catch (error) {
-    console.error('❌ Failed to copy configuration:', error.message);
-    process.exit(1);
-  }
-
-  // Check if memory directory exists and copy it
-  const liveMemoryDir = path.join(CLAUDE_DIR, 'memory');
-  const dotfilesMemoryDir = path.join(__dirname, '../../claude/memory');
-
-  if (fs.existsSync(liveMemoryDir)) {
-    console.log('🧠 Copying memory files...');
-    if (!fs.existsSync(dotfilesMemoryDir)) {
-      fs.mkdirSync(dotfilesMemoryDir, { recursive: true });
-    }
-
-    try {
-      copyDirectoryRecursive(liveMemoryDir, dotfilesMemoryDir);
-      console.log('✅ Memory files copied successfully');
-    } catch (error) {
-      console.log('⚠️  Some memory files may not have copied (this is normal if directory is empty)');
-    }
-  } else {
-    console.log('ℹ️  No memory directory found (this is normal if no memories exist)');
-  }
-
-  // Update Nix cache
-  console.log('🔧 Updating Nix cache...');
-  try {
-    execSync('just hmr-with-exit-check', { stdio: 'inherit' });
-    console.log('✅ Nix cache updated successfully');
-    console.log('💡 Your Claude configuration is now synced and cached');
-  } catch (error) {
-    console.error('❌ Failed to update Nix cache');
-    console.log('   Please check the error messages above and try running \'just hmr\' manually');
-    process.exit(1);
-  }
-}
 
 function cleanProjects() {
   const projectsDir = path.join(CLAUDE_DIR, 'projects');
@@ -604,38 +259,14 @@ function cleanProjects() {
 const command = process.argv[2];
 
 switch (command) {
-  case 'edit':
-    editClaudeConfig();
-    break;
   case 'view':
     viewClaudeConfig();
-    break;
-  case 'backup':
-    backupClaudeConfig();
-    break;
-  case 'backup-all':
-    backupAllClaudeData();
-    break;
-  case 'restore':
-    restoreClaudeConfig();
-    break;
-  case 'restore-all':
-    restoreAllClaudeData();
-    break;
-  case 'diff':
-    diffClaudeConfig();
-    break;
-  case 'status':
-    showStatus();
     break;
   case 'memory-status':
     showMemoryStatus();
     break;
   case 'clean-projects':
     cleanProjects();
-    break;
-  case 'update-config':
-    updateConfig();
     break;
   default:
     showHelp();

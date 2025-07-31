@@ -5,6 +5,7 @@
 ## Code Writing Guidelines
 
 - When removing code, don't leave behind comments saying that you've done it, there's no need
+- Do not generate comments when you generate code
 
 # Tone & Communication Protocol
 

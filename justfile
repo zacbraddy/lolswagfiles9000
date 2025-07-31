@@ -496,45 +496,10 @@ validate-hm:
 
 # Claude Configuration Management Recipes
 
-# Edit Claude configuration in your default editor
-claude-edit:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs edit
-
 # View current Claude configuration
 claude-view:
 	#!/usr/bin/env bash
 	node scripts/claude/manage.cjs view
-
-# Backup current Claude configuration
-claude-backup:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs backup
-
-# Backup entire Claude directory (including memories, projects, settings)
-claude-backup-all:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs backup-all
-
-# Restore Claude configuration from latest backup
-claude-restore:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs restore
-
-# Restore entire Claude directory from backup
-claude-restore-all:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs restore-all
-
-# Show differences between dotfiles and live config
-claude-diff:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs diff
-
-# Show Claude configuration status
-claude-status:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs status
 
 # Show memory usage and project data status
 claude-memory-status:
@@ -545,8 +510,3 @@ claude-memory-status:
 claude-clean-projects:
 	#!/usr/bin/env bash
 	node scripts/claude/manage.cjs clean-projects
-
-# Update Nix cache with current Claude configuration and memory
-claude-update-config:
-	#!/usr/bin/env bash
-	node scripts/claude/manage.cjs update-config

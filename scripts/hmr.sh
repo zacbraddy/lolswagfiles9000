@@ -65,11 +65,11 @@ fi
 echo "===== RUNNING HOME MANAGER ====="
 BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 
-home-manager switch \
+NIX_CONFIG="experimental-features = nix-command flakes" \
+nix run home-manager/master -- switch \
     --flake "/home/zacbraddy/Projects/Personal/lolswagfiles9000#zacbraddy" \
     --show-trace \
     -b ".backup-$BACKUP_TIMESTAMP" \
-    --extra-experimental-features "nix-command flakes" \
     "$@"
 
 # Fix keyboard layout to British format
