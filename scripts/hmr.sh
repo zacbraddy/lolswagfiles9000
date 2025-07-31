@@ -177,5 +177,39 @@ else
     echo "✅ memory symlink created"
 fi
 
+# Setup npm configuration
+echo "===== SETTING UP NPM CONFIGURATION ====="
+DOTFILES_NPMRC="$DOTFILES_DIR/.npmrc"
+USER_NPMRC="$HOME/.npmrc"
+
+# Ensure npm directories exist
+mkdir -p "$HOME/.local/bin" "$HOME/.local/lib/node_modules"
+
+# Setup .npmrc symlink
+if [ -L "$USER_NPMRC" ]; then
+    echo "✅ .npmrc symlink already exists"
+elif [ -f "$USER_NPMRC" ]; then
+    echo "🔄 Backing up existing .npmrc and creating symlink..."
+    mv "$USER_NPMRC" "$USER_NPMRC.backup-$(date +%Y%m%d-%H%M%S)"
+    ln -s "$DOTFILES_NPMRC" "$USER_NPMRC"
+    echo "✅ .npmrc symlink created"
+else
+    ln -s "$DOTFILES_NPMRC" "$USER_NPMRC"
+    echo "✅ .npmrc symlink created"
+fi
+
+# Verify npm configuration
+if command -v npm >/dev/null; then
+    NPM_PREFIX=$(npm config get prefix 2>/dev/null || echo "")
+    if [ "$NPM_PREFIX" = "/home/zacbraddy/.local" ]; then
+        echo "✅ npm prefix correctly configured to ~/.local"
+    else
+        echo "⚠️  npm prefix is set to: $NPM_PREFIX"
+        echo "💡 Expected: /home/zacbraddy/.local"
+    fi
+else
+    echo "⚠️  npm not found in PATH"
+fi
+
 echo "===== HMR COMPLETED ====="
 echo "Run 'reload' or restart your shell to apply changes"

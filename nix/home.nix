@@ -3,7 +3,7 @@
   # Home Manager settings
   home.username = "zacbraddy";
   home.homeDirectory = "/home/zacbraddy";
-  home.stateVersion = "25.05"; # Set to the latest stable or your preferred version
+  home.stateVersion = "24.11"; # Set to the latest stable or your preferred version
 
   # Import modules
   imports = [
