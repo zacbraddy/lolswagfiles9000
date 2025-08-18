@@ -22,7 +22,7 @@ get_latest_version() {
 
     local VERSION
     VERSION=$(echo "$VERSION_INFO" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
-    
+
     if [ -z "$DOWNLOAD_URL" ] || [ -z "$VERSION" ]; then
         echo "Error: Failed to get latest version information"
         exit 1
@@ -37,6 +37,7 @@ VERSION=$(echo "$VERSION_INFO" | cut -d'|' -f2)
 
 CURSOR_APPIMAGE="Cursor-${VERSION}-x86_64.AppImage"
 CURSOR_NAME="Cursor"
+TEMP_DOWNLOAD_DIR="$(pwd)/tmp"
 
 echo "VERSION_INFO: $VERSION_INFO"
 echo "DOWNLOAD_URL: $DOWNLOAD_URL"
@@ -49,15 +50,17 @@ echo "==========================================="
 echo "Latest version: $VERSION"
 echo "Downloading $CURSOR_APPIMAGE from $DOWNLOAD_URL..."
 
+mkdir -p "$TEMP_DOWNLOAD_DIR"
+
 # Download the AppImage
-if ! curl -L "$DOWNLOAD_URL" -o "$CURSOR_APPIMAGE"; then
+if ! curl -L "$DOWNLOAD_URL" -o "$TEMP_DOWNLOAD_DIR/$CURSOR_APPIMAGE"; then
     echo "Error: Failed to download Cursor AppImage"
     exit 1
 fi
 
 # Make AppImage executable
 echo "Making AppImage executable..."
-chmod +x "./$CURSOR_APPIMAGE"
+chmod +x "$TEMP_DOWNLOAD_DIR/$CURSOR_APPIMAGE"
 
 # Create applications directory if it doesn't exist
 APPS_DIR="$HOME/Applications"
@@ -68,7 +71,7 @@ fi
 
 # Move AppImage to applications directory
 echo "Moving $CURSOR_APPIMAGE to $APPS_DIR..."
-cp "./$CURSOR_APPIMAGE" "$APPS_DIR/$CURSOR_APPIMAGE"
+cp "$TEMP_DOWNLOAD_DIR/$CURSOR_APPIMAGE" "$APPS_DIR/$CURSOR_APPIMAGE"
 chmod +x "$APPS_DIR/$CURSOR_APPIMAGE"  # Ensure it's executable after copying
 
 # Check for FUSE availability
@@ -243,8 +246,11 @@ else
 fi
 echo "--------- END APPLICATION OUTPUT ---------"
 
+# Idempotent MIME association function
+mkdir -p "$(dirname $MIMEAPPS)"
+
 echo "Cleaning up..."
-rm -rf "$CURSOR_APPIMAGE"
+rm -rf "$TEMP_DOWNLOAD_DIR"
 
 echo "Installation complete!"
 echo ""
@@ -256,9 +262,6 @@ echo "1. Try running manually: $EXTRACT_DIR/squashfs-root/AppRun"
 echo "2. Check for further error messages by running $LAUNCH_SCRIPT in terminal"
 echo "3. For FUSE issues run: sudo apt-get install fuse libfuse2 fuse3 libfuse3-3"
 echo "4. If the AppImage won't extract, you might need to run it directly from $APPS_DIR/$CURSOR_APPIMAGE"
-
-# Idempotent MIME association function
-mkdir -p "$(dirname $MIMEAPPS)"
 
 default_section='[Default Applications]'
 add_mime_default() {

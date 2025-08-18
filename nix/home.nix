@@ -72,12 +72,13 @@
   home.activation.installFlatpaks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     # Enable Flathub repository
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    
+
     # Install applications
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub com.adobe.Reader
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub com.bitwarden.desktop
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub com.discordapp.Discord
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub com.obsproject.Studio
+    $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub com.spotify.Client
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub org.flameshot.Flameshot
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub org.gimp.GIMP
     $DRY_RUN_CMD ${pkgs.flatpak}/bin/flatpak install -y flathub org.videolan.VLC

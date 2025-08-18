@@ -534,56 +534,56 @@
         echo "❌ Could not find obsidian vault manager. Run 'hmr' to initialise." >&2
         return 1
       }
-      
+
       ob-create() {
         if [ -z "$1" ]; then
           echo "Usage: ob-create <vault-name>"
           echo "Example: ob-create MyNewVault"
           return 1
         fi
-        
+
         local vault_name="$1"
         local vault_path="$PWD/$vault_name"
         local vault_manager
-        
+
         if ! vault_manager=$(_get_dotfiles_vault_manager); then
           return 1
         fi
-        
+
         node "$vault_manager" create "$vault_path"
       }
-      
+
       ob-update() {
         local vault_path="$PWD"
         local vault_manager
-        
+
         if [ ! -d "$vault_path/.obsidian" ]; then
           echo "❌ No .obsidian directory found in current directory: $vault_path"
           echo "This command must be run from an Obsidian vault directory."
           return 1
         fi
-        
+
         if ! vault_manager=$(_get_dotfiles_vault_manager); then
           return 1
         fi
-        
+
         node "$vault_manager" update "$vault_path"
       }
-      
+
       ob-refresh-dotfiles() {
         local vault_path="$PWD"
         local vault_manager
-        
+
         if [ ! -d "$vault_path/.obsidian" ]; then
           echo "❌ No .obsidian directory found in current directory: $vault_path"
           echo "This command must be run from an Obsidian vault directory."
           return 1
         fi
-        
+
         if ! vault_manager=$(_get_dotfiles_vault_manager); then
           return 1
         fi
-        
+
         node "$vault_manager" refresh "$vault_path"
       }
 
@@ -641,6 +641,12 @@
     $DRY_RUN_CMD mkdir -p ~/.spicetify/Extensions
     $DRY_RUN_CMD mkdir -p ~/.spicetify/CustomApps
     $DRY_RUN_CMD mkdir -p ~/.spicetify/jsHelper
+
+    # Install popular Spicetify themes if not already present
+    if [ ! -d ~/.spicetify/Themes/SpicetifyDefault ] && command -v spicetify >/dev/null 2>&1; then
+      echo "Installing Spicetify default theme..."
+      $DRY_RUN_CMD spicetify theme apply 2>/dev/null || echo "Theme installation will complete when Spotify is first launched"
+    fi
 
     # Run spicetify backup and apply (only if spotify is installed)
     if command -v spotify >/dev/null 2>&1 || [ -d ~/.config/spotify ] || flatpak list | grep -q spotify; then

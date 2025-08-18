@@ -101,23 +101,7 @@ setup-ssh-github:
 
 install-jetbrains-toolbox:
 	#!/usr/bin/env bash
-	TOOLBOX_DIR="$HOME/jetbrains-toolbox"; \
-	TOOLBOX_URL="https://download-cf.jetbrains.com/toolbox/jetbrains-toolbox-1.20.7940.tar.gz"; \
-	mkdir -p "$TOOLBOX_DIR"; \
-	cd "$TOOLBOX_DIR"; \
-	if [ ! -f "jetbrains-toolbox" ]; then \
-	  curl -L "$TOOLBOX_URL" -o toolbox.tar.gz; \
-	  tar -xzf toolbox.tar.gz --strip-components=1; \
-	  rm toolbox.tar.gz; \
-	fi; \
-	if [ -f "jetbrains-toolbox" ]; then \
-	  chmod +x jetbrains-toolbox; \
-	  echo "JetBrains Toolbox is ready in $TOOLBOX_DIR"; \
-	  "$TOOLBOX_DIR/jetbrains-toolbox" & \
-	else \
-	  echo "JetBrains Toolbox install failed"; \
-	  exit 1; \
-	fi
+	bash ./scripts/install-jetbrains-toolbox.sh
 
 # Secrets Management Recipes
 
