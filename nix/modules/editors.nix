@@ -122,10 +122,4 @@ in
     in
     builtins.toJSON mergedSettings;
 
-  # Obsidian dotfile management
-  home.file."Projects/Fireflai/Vaults/FireFlai/.obsidian/appearance.json".source = ../../obsidian/appearance.json;
-  home.file."Projects/Fireflai/Vaults/FireFlai/.obsidian/community-plugins.json".source = ../../obsidian/community-plugins.json;
-  home.file."Projects/Fireflai/Vaults/FireFlai/.obsidian/core-plugins.json".source = ../../obsidian/core-plugins.json;
-  home.file."Projects/Fireflai/Vaults/FireFlai/.obsidian/workspace.json".source = ../../obsidian/workspace.json;
-  home.file."Projects/Fireflai/Vaults/FireFlai/.obsidian/vimrc".source = ../../obsidian/vimrc;
 }

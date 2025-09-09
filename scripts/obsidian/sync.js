@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const VAULTS_FILE = path.join(__dirname, '../../obsidian/vaults.json');
-const SOURCE_VAULT = '/home/zacbraddy/Projects/Fireflai/Vaults/FireFlai';
 
 // Files and directories to sync
 const CONFIG_ITEMS = [
@@ -55,13 +54,13 @@ function copyDir(source, target) {
   }
 }
 
-function syncItem(sourcePath, targetPath) {
+function syncFromVaultToDotfiles(vaultPath, itemPath) {
   try {
-    const sourceFullPath = path.join(SOURCE_VAULT, '.obsidian', sourcePath);
-    const targetFullPath = path.join(__dirname, '../../obsidian', sourcePath);
+    const sourceFullPath = path.join(vaultPath, '.obsidian', itemPath);
+    const targetFullPath = path.join(__dirname, '../../obsidian', itemPath);
 
     if (!fs.existsSync(sourceFullPath)) {
-      console.log(`⚠️  Source item not found: ${sourcePath}`);
+      console.log(`⚠️  Source item not found: ${itemPath}`);
       return;
     }
 
@@ -69,20 +68,60 @@ function syncItem(sourcePath, targetPath) {
 
     if (stats.isDirectory()) {
       copyDir(sourceFullPath, targetFullPath);
-      console.log(`✅ Synced directory: ${sourcePath}`);
+      console.log(`✅ Synced directory: ${itemPath}`);
     } else {
       const sourceContent = fs.readFileSync(sourceFullPath);
       const targetDir = path.dirname(targetFullPath);
       ensureDir(targetDir);
       fs.writeFileSync(targetFullPath, sourceContent);
-      console.log(`✅ Synced file: ${sourcePath}`);
+      console.log(`✅ Synced file: ${itemPath}`);
     }
   } catch (error) {
-    console.error(`❌ Error syncing ${sourcePath}:`, error.message);
+    console.error(`❌ Error syncing ${itemPath}:`, error.message);
   }
 }
 
-function main() {
+async function promptForSourceVault(vaults) {
+  const enabledVaults = vaults.vaults.filter(v => v.enabled);
+  
+  if (enabledVaults.length === 0) {
+    return null;
+  }
+
+  console.log('📥 Do you want to sync settings FROM a specific vault first?');
+  console.log('   (This will copy settings from that vault to dotfiles, then to all vaults)\n');
+  
+  console.log('Available options:');
+  console.log('0. Skip - just sync from dotfiles to all vaults');
+  enabledVaults.forEach((vault, index) => {
+    console.log(`${index + 1}. ${vault.name} (${vault.path})`);
+  });
+
+  // Simple readline implementation
+  const readline = await import('readline');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    rl.question('\nEnter your choice (0-' + enabledVaults.length + '): ', (answer) => {
+      rl.close();
+      
+      const choice = parseInt(answer);
+      if (choice === 0) {
+        resolve(null);
+      } else if (choice >= 1 && choice <= enabledVaults.length) {
+        resolve(enabledVaults[choice - 1]);
+      } else {
+        console.log('❌ Invalid choice. Skipping vault-to-dotfiles sync.');
+        resolve(null);
+      }
+    });
+  });
+}
+
+async function main() {
   const vaults = readVaults();
 
   if (vaults.vaults.length === 0) {
@@ -92,12 +131,20 @@ function main() {
 
   console.log('🔄 Starting Obsidian configuration sync...\n');
 
-  // First, sync from source vault to dotfiles
-  console.log('📥 Syncing from source vault to dotfiles...\n');
-  CONFIG_ITEMS.forEach(item => syncItem(item, item));
+  // Step 1: Optionally sync from a chosen vault to dotfiles
+  const sourceVault = await promptForSourceVault(vaults);
 
-  // Then sync from dotfiles to all vaults
-  console.log('\n📤 Syncing from dotfiles to all vaults...\n');
+  if (sourceVault) {
+    console.log(`\n📥 Syncing from source vault '${sourceVault.name}' to dotfiles...\n`);
+    CONFIG_ITEMS.forEach(item => {
+      syncFromVaultToDotfiles(sourceVault.path, item);
+    });
+    console.log('');
+  }
+
+  // Step 2: Sync from dotfiles to all vaults
+  console.log('📤 Syncing from dotfiles to all vaults...\n');
+  
   vaults.vaults.forEach(vault => {
     if (!vault.enabled) {
       console.log(`⏭️  Skipping disabled vault: ${vault.name}`);
@@ -130,6 +177,9 @@ function main() {
   });
 
   console.log('\n✨ Obsidian configuration sync complete!');
+  if (sourceVault) {
+    console.log(`📝 Configuration changes from '${sourceVault.name}' have been applied to all vaults.`);
+  }
   console.log('\n⚠️  Important: You will need to restart Obsidian for the changes to take effect.');
 }
 

@@ -35,7 +35,6 @@
         "colored-man-pages"
         "alias-finder"
         "docker"
-        "node"
         "vi-mode"
       ];
     };
@@ -81,6 +80,11 @@
       # Append spicetify path
       path_append "$HOME/.spicetify"
 
+      # Append pnpm path
+      export PNPM_HOME=$HOME/.pnpm
+      mkdir -p $PNPM_HOME
+      path_append "$PNPM_HOME"
+
       # Initialize completions safely - fix permissions first
       if [[ -d "$HOME/.nix-profile/share/zsh/site-functions" ]]; then
         chmod -R go-w "$HOME/.nix-profile/share/zsh/site-functions" 2>/dev/null || true
@@ -109,14 +113,6 @@
           docker ps -a
       }
 
-      # Project jump function
-      pj() {
-        local projects=($HOME/Projects/*)
-        local project=$(printf "%s\n" "''${projects[@]}" | fzf --height 40% --reverse)
-        if [[ -n "''${project}" ]]; then
-          cd "''$project"
-        fi
-      }
 
       # Trash management helpers
       trash-clear-all() {
@@ -183,6 +179,12 @@
       # nx completion (if installed via npm or globally)
       if type nx &>/dev/null; then
         source <(nx completion zsh || true)
+      fi
+
+      # FNM (Fast Node Manager) setup
+      if command -v fnm &>/dev/null; then
+        eval "$(fnm env --use-on-cd --resolve-engines)"
+        fnm default lts 2>/dev/null || true
       fi
 
       # --- Aider Integration: Functions ---
@@ -671,7 +673,6 @@
     # Development tools
     nodejs
     pnpm
-    yarn
     poetry
     docker
     azure-cli

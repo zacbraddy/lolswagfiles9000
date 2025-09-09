@@ -201,11 +201,22 @@ fi
 # Verify npm configuration
 if command -v npm >/dev/null; then
     NPM_PREFIX=$(npm config get prefix 2>/dev/null || echo "")
-    if [ "$NPM_PREFIX" = "/home/zacbraddy/.local" ]; then
-        echo "✅ npm prefix correctly configured to ~/.local"
+    if command -v fnm >/dev/null; then
+        # Using fnm - prefix should be managed by fnm
+        if [[ "$NPM_PREFIX" == *"/fnm/node-versions/"* ]]; then
+            echo "✅ npm prefix correctly managed by fnm: $NPM_PREFIX"
+        else
+            echo "⚠️  npm prefix is set to: $NPM_PREFIX"
+            echo "💡 Expected: fnm-managed prefix (containing '/fnm/node-versions/')"
+        fi
     else
-        echo "⚠️  npm prefix is set to: $NPM_PREFIX"
-        echo "💡 Expected: /home/zacbraddy/.local"
+        # Not using fnm - check for old static prefix
+        if [ "$NPM_PREFIX" = "/home/zacbraddy/.local" ]; then
+            echo "✅ npm prefix correctly configured to ~/.local"
+        else
+            echo "⚠️  npm prefix is set to: $NPM_PREFIX"
+            echo "💡 Expected: /home/zacbraddy/.local"
+        fi
     fi
 else
     echo "⚠️  npm not found in PATH"

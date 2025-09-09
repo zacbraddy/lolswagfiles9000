@@ -28,7 +28,7 @@
   "addRSSFeed": false,
   "siteURL": "",
   "authorName": "",
-  "vaultTitle": "FireFlai",
+  "vaultTitle": "",
   "exportPreset": "documents",
   "openAfterExport": true,
   "graphAttractionForce": 1,
@@ -43,31 +43,6 @@
   "defaultFileIcon": "lucide//file",
   "defaultFolderIcon": "lucide//folder",
   "defaultMediaIcon": "lucide//file-image",
-  "exportPath": "/home/zacbraddy/Projects/Fireflai/Export",
-  "filesToExport": [
-    [
-      "Asset Library",
-      "Clients",
-      "Competitors",
-      "Domain Knowledge",
-      "Fireflai",
-      "Master Data Management (MDM)",
-      "Non-Core Work",
-      "Product Enrichment",
-      "Staff",
-      "Asset Library.md",
-      "Clients.md",
-      "Competitors.md",
-      "Domain Knowledge.md",
-      "Fireflai.md",
-      "Master Data Management (MDM).md",
-      "Non-Core Work.md",
-      "Platform Communication Strategy.md",
-      "Priority Items.md",
-      "Product Enrichment.md",
-      "Software Development.md",
-      "Staff.md",
-      "Supply Chain Management (SCM).md"
-    ]
-  ]
+  "exportPath": "/home/zacbraddy/Projects/Vaults/Export",
+  "filesToExport": []
 }
