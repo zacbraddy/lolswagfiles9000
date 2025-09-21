@@ -139,3 +139,14 @@ Here are several ways to get the date in a browser environment (JavaScript):
 
 - `new Date().toLocaleString('en-GB', { dateStyle: 'full' })`
   Returns the date in full British English format (e.g., "Monday, 10 June 2024").
+
+## MCP Tools Available
+
+When you need Notion integration, remind the user to restart with:
+`ccwn` (alias for claude with notion)
+
+By default, `cc` (alias for claude) runs with minimal MCP tools (IDE only). The `ccwn` command provides access to search, fetch, create, and manage Notion content.
+
+**Available commands:**
+- `cc` - Claude with minimal MCP tools (IDE diagnostics and code execution only)
+- `ccwn` - Claude with Notion MCP (includes search, fetch, create, and manage Notion content)

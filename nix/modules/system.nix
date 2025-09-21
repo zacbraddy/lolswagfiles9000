@@ -67,11 +67,21 @@
     };
   };
 
-  # Symlink for user config file
-  home.file.".config/mimeapps.list" = {
-    source = ../../mimeapps.list;
-    force = true;
-  };
+  # Create direct symlink to mimeapps.list (not via Nix store)
+  home.activation.setupMimeApps = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    DOTFILES_DIR="${config.home.homeDirectory}/Projects/Personal/lolswagfiles9000"
+    CONFIG_DIR="${config.home.homeDirectory}/.config"
+
+    # Create .config directory
+    $DRY_RUN_CMD mkdir -p "$CONFIG_DIR"
+
+    # Symlink mimeapps.list directly to git repo
+    if [ -f "$DOTFILES_DIR/mimeapps.list" ]; then
+      $DRY_RUN_CMD rm -f "$CONFIG_DIR/mimeapps.list"
+      $DRY_RUN_CMD ln -s "$DOTFILES_DIR/mimeapps.list" "$CONFIG_DIR/mimeapps.list"
+      echo "✅ Symlinked mimeapps.list to git repo (writable)"
+    fi
+  '';
 
   home.activation.linkPulseAndTuxedo = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     # Use system sudo directly with absolute path

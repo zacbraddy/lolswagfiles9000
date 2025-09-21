@@ -55,4 +55,5 @@
   set surround
   set commentary
   set highlightedyank
-  set hlsearch!
+  set functiontextobj
+  setglobal hlsearch!

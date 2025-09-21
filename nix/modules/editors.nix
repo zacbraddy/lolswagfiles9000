@@ -75,8 +75,36 @@ in
     }))
   ];
 
-  # Cursor settings management
-  home.file.".config/Cursor/User/extensions.json".source = ../../.vscode/extensions.json;
+  # VS Code and Cursor settings management
+  home.activation.setupEditorFiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    DOTFILES_DIR="${config.home.homeDirectory}/Projects/Personal/lolswagfiles9000"
+    VSCODE_DIR="${config.home.homeDirectory}/.config/Code/User"
+    CURSOR_DIR="${config.home.homeDirectory}/.config/Cursor/User"
+
+    # Create editor directories
+    $DRY_RUN_CMD mkdir -p "$VSCODE_DIR"
+    $DRY_RUN_CMD mkdir -p "$CURSOR_DIR"
+
+    # Function to create editor symlinks
+    create_editor_symlink() {
+      local source_file="$1"
+      local target_file="$2"
+
+      if [ -f "$DOTFILES_DIR/$source_file" ]; then
+        $DRY_RUN_CMD rm -f "$target_file"
+        $DRY_RUN_CMD ln -s "$DOTFILES_DIR/$source_file" "$target_file"
+        echo "✅ Symlinked $(basename "$target_file") to git repo (writable)"
+      fi
+    }
+
+    # VS Code settings
+    create_editor_symlink ".config/Code/User/settings.json" "$VSCODE_DIR/settings.json"
+    create_editor_symlink ".config/Code/User/keybindings.json" "$VSCODE_DIR/keybindings.json"
+    create_editor_symlink ".vscode/extensions.json" "$VSCODE_DIR/extensions.json"
+
+    # Cursor settings (shared extensions.json with VS Code)
+    create_editor_symlink ".vscode/extensions.json" "$CURSOR_DIR/extensions.json"
+  '';
   home.file.".config/Cursor/User/settings.json".text =
     let
       # Read your existing settings file

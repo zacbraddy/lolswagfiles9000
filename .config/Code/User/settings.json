@@ -1,0 +1,104 @@
+{
+    "editor.formatOnSave": true,
+    "files.autoSave": "afterDelay",
+    "editor.fontFamily": "'DejaVu Sans Mono', 'Droid Sans Mono', 'monospace', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 14,
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "editor.tabSize": 2,
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "workbench.editor.autoLockGroups": {
+        "workbench.editor.chatSession": false
+    },
+
+  "vim.easymotion": true,
+  "vim.handleKeys": {
+    "<C-b>": true,
+    "<C-d>": true,
+    "<C-f>": true,
+    "<C-u>": true
+  },
+  "vim.highlightedyank.enable": true,
+  "vim.hlsearch": true,
+  "vim.incsearch": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "after": ["<Esc>"],
+      "before": ["j", "k"]
+    }
+  ],
+  "vim.leader": "<space>",
+  "vim.normalModeKeyBindings": [
+    {
+      "after": ["\"", "+", "y"],
+      "before": ["<leader>", "y"]
+    },
+    {
+      "after": ["\"", "+", "Y"],
+      "before": ["<leader>", "Y"]
+    },
+    {
+      "after": ["\"", "+", "p"],
+      "before": ["<leader>", "p"]
+    },
+    {
+      "after": ["\"", "+", "P"],
+      "before": ["<leader>", "P"]
+    },
+    {
+      "after": ["\"", "+", "d"],
+      "before": ["<leader>", "d"]
+    },
+    {
+      "after": ["\"", "+", "D"],
+      "before": ["<leader>", "D"]
+    },
+    {
+      "before": ["<leader>", "f", "s"],
+      "commands": [":w"]
+    },
+    {
+      "before": ["<leader>", "f", "S"],
+      "commands": [":wa"]
+    },
+    {
+      "before": ["<leader>", "f"],
+      "commands": [":FZF"]
+    },
+    {
+      "before": ["<leader>", "b"],
+      "commands": [":Buffers"]
+    },
+    {
+      "before": ["<leader>", "h"],
+      "commands": [":History"]
+    },
+    {
+      "before": ["<leader>", "o", "t"],
+      "commands": ["workbench.action.terminal.focus"]
+    },
+    {
+      "before": ["<leader>", "."],
+      "commands": ["workbench.action.quickOpenRecent"]
+    }
+  ],
+  "vim.surround": true,
+  "vim.useSystemClipboard": false,
+  "vim.visualModeKeyBindings": [
+    {
+      "after": ["<Esc>"],
+      "before": ["j", "k"]
+    }
+],
+"projectManager.git.baseFolders": [
+    "~/Projects"
+],
+"workbench.secondarySideBar.defaultVisibility": "hidden",
+"monorepoWorkspace.folders.regex.tools": "^tool|script|util",
+"[json]": {
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"editor.lineNumbers": "relative",
+"terminal.integrated.enableVisualBell": true
+}

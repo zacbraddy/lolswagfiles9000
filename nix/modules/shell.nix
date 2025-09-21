@@ -17,6 +17,8 @@
         reload = "exec zsh";
         netinfo = "ip a; iwconfig 2>/dev/null; nmcli device status";
         rm = "trash";
+        cc = "claude --strict-mcp-config --mcp-config ~/.claude/mcp.json";
+        ccwn = "claude --strict-mcp-config --mcp-config ~/.claude/mcp-notion.json";
       }
       (lib.optionalAttrs config.programs.direnv.enable {
         d = "direnv edit .";
@@ -66,6 +68,7 @@
       path_prepend "$HOME/.config/yarn/global/node_modules/.bin"
       path_prepend "$HOME/.local/bin"
       path_prepend "$HOME/.poetry/bin"
+      path_prepend "$HOME/.local/share/fnm"
 
       # Linuxbrew paths - only add if they exist
       if [ -d "/home/linuxbrew/.linuxbrew" ]; then
@@ -706,10 +709,31 @@
     pkg-config
   ];
 
-  home.file.".p10k.zsh".source = ../../zsh/.p10k.zsh;
-  home.file.".gitconfig".source = ../../.gitconfig;
-  home.file.".gitignore_global".source = ../../.gitignore_global;
-  home.file.".ideavimrc".source = ../../.ideavimrc;
+  # Create direct symlinks to dotfiles (not via Nix store)
+  home.activation.setupShellFiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    DOTFILES_DIR="${config.home.homeDirectory}/Projects/Personal/lolswagfiles9000"
+
+    # Function to create direct symlinks
+    create_shell_symlink() {
+      local target_file="$1"
+      local source_file="$2"
+      local target_path="${config.home.homeDirectory}/$target_file"
+
+      if [ -f "$DOTFILES_DIR/$source_file" ]; then
+        # Remove existing file/symlink
+        $DRY_RUN_CMD rm -f "$target_path"
+        # Create direct symlink to git repo file
+        $DRY_RUN_CMD ln -s "$DOTFILES_DIR/$source_file" "$target_path"
+        echo "✅ Symlinked $target_file to git repo (writable)"
+      fi
+    }
+
+    # Symlink shell configuration files
+    create_shell_symlink ".p10k.zsh" "zsh/.p10k.zsh"
+    create_shell_symlink ".gitconfig" ".gitconfig"
+    create_shell_symlink ".gitignore_global" ".gitignore_global"
+    create_shell_symlink ".ideavimrc" ".ideavimrc"
+  '';
 
   programs.direnv = {
     enable = true;
