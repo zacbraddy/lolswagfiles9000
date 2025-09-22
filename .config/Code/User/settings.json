@@ -100,5 +100,11 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 },
 "editor.lineNumbers": "relative",
-"terminal.integrated.enableVisualBell": true
+"terminal.integrated.enableVisualBell": true,
+"git.allowNoVerifyCommit": true,
+"git.allowForcePush": true,
+"git.autofetch": "all",
+"git.autofetchPeriod": 600,
+"git.fetchOnPull": true,
+"scm.defaultViewMode": "tree"
 }

@@ -17,10 +17,6 @@
     # Process decrypted secrets
     processSecrets = lib.hm.dag.entryAfter ["writeBoundary"] ''
       if [ -f "${config.home.homeDirectory}/.config/secrets/data" ]; then
-        # Extract and write AWS credentials
-        ${pkgs.yq-go}/bin/yq -r '.aws_credentials' "${config.home.homeDirectory}/.config/secrets/data" > "${config.home.homeDirectory}/.aws/credentials"
-        chmod 600 "${config.home.homeDirectory}/.aws/credentials"
-
         # Extract and write GitHub token
         ${pkgs.yq-go}/bin/yq -r '.github_token' "${config.home.homeDirectory}/.config/secrets/data" > "${config.home.homeDirectory}/.config/github/token"
         chmod 600 "${config.home.homeDirectory}/.config/github/token"

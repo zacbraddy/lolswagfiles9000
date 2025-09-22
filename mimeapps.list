@@ -26,6 +26,7 @@ text/html=brave-browser.desktop
 text/xml=brave-browser.desktop
 application/xhtml_xml=brave-browser.desktop
 image/webp=brave-browser.desktop
+x-scheme-handler/jetbrains=jetbrains-toolbox.desktop
 
 [Added Associations]
 application/pdf=org.gnome.Evince.desktop;
