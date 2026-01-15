@@ -171,7 +171,7 @@ Run `just --list` to see all available commands. Key ones include:
 
 **Application Management:**
 - `just install-cursor` - Install Cursor editor
-- `just sync-cursor-settings` - Sync Cursor configuration
+- `just diff-cursor-settings` - Check Cursor settings symlink status
 - `just install-jetbrains-toolbox` - Install JetBrains Toolbox
 
 **Secrets Management:**
@@ -182,6 +182,12 @@ Run `just --list` to see all available commands. Key ones include:
 **Obsidian Management:**
 - `just obsidian-vaults-list` - List managed vaults
 - `just obsidian-sync` - Sync configuration to all vaults
+
+**Cursor Management:**
+- Settings are automatically symlinked to the repo (changes are immediately saved)
+- Edit `.config/Cursor/User/settings.json` in Cursor or your dotfiles repo
+- Changes are ready to commit whenever you want
+- Run `just diff-cursor-settings` to verify symlink status
 
 **Claude Management:**
 - Configuration and memories are automatically symlinked and version controlled
@@ -242,10 +248,12 @@ just clear-nix-cache
 just hmr
 ```
 
-**Cursor settings won't sync:**
+**Cursor settings issues:**
 ```bash
-# Make sure Cursor is closed first
-just sync-cursor-settings
+# Check if settings are properly symlinked
+just diff-cursor-settings
+# If not symlinked, reapply home-manager config
+just hmr
 ```
 
 **Secrets not working:**

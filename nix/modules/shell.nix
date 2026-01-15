@@ -676,7 +676,6 @@
     # Development tools
     nodejs
     pnpm
-    poetry
     docker
     azure-cli
 

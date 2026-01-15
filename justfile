@@ -13,62 +13,34 @@ home-manager-update:
 
 sync-cursor-settings:
 	#!/usr/bin/env bash
-	mkdir -p ~/.config/Cursor/User
-	# Check if Cursor is running
-	if pgrep -x "Cursor" > /dev/null; then
-		echo "⚠️  Cursor is currently running. Please close Cursor before syncing settings."
-		echo "This is required to prevent permission issues with the configuration files."
-		exit 1
-	fi
-	# Function to handle file sync
-	sync_file() {
-		local file=$1
-		local source_file=$2
-		if [ -f ~/.config/Cursor/User/$file ]; then \
-			echo "Found existing Cursor $file"; \
-			echo "Do you want to overwrite it? [y/N]"; \
-			read -r overwrite; \
-			if [[ $overwrite =~ ^[Yy]$ ]]; then \
-				echo "Overwriting $file..."; \
-				if cp $source_file ~/.config/Cursor/User/$file; then \
-					echo "✅ $file updated successfully."; \
-					return 0; \
-				else \
-					echo "❌ Failed to update $file."; \
-					echo "   Please ensure Cursor is closed and try again."; \
-					return 1; \
-				fi; \
-			else \
-				echo "Keeping existing $file"; \
-				echo "Use your preferred editor to modify the file."; \
-				return 0; \
-			fi; \
-		else \
-			echo "Creating new $file..."; \
-			if cp $source_file ~/.config/Cursor/User/$file; then \
-				echo "✅ $file created successfully."; \
-				return 0; \
-			else \
-				echo "❌ Failed to create $file."; \
-				echo "   Please ensure Cursor is closed and try again."; \
-				return 1; \
-			fi; \
-		fi
-	}
-	# Sync settings.json
-	sync_file "settings.json" ".config/Cursor/User/settings.json"
-	# Sync extensions.json
-	sync_file "extensions.json" ".config/Cursor/User/extensions.json"
+	echo "ℹ️  Cursor settings are now automatically symlinked by Home Manager!"
+	echo ""
+	echo "Your Cursor settings.json is symlinked to:"
+	echo "  ~/.config/Cursor/User/settings.json -> $(pwd)/.config/Cursor/User/settings.json"
+	echo ""
+	echo "This means:"
+	echo "  ✅ Changes in Cursor are automatically saved to your dotfiles repo"
+	echo "  ✅ Changes are ready to commit whenever you want"
+	echo "  ✅ No manual syncing needed"
+	echo ""
+	echo "To apply or refresh the symlink, run:"
+	echo "  just hmr"
 
 diff-cursor-settings:
 	#!/usr/bin/env bash
-	if [ -f ~/.config/Cursor/User/settings.json ]; then \
+	if [ -L ~/.config/Cursor/User/settings.json ]; then \
+		echo "✅ Cursor settings.json is symlinked to dotfiles repo"; \
+		echo "Target: $(readlink -f ~/.config/Cursor/User/settings.json)"; \
+	elif [ -f ~/.config/Cursor/User/settings.json ]; then \
+		echo "⚠️  Cursor settings.json exists but is NOT symlinked"; \
 		echo "Diffing current settings with dotfiles settings:"; \
 		echo "----------------------------------------"; \
 		diff -u ~/.config/Cursor/User/settings.json .config/Cursor/User/settings.json || true; \
+		echo ""; \
+		echo "To fix this, run: just hmr"; \
 	else \
 		echo "No existing settings found at ~/.config/Cursor/User/settings.json"; \
-		echo "Use 'just sync-cursor-settings' to create initial settings."; \
+		echo "Run 'just hmr' to create the symlink."; \
 	fi
 
 bootstrap-home-manager:
@@ -80,7 +52,7 @@ bootstrap-home-manager:
 	fi
 	mkdir -p $HOME/.config/home-manager
 	echo "{ imports = [ \"$(pwd)/nix/modules/editors.nix\" ]; }" > $HOME/.config/home-manager/home.nix
-	echo "Home Manager bootstrapped. You can now run 'just sync-cursor-settings'!"
+	echo "Home Manager bootstrapped. You can now run 'just hmr'!"
 
 setup-ssh-github:
 	#!/usr/bin/env bash
@@ -303,11 +275,6 @@ setup-wizard:
 	else
 		just install-cursor
 	fi
-	echo "⚙️  Syncing Cursor settings..."
-	if ! just sync-cursor-settings; then
-		echo "❌ Failed to sync Cursor settings."
-		exit 1
-	fi
 	echo "📄 Installing Adobe Reader..."
 	if command -v acroread >/dev/null; then
 		echo "ℹ️  Adobe Reader already installed. Do you want to reinstall? [y/N]"
@@ -388,7 +355,7 @@ setup-wizard:
 	echo
 	echo "🔧 Troubleshooting:"
 	echo "  - If Home Manager fails, run 'just hmr' to retry"
-	echo "  - For Cursor issues, run 'just sync-cursor-settings'"
+	echo "  - For Cursor settings issues, run 'just diff-cursor-settings'"
 	echo "  - For secrets issues, run 'just secrets-setup-key'"
 	echo "  - For system tweaks, check ./scripts/ directory"
 

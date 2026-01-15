@@ -80,6 +80,7 @@ in
     DOTFILES_DIR="${config.home.homeDirectory}/Projects/Personal/lolswagfiles9000"
     VSCODE_DIR="${config.home.homeDirectory}/.config/Code/User"
     CURSOR_DIR="${config.home.homeDirectory}/.config/Cursor/User"
+    ZSH_PATH="${pkgs.zsh}/bin/zsh"
 
     # Create editor directories
     $DRY_RUN_CMD mkdir -p "$VSCODE_DIR"
@@ -97,57 +98,54 @@ in
       fi
     }
 
+    # Function to update terminal settings in Cursor settings.json
+    update_cursor_terminal_settings() {
+      local settings_file="$CURSOR_DIR/settings.json"
+
+      if [ -f "$settings_file" ] || [ -L "$settings_file" ]; then
+        # Use jq to update the terminal settings with current zsh path
+        ${pkgs.jq}/bin/jq --arg zsh_path "$ZSH_PATH" '
+          .["terminal.integrated.defaultProfile.linux"] = "nix-zsh" |
+          .["terminal.integrated.automationProfile.linux"] = {
+            "path": $zsh_path,
+            "args": ["-l"],
+            "env": {
+              "SHELL": $zsh_path
+            }
+          } |
+          .["terminal.integrated.profiles.linux"] = {
+            "nix-zsh": {
+              "path": $zsh_path,
+              "args": ["-l"],
+              "env": {
+                "SHELL": $zsh_path
+              }
+            },
+            "system-zsh": {
+              "path": "/usr/bin/zsh",
+              "args": ["-l"]
+            }
+          } |
+          .["terminal.integrated.env.linux"] = {
+            "PYTHONHOME": "",
+            "PYTHONPATH": ""
+          }
+        ' "$settings_file" > "$settings_file.tmp" && mv "$settings_file.tmp" "$settings_file"
+        echo "✅ Updated Cursor terminal settings with zsh path: $ZSH_PATH"
+      fi
+    }
+
     # VS Code settings
     create_editor_symlink ".config/Code/User/settings.json" "$VSCODE_DIR/settings.json"
     create_editor_symlink ".config/Code/User/keybindings.json" "$VSCODE_DIR/keybindings.json"
     create_editor_symlink ".vscode/extensions.json" "$VSCODE_DIR/extensions.json"
 
-    # Cursor settings (shared extensions.json with VS Code)
+    # Cursor settings (symlink both settings.json and extensions.json)
+    create_editor_symlink ".config/Cursor/User/settings.json" "$CURSOR_DIR/settings.json"
     create_editor_symlink ".vscode/extensions.json" "$CURSOR_DIR/extensions.json"
+
+    # Update terminal settings dynamically after symlinking
+    update_cursor_terminal_settings
   '';
-  home.file.".config/Cursor/User/settings.json".text =
-    let
-      # Read your existing settings file
-      existingSettings = builtins.fromJSON (builtins.readFile ../../.config/Cursor/User/settings.json);
-
-      # Get the actual store path
-      zshStorePath = pkgs.zsh;
-
-      # Shell settings that need dynamic Nix paths
-      shellSettings = {
-        "terminal.integrated.defaultProfile.linux" = "nix-zsh";
-
-        "terminal.integrated.automationProfile.linux" = {
-          "path" = "${zshStorePath}/bin/zsh";
-          "args" = ["-l"];
-          "env" = {
-            "SHELL" = "${zshStorePath}/bin/zsh";
-          };
-        };
-
-        "terminal.integrated.profiles.linux" = {
-          "nix-zsh" = {
-            "path" = "${zshStorePath}/bin/zsh";
-            "args" = ["-l"];
-            "env" = {
-              "SHELL" = "${zshStorePath}/bin/zsh";
-            };
-          };
-          "system-zsh" = {
-            "path" = "/usr/bin/zsh";
-            "args" = ["-l"];
-          };
-        };
-
-        "terminal.integrated.env.linux" = {
-          "PYTHONHOME" = "";
-          "PYTHONPATH" = "";
-        };
-      };
-
-      # Merge existing + shell settings
-      mergedSettings = existingSettings // shellSettings;
-    in
-    builtins.toJSON mergedSettings;
 
 }

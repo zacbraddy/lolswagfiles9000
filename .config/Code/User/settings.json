@@ -1,16 +1,25 @@
 {
-    "editor.formatOnSave": true,
-    "files.autoSave": "afterDelay",
-    "editor.fontFamily": "'DejaVu Sans Mono', 'Droid Sans Mono', 'monospace', monospace",
-    "editor.fontLigatures": true,
-    "editor.fontSize": 14,
-    "workbench.colorTheme": "Catppuccin Mocha",
-    "editor.tabSize": 2,
-    "editor.mouseWheelZoom": true,
-    "editor.formatOnPaste": true,
-    "workbench.editor.autoLockGroups": {
-        "workbench.editor.chatSession": false
-    },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "files.autoSave": "afterDelay",
+  "editor.fontFamily": "'DejaVu Sans Mono', 'Droid Sans Mono', 'monospace', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 14,
+  "workbench.colorTheme": "Catppuccin Mocha",
+  "editor.tabSize": 2,
+  "editor.mouseWheelZoom": true,
+  "editor.formatOnPaste": true,
+  "workbench.editor.autoLockGroups": {
+    "workbench.editor.chatSession": false
+  },
 
   "vim.easymotion": true,
   "vim.handleKeys": {
@@ -90,21 +99,45 @@
       "after": ["<Esc>"],
       "before": ["j", "k"]
     }
-],
-"projectManager.git.baseFolders": [
-    "~/Projects"
-],
-"workbench.secondarySideBar.defaultVisibility": "hidden",
-"monorepoWorkspace.folders.regex.tools": "^tool|script|util",
-"[json]": {
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
-},
-"editor.lineNumbers": "relative",
-"terminal.integrated.enableVisualBell": true,
-"git.allowNoVerifyCommit": true,
-"git.allowForcePush": true,
-"git.autofetch": "all",
-"git.autofetchPeriod": 600,
-"git.fetchOnPull": true,
-"scm.defaultViewMode": "tree"
+  ],
+  "projectManager.git.baseFolders": ["~/Projects"],
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "monorepoWorkspace.folders.regex.tools": "^tool|script|util",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.lineNumbers": "relative",
+  "terminal.integrated.enableVisualBell": true,
+  "git.allowNoVerifyCommit": true,
+  "git.allowForcePush": true,
+  "git.autofetch": "all",
+  "git.autofetchPeriod": 600,
+  "git.fetchOnPull": true,
+  "scm.defaultViewMode": "tree",
+  "githubPullRequests.createOnPublishBranch": "never",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "markdown-preview-enhanced.codeBlockTheme": "monokai.css",
+  "markdown-preview-enhanced.previewTheme": "atom-dark.css",
+  "typescript.format.enable": false,
+  "javascript.format.enable": false,
+  "eslint.format.enable": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/tmp/**": true,
+    "**/dist/**": true
+  },
+  "extensions.ignoreRecommendations": true,
+  "claudeCode.preferredLocation": "panel",
+  "githubPullRequests.pullBranch": "never",
 }

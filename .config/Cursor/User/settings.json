@@ -13,6 +13,7 @@
   "terminal.integrated.fontFamily": "JetBrains Mono, 'FiraCode Nerd Font', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace",
   "terminal.integrated.fontSize": 13,
   "terminal.integrated.minimumContrastRatio": 1,
+  "terminal.integrated.shellIntegration.enabled": false,
   "vim.easymotion": true,
   "vim.handleKeys": {
     "<C-b>": true,
